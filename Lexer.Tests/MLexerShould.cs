@@ -205,5 +205,15 @@ namespace Parser.Tests
             var actual = string.Join("", tokens.Select(token => token.FullText));
             Assert.AreEqual(s, actual);
         }
+
+        [Test]
+        public void ParseStringLiteral()
+        {
+            var sut = CreateLexer("'just a string'");
+            var tokens = sut.ParseAll();
+            Assert.AreEqual(2, tokens.Count);
+            Assert.AreEqual(TokenKind.StringLiteral, tokens[0].Kind);
+            Assert.AreEqual("just a string", tokens[0].PureToken.Value);
+        }
     }
 }

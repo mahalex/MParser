@@ -537,10 +537,11 @@ namespace Lexer
                     Window.ConsumeChar();
                     return PureTokenFactory.CreatePunctuation(TokenKind.QuestionMark);
                 case '\'':
-                    if (LastToken.PureToken.Kind == TokenKind.ClosingBrace
-                        || LastToken.PureToken.Kind == TokenKind.ClosingBracket
-                        || LastToken.PureToken.Kind == TokenKind.ClosingSquareBracket
-                        || LastToken.PureToken.Kind == TokenKind.Identifier)
+                    if (LastToken != null &&
+                        (LastToken.Kind == TokenKind.ClosingBrace
+                        || LastToken.Kind == TokenKind.ClosingBracket
+                        || LastToken.Kind == TokenKind.ClosingSquareBracket
+                        || LastToken.Kind == TokenKind.Identifier))
                     {
                         if (LastToken.TrailingTrivia.Count == 0 && leadingTrivia.Count == 0)
                         {
