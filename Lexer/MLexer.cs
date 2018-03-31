@@ -306,11 +306,24 @@ namespace Lexer
         private PureToken ContinueParsingStringLiteral()
         {
             Window.ConsumeChar();
+            var pieces = new List<string>();
             var n = 0;
             while (true) {
                 if (Window.PeekChar(n) == '\'')
                 {
-                    break;
+                    if (Window.PeekChar(n + 1) == '\'')
+                    {
+                        var piece = Window.GetAndConsumeChars(n);
+                        pieces.Add(piece);
+                        Window.ConsumeChar();
+                        Window.ConsumeChar();
+                        pieces.Add("'");
+                        n = -1;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 if (IsEolOrEof(Window.PeekChar(n)))
                 {
@@ -319,9 +332,11 @@ namespace Lexer
                 n++;
             }
 
-            var literal = Window.GetAndConsumeChars(n);
+            var lastPiece = Window.GetAndConsumeChars(n);
+            pieces.Add(lastPiece);
+            var total = string.Join("", pieces);
             Window.ConsumeChar();
-            return PureTokenFactory.CreateStringLiteral(literal);
+            return PureTokenFactory.CreateStringLiteral(total);
         }
 
         private PureToken ContinueParsingDoubleQuotedStringLiteral()
