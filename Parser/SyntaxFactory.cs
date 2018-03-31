@@ -503,5 +503,25 @@ namespace Parser
             SetParent(result);
             return result;
         }
+
+        public IndirectMemberAccessNode IndirectMemberAccess(
+            TokenNode openingBracket,
+            ExpressionNode indirectMemberName,
+            TokenNode closingBracket)
+        {
+            var children = new List<SyntaxNode>
+            {
+                openingBracket,
+                indirectMemberName,
+                closingBracket
+            };
+            var result = new IndirectMemberAccessNode(
+                children,
+                openingBracket,
+                indirectMemberName,
+                closingBracket);
+            SetParent(result);
+            return result;
+        }
     }
 }

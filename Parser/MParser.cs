@@ -255,6 +255,15 @@ namespace Parser
             if (CurrentToken.Kind == TokenKind.Identifier)
             {
                 return Factory.IdentifierName(EatToken());
+            } else if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            {
+                var openingBracket = EatToken();
+                var indirectMember = ParseExpression();
+                var closingBracket = EatToken(TokenKind.ClosingBracket);
+                return Factory.IndirectMemberAccess(
+                    Factory.Token(openingBracket),
+                    indirectMember,
+                    Factory.Token(closingBracket));
             }
             throw new ParsingException($"Unexpected token {CurrentToken.PureToken} at {CurrentToken.PureToken.Position}.");
         }

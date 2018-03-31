@@ -512,4 +512,22 @@ namespace Parser
             EndKeyword = endKeyword;
         }
     }
+
+    public class IndirectMemberAccessNode : ExpressionNode
+    {
+        public TokenNode OpeningBracket { get; }
+        public ExpressionNode IndirectMemberName { get; }
+        public TokenNode ClosingBracket { get; }
+
+        public IndirectMemberAccessNode(
+            List<SyntaxNode> children,
+            TokenNode openingBracket,
+            ExpressionNode indirectMemberName,
+            TokenNode closingBracket) : base(children)
+        {
+            OpeningBracket = openingBracket;
+            IndirectMemberName = indirectMemberName;
+            ClosingBracket = closingBracket;
+        }
+    }
 }

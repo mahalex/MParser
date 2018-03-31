@@ -213,5 +213,17 @@ namespace Parser.Tests
             var a = (CellArrayLiteralExpressionNode) actual;
             Assert.AreEqual(3, a.Elements.Elements.Count);
         }
+
+        [Test]
+        public void ParseIndirectMemberAccess()
+        {
+            var text = "abc.(def)";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<MemberAccessNode>(actual);
+            var a = (MemberAccessNode) actual;
+            Assert.IsInstanceOf<IdentifierNameNode>(a.LeftOperand);
+            Assert.IsInstanceOf<IndirectMemberAccessNode>(a.RightOperand);
+        }
     }
 }
