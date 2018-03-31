@@ -41,10 +41,15 @@ namespace Parser
     public class FunctionOutputDescriptionNode : SyntaxNode
     {
         public List<TokenNode> Outputs { get; }
+        public TokenNode EqualitySign { get;  }
         
-        public FunctionOutputDescriptionNode(List<SyntaxNode> children, List<TokenNode> outputs) : base(children)
+        public FunctionOutputDescriptionNode(
+            List<SyntaxNode> children,
+            List<TokenNode> outputs,
+            TokenNode equalitySign) : base(children)
         {
             Outputs = outputs;
+            EqualitySign = equalitySign;
         }
     }
 
@@ -69,7 +74,6 @@ namespace Parser
     {
         public TokenNode Token { get; }
         public FunctionOutputDescriptionNode OutputDescription { get; }
-        public TokenNode EqualitySign { get;  }
         public TokenNode Name { get; }
         public FunctionInputDescriptionNode InputDescription { get; }
         public StatementListNode Body { get; }
@@ -79,7 +83,6 @@ namespace Parser
             List<SyntaxNode> children,
             TokenNode token,
             FunctionOutputDescriptionNode outputDescription,
-            TokenNode equalitySign,
             TokenNode name,
             FunctionInputDescriptionNode inputDescription,
             StatementListNode body,
@@ -89,7 +92,6 @@ namespace Parser
         {
             Token = token;
             OutputDescription = outputDescription;
-            EqualitySign = equalitySign;
             Name = name;
             InputDescription = inputDescription;
             Body = body;

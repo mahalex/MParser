@@ -18,24 +18,22 @@ namespace Parser
         }
         
         public FunctionDeclarationNode FunctionDeclaration(
-            TokenNode token,
+            TokenNode functionKeyword,
             FunctionOutputDescriptionNode outputDescription,
-            TokenNode equalitySign,
             TokenNode name,
             FunctionInputDescriptionNode inputDescription,
             StatementListNode body,
             TokenNode end,
             TokenNode semicolonOrComma = null)
         {
-            var children = new List<SyntaxNode>
+            var children = new List<SyntaxNode> {functionKeyword};
+            if (outputDescription != null)
             {
-                token,
-                outputDescription,
-                equalitySign,
-                name,
-                inputDescription,
-                body
-            };
+                children.Add(outputDescription);
+            }
+            children.Add(name);
+            children.Add(inputDescription);
+            children.Add(body);
             if (end != null)
             {
                 children.Add(end);
@@ -46,28 +44,31 @@ namespace Parser
             }
             var result =
                 new FunctionDeclarationNode(
-                children,
-                token,
-                outputDescription,
-                equalitySign,
-                name,
-                inputDescription,
-                body,
-                end,
-                semicolonOrComma);
+                    children,
+                    functionKeyword,
+                    outputDescription,
+                    name,
+                    inputDescription,
+                    body,
+                    end,
+                    semicolonOrComma);
             SetParent(result);
             return result;
         }
 
         public FunctionOutputDescriptionNode FunctionOutputDescription(
-            List<SyntaxNode> nodes)
+            List<SyntaxNode> nodes,
+            TokenNode equalitySign)
         {
+            var children = new List<SyntaxNode>(nodes);
+            nodes.Add(equalitySign);
             var result = new FunctionOutputDescriptionNode(
                 nodes,
                 nodes
                     .Where(node => node is TokenNode && ((TokenNode) node).Token.Kind == TokenKind.Identifier)
                     .Select(node => node as TokenNode)
-                    .ToList()
+                    .ToList(),
+                equalitySign
                 );
             SetParent(result);
             return result;

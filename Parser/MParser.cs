@@ -73,6 +73,7 @@ namespace Parser
         private List<Token> Tokens { get; }
         private int _index;
         private Token CurrentToken => Tokens[_index];
+        private Token PeekToken(int n) => Tokens[_index + n];
         private SyntaxFactory Factory { get; }
         
         public MParser(List<Token> tokens)
@@ -144,8 +145,17 @@ namespace Parser
         {
             if (CurrentToken.Kind == TokenKind.Identifier)
             {
-                var result = EatToken();
-                return Factory.FunctionOutputDescription(new List<SyntaxNode> { Factory.Token(result) });
+                if (PeekToken(1).Kind == TokenKind.Assignment)
+                {
+                    var identifier = EatToken();
+                    var assignmentSign = EatToken(TokenKind.Assignment);                    
+                    return Factory.FunctionOutputDescription(
+                        new List<SyntaxNode> { Factory.Token(identifier) },
+                        Factory.Token(assignmentSign)
+                        );
+                }
+
+                return null;
             } else if (CurrentToken.Kind == TokenKind.OpeningSquareBracket)
             {
                 var leftBracket = EatToken();
@@ -154,7 +164,8 @@ namespace Parser
                 var nodes = new List<SyntaxNode> {Factory.Token(leftBracket)};
                 nodes.AddRange(outputs);
                 nodes.Add(Factory.Token(rightBracket));
-                return Factory.FunctionOutputDescription(nodes);
+                var assignmentSign = EatToken(TokenKind.Assignment);                    
+                return Factory.FunctionOutputDescription(nodes, Factory.Token(assignmentSign));
             }
             throw new ParsingException($"Unexpected token {CurrentToken.PureToken} during parsing function output descritpion at {CurrentToken.PureToken.Position}.");
         }
@@ -198,7 +209,6 @@ namespace Parser
         {
             var functionKeyword = EatIdentifier("function");
             var outputDescription = ParseFunctionOutputDescription();
-            var assignment = EatToken(TokenKind.Assignment);
             var name = EatToken(TokenKind.Identifier);
             var inputDescription = ParseFunctionInputDescription();
             var body = ParseStatements();
@@ -213,7 +223,6 @@ namespace Parser
             return Factory.FunctionDeclaration(
                 Factory.Token(functionKeyword),
                 outputDescription,
-                Factory.Token(assignment),
                 Factory.Token(name),
                 inputDescription,
                 body,
