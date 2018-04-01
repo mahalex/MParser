@@ -542,7 +542,7 @@ namespace Parser
             return result;
         }
         
-        public FunctionHandleNode FunctionHandle(
+        public NamedFunctionHandleNode NamedFunctionHandle(
             TokenNode atSign,
             IdentifierNameNode identifierName)
         {
@@ -551,7 +551,7 @@ namespace Parser
                 atSign,
                 identifierName
             };
-            var result = new FunctionHandleNode(
+            var result = new NamedFunctionHandleNode(
                 children,
                 atSign,
                 identifierName);
@@ -559,5 +559,24 @@ namespace Parser
             return result;
         }
 
+        public LambdaNode Lambda(
+            TokenNode atSign,
+            FunctionInputDescriptionNode input,
+            ExpressionNode body)
+        {
+            var children = new List<SyntaxNode>
+            {
+                atSign,
+                input,
+                body
+            };
+            var result = new LambdaNode(
+                children,
+                atSign,
+                input,
+                body);
+            SetParent(result);
+            return result;
+        }
     }
 }

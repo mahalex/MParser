@@ -553,10 +553,19 @@ namespace Parser
         private FunctionHandleNode ParseFunctionHandle()
         {
             var atSign = EatToken();
-            var identifierName = EatToken(TokenKind.Identifier);
-            return Factory.FunctionHandle(
-                Factory.Token(atSign),
-                Factory.IdentifierName(identifierName));
+            if (CurrentToken.Kind == TokenKind.Identifier)
+            {
+                var identifierName = EatToken(TokenKind.Identifier);
+                return Factory.NamedFunctionHandle(
+                    Factory.Token(atSign),
+                    Factory.IdentifierName(identifierName));
+            } else if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            {
+                var inputs = ParseFunctionInputDescription();
+                var body = ParseExpression();
+                return Factory.Lambda(Factory.Token(atSign), inputs, body);
+            }
+            throw new ParsingException($"Unexpected token {CurrentToken.PureToken} while parsing function handle at {CurrentToken.PureToken.Position}.");
         }
         
         private ExpressionNode ParseSubExpression(ParseOptions options, Precedence precedence)

@@ -356,9 +356,23 @@ namespace Parser.Tests
             var text = "@sqrt";
             var sut = CreateParser(text);
             var actual = sut.ParseExpression();
-            Assert.IsInstanceOf<FunctionHandleNode>(actual);
-            var f = (FunctionHandleNode) actual;
+            Assert.IsInstanceOf<NamedFunctionHandleNode>(actual);
+            var f = (NamedFunctionHandleNode) actual;
             Assert.AreEqual("sqrt", f.IdentifierName.Token.PureToken.LiteralText);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseLambda()
+        {
+            var text = "@(x, y) x + y";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<LambdaNode>(actual);
+            var f = (LambdaNode) actual;
+            Assert.AreEqual(2, f.Input.Parameters.Parameters.Count);
+            Assert.IsInstanceOf<BinaryOperationExpressionNode>(f.Body);
+            Assert.AreEqual(text, actual.FullText);            
         }
     }
 }

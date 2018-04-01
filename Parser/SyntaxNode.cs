@@ -587,12 +587,20 @@ namespace Parser
         }
     }
     
-    public class FunctionHandleNode : ExpressionNode
+    public abstract class FunctionHandleNode : ExpressionNode
+    {
+        protected FunctionHandleNode(
+            List<SyntaxNode> children) : base(children)
+        {
+        }
+    }
+
+    public class NamedFunctionHandleNode : FunctionHandleNode
     {
         public TokenNode AtSign { get; }
         public IdentifierNameNode IdentifierName { get; }
 
-        public FunctionHandleNode(
+        public NamedFunctionHandleNode(
             List<SyntaxNode> children,
             TokenNode atSign,
             IdentifierNameNode identifierName) : base(children)
@@ -602,5 +610,21 @@ namespace Parser
         }
     }
 
+    public class LambdaNode : FunctionHandleNode
+    {
+        public TokenNode AtSign { get; }
+        public FunctionInputDescriptionNode Input { get; }
+        public ExpressionNode Body { get; }
 
+        public LambdaNode(
+            List<SyntaxNode> children,
+            TokenNode atSign,
+            FunctionInputDescriptionNode input,
+            ExpressionNode body) : base(children)
+        {
+            AtSign = atSign;
+            Input = input;
+            Body = body;
+        }
+    }
 }
