@@ -123,9 +123,15 @@ namespace Parser
             ExpressionNode switchExpression,
             List<SwitchCaseNode> cases,
             TokenNode endKeyword,
+            List<TokenNode> optionalCommasAfterExpression,
             TokenNode semicolonOrComma = null)
         {
             var children = new List<SyntaxNode> { switchKeyword, switchExpression };
+            if (optionalCommasAfterExpression != null)
+            {
+                children.AddRange(optionalCommasAfterExpression);
+            }
+
             children.AddRange(cases);
             children.Add(endKeyword);
             if (semicolonOrComma != null)
@@ -139,7 +145,8 @@ namespace Parser
                 switchExpression,
                 cases,
                 endKeyword,
-                semicolonOrComma);
+                semicolonOrComma,
+                optionalCommasAfterExpression);
             SetParent(result);
             return result;
         }

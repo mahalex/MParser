@@ -219,6 +219,7 @@ namespace Parser
     {
         public TokenNode SwitchKeyword { get; }
         public ExpressionNode SwitchExpression { get; }
+        public List<TokenNode> OptionalCommasAfterExpression { get; }
         public List<SwitchCaseNode> Cases { get; }
         public TokenNode EndKeyword { get; }
 
@@ -228,11 +229,13 @@ namespace Parser
             ExpressionNode switchExpression,
             List<SwitchCaseNode> cases,
             TokenNode endKeyword,
-            TokenNode semicolonOrComma
+            TokenNode semicolonOrComma,
+            List<TokenNode> optionalCommasAfterExpression = null
             ) : base(children, semicolonOrComma)
         {
             SwitchKeyword = switchKeyword;
             SwitchExpression = switchExpression;
+            OptionalCommasAfterExpression = optionalCommasAfterExpression;
             Cases = cases;
             EndKeyword = endKeyword;
         }

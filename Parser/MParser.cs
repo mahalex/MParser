@@ -594,6 +594,15 @@ namespace Parser
         {
             var switchKeyword = EatIdentifier("switch");
             var expression = ParseExpression();
+            var commas = new List<TokenNode>();
+            while (CurrentToken.Kind == TokenKind.Comma)
+            {
+                commas.Add(Factory.Token(EatToken()));
+            }
+            if (commas.Count == 0)
+            {
+                commas = null;
+            }
             var casesList = new List<SwitchCaseNode>();
             while (CurrentToken.Kind == TokenKind.Identifier
                    && CurrentToken.PureToken.LiteralText == "case")
@@ -606,7 +615,8 @@ namespace Parser
                 Factory.Token(switchKeyword),
                 expression,
                 casesList,
-                Factory.Token(endKeyword));
+                Factory.Token(endKeyword),
+                commas);
         }
 
         public ExpressionStatementNode ParseExpressionStatement()
