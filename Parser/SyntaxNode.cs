@@ -340,19 +340,19 @@ namespace Parser
     {
         public ExpressionNode CellArray { get; }
         public TokenNode OpeningBrace { get; }
-        public ExpressionNode Index { get; }
+        public ArrayElementListNode Indices { get; }
         public TokenNode ClosingBrace { get; }
 
         public CellArrayElementAccessExpressionNode(
             List<SyntaxNode> children,
             ExpressionNode cellArray,
             TokenNode openingBrace,
-            ExpressionNode index,
+            ArrayElementListNode indices,
             TokenNode closingBrace) : base(children)
         {
             CellArray = cellArray;
             OpeningBrace = openingBrace;
-            Index = index;
+            Indices = indices;
             ClosingBrace = closingBrace;
         }
     }

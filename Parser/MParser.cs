@@ -282,28 +282,32 @@ namespace Parser
             throw new ParsingException($"Unexpected token {CurrentToken.PureToken} at {CurrentToken.PureToken.Position}.");
         }
 
-        private ExpressionNode ParsePostfix(ExpressionNode expression)
+        private ExpressionNode ParsePostfix(ParseOptions options, ExpressionNode expression)
         {
             while (true)
             {
                 var token = CurrentToken;
                 switch(token.Kind) {
                     case TokenKind.OpeningBrace: // cell array element access
-                        if (expression.TrailingTrivia.Any())
+                        if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
                         {
                             return expression;
                         }
                         var openingBrace = EatToken();
-                        var index = ParseExpression();
+                        var indices = ParseCellArrayElementList();
                         var closingBrace = EatToken(TokenKind.ClosingBrace);
                         expression = Factory.CellArrayElementAccessExpression(
                             expression,
                             Factory.Token(openingBrace),
-                            index,
+                            indices,
                             Factory.Token(closingBrace)
                         );
                         break;
                     case TokenKind.OpeningBracket: // function call
+                        if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
+                        {
+                            return expression;
+                        }
                         var openingBracket = EatToken();
                         var parameters = ParseFunctionCallParameterList();
                         var closingBracket = EatToken(TokenKind.ClosingBracket);
@@ -355,7 +359,7 @@ namespace Parser
                     }
                 }
 
-                var expression = ParseExpression();
+                var expression = ParseExpression(new ParseOptions {ParsingArrayElements = true});
                 if (expression != null)
                 {
                     nodes.Add(expression);
@@ -381,7 +385,7 @@ namespace Parser
                     }
                 }
 
-                nodes.Add(ParseExpression());
+                nodes.Add(ParseExpression(new ParseOptions {ParsingArrayElements = true}));
             }
 
             return Factory.ArrayElementList(nodes);
@@ -420,7 +424,7 @@ namespace Parser
                 closeParen);
         }
 
-        private ExpressionNode ParseTerm()
+        private ExpressionNode ParseTerm(ParseOptions options)
         {
             var token = CurrentToken;
             ExpressionNode expression = null;
@@ -460,12 +464,24 @@ namespace Parser
             {
                 return null;
             }
-            return ParsePostfix(expression);
+            return ParsePostfix(options, expression);
+        }
+
+        internal struct ParseOptions
+        {
+            public bool ParsingArrayElements { get; set; }
+            
+            public static ParseOptions Default = new ParseOptions { ParsingArrayElements = false };
         }
 
         public ExpressionNode ParseExpression()
         {
-            return ParseSubExpression(Precedence.Expression);
+            return ParseExpression(ParseOptions.Default);
+        }
+
+        private ExpressionNode ParseExpression(ParseOptions options)
+        {
+            return ParseSubExpression(options, Precedence.Expression);
         }
 
         private bool IsUnaryOperator(TokenKind kind)
@@ -533,8 +549,8 @@ namespace Parser
                     throw new ArgumentException(nameof(kind));
             }
         }
-
-        private ExpressionNode ParseSubExpression(Precedence precedence)
+        
+        private ExpressionNode ParseSubExpression(ParseOptions options, Precedence precedence)
         {
             ExpressionNode lhs = null;
             if (IsUnaryOperator(CurrentToken.Kind))
@@ -542,12 +558,12 @@ namespace Parser
                 var operation = EatToken();
                 var unaryTokenKind = ConvertToUnaryTokenKind(operation.Kind);
                 var newPrecedence = GetPrecedence(unaryTokenKind);
-                var operand = ParseSubExpression(newPrecedence);
+                var operand = ParseSubExpression(options, newPrecedence);
                 lhs = Factory.UnaryPrefixOperationExpression(Factory.Token(operation), operand);
             }
             else
             {
-                lhs = ParseTerm();
+                lhs = ParseTerm(options);
             }
             while (true)
             {
@@ -566,7 +582,7 @@ namespace Parser
                     }
 
                     EatToken();
-                    var rhs = ParseSubExpression(newPrecedence);
+                    var rhs = ParseSubExpression(options, newPrecedence);
                     if (rhs == null && token.Kind == TokenKind.Colon) // for parsing things like a{:}
                     {
                         rhs = Factory.EmptyExpression();

@@ -264,15 +264,15 @@ namespace Parser
         public CellArrayElementAccessExpressionNode CellArrayElementAccessExpression(
             ExpressionNode cellArray,
             TokenNode openingBrace,
-            ExpressionNode index,
+            ArrayElementListNode indices,
             TokenNode closingBrace)
         {
-            var children = new List<SyntaxNode> {cellArray, openingBrace, index, closingBrace};
+            var children = new List<SyntaxNode> {cellArray, openingBrace, indices, closingBrace};
             var result = new CellArrayElementAccessExpressionNode(
                 children,
                 cellArray,
                 openingBrace,
-                index,
+                indices,
                 closingBrace);
             SetParent(result);
             return result;

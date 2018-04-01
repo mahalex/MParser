@@ -253,5 +253,102 @@ namespace Parser.Tests
             Assert.AreEqual(f.InputDescription, null);
             Assert.AreEqual(text, actual.FullText);            
         }
+
+        [Test]
+        public void ParseCellArrayWithCellArrayLiteralInside()
+        {
+            var text = "{1 2 a {3}}";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<CellArrayLiteralExpressionNode>(actual);
+            var a = (CellArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(4, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+        
+        [Test]
+        public void ParseCellArrayWithCellArrayAccessInside()
+        {
+            var text = "{1 2 a{3}}";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<CellArrayLiteralExpressionNode>(actual);
+            var a = (CellArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(3, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseCellArrayWithElementInBracketsInside()
+        {
+            var text = "{1 2 a (3)}";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<CellArrayLiteralExpressionNode>(actual);
+            var a = (CellArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(4, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+        
+        [Test]
+        public void ParseCellArrayWithFunctionCallInside()
+        {
+            var text = "{1 2 a(3)}";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<CellArrayLiteralExpressionNode>(actual);
+            var a = (CellArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(3, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseArrayWithCellArrayLiteralInside()
+        {
+            var text = "[1 2 a {3}]";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
+            var a = (ArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(4, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+        
+        [Test]
+        public void ParseArrayWithCellArrayAccessInside()
+        {
+            var text = "[1 2 a{3}]";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
+            var a = (ArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(3, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseArrayWithElementInBracketsInside()
+        {
+            var text = "[1 2 a (3)]";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
+            var a = (ArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(4, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+        
+        [Test]
+        public void ParseArrayWithFunctionCallInside()
+        {
+            var text = "[1 2 a(3)]";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
+            var a = (ArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(3, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
     }
 }
