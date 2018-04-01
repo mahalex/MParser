@@ -225,5 +225,17 @@ namespace Parser.Tests
             Assert.IsInstanceOf<IdentifierNameNode>(a.LeftOperand);
             Assert.IsInstanceOf<IndirectMemberAccessNode>(a.RightOperand);
         }
+
+        [Test]
+        public void ParseMemberAccessAfterElementAccess()
+        {
+            var text = "a(1).b";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<MemberAccessNode>(actual);
+            var m = (MemberAccessNode) actual;
+            Assert.IsInstanceOf<FunctionCallExpressionNode>(m.LeftOperand);
+            Assert.IsInstanceOf<IdentifierNameNode>(m.RightOperand);
+        }
     }
 }
