@@ -309,7 +309,8 @@ namespace Parser
                     case TokenKind.Dot: // member access
                         if (expression is IdentifierNameNode
                             || expression is MemberAccessNode
-                            || expression is FunctionCallExpressionNode)
+                            || expression is FunctionCallExpressionNode
+                            || expression is CellArrayElementAccessExpressionNode)
                         {
                             var dot = EatToken();
                             var member = ParseMember();
