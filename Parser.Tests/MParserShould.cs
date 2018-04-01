@@ -358,7 +358,20 @@ namespace Parser.Tests
             var actual = sut.ParseExpression();
             Assert.IsInstanceOf<NamedFunctionHandleNode>(actual);
             var f = (NamedFunctionHandleNode) actual;
-            Assert.AreEqual("sqrt", f.IdentifierName.Token.PureToken.LiteralText);
+            Assert.AreEqual(1, f.FunctionName.Names.Count);
+            Assert.AreEqual("sqrt", f.FunctionName.Names[0].Token.PureToken.LiteralText);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseFunctionHandleWithCompoundName()
+        {
+            var text = "@a.b.c";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<NamedFunctionHandleNode>(actual);
+            var f = (NamedFunctionHandleNode) actual;
+            Assert.AreEqual(3, f.FunctionName.Names.Count);
             Assert.AreEqual(text, actual.FullText);            
         }
 

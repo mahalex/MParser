@@ -11,7 +11,7 @@ namespace ProjectConsole
     class Program
     {
         //private const string BaseDirectory = @"C:\Program Files\MATLAB\R2018a\toolbox\matlab\";
-        private const string BaseDirectory = @"/Applications/MATLAB_R2017b.app/toolbox/matlab/guide/";
+        private const string BaseDirectory = @"/Applications/MATLAB_R2017b.app/toolbox/matlab/";
 
         private static HashSet<string> skipFiles = new HashSet<string>
         {

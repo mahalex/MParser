@@ -554,15 +554,32 @@ namespace Parser
             }
         }
 
+        private CompoundNameNode ParseCompoundName()
+        {
+            var lastToken = EatToken(TokenKind.Identifier);
+            var firstName = Factory.IdentifierName(lastToken);
+            var nodes = new List<SyntaxNode> {firstName};
+            while (CurrentToken.Kind == TokenKind.Dot
+                   && !lastToken.TrailingTrivia.Any())
+            {
+                var dot = Factory.Token(EatToken());
+                nodes.Add(dot);
+                lastToken = EatToken(TokenKind.Identifier);
+                nodes.Add(Factory.IdentifierName(lastToken));
+            }
+
+            return Factory.CompoundName(nodes);
+        }
+
         private FunctionHandleNode ParseFunctionHandle()
         {
             var atSign = EatToken();
             if (CurrentToken.Kind == TokenKind.Identifier)
             {
-                var identifierName = EatToken(TokenKind.Identifier);
+                var compoundName = ParseCompoundName();
                 return Factory.NamedFunctionHandle(
                     Factory.Token(atSign),
-                    Factory.IdentifierName(identifierName));
+                    compoundName);
             } else if (CurrentToken.Kind == TokenKind.OpeningBracket)
             {
                 var inputs = ParseFunctionInputDescription();

@@ -451,6 +451,19 @@ namespace Parser
 
     }
 
+    public class CompoundNameNode : ExpressionNode
+    {
+        public List<IdentifierNameNode> Names;
+
+        public CompoundNameNode(
+            List<SyntaxNode> children,
+            List<IdentifierNameNode> names
+        ) : base(children)
+        {
+            Names = names;
+        }
+    }
+
     public class MemberAccessNode : ExpressionNode
     {
         public SyntaxNode LeftOperand { get; }
@@ -598,15 +611,15 @@ namespace Parser
     public class NamedFunctionHandleNode : FunctionHandleNode
     {
         public TokenNode AtSign { get; }
-        public IdentifierNameNode IdentifierName { get; }
+        public CompoundNameNode FunctionName { get; }
 
         public NamedFunctionHandleNode(
             List<SyntaxNode> children,
             TokenNode atSign,
-            IdentifierNameNode identifierName) : base(children)
+            CompoundNameNode functionName) : base(children)
         {
             AtSign = atSign;
-            IdentifierName = identifierName;
+            FunctionName = functionName;
         }
     }
 

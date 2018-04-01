@@ -323,6 +323,17 @@ namespace Parser
             return result;            
         }
 
+        public CompoundNameNode CompoundName(List<SyntaxNode> nodes)
+        {
+            var result = new CompoundNameNode(
+                nodes,
+                nodes
+                    .OfType<IdentifierNameNode>()
+                    .ToList());
+            SetParent(result);
+            return result;            
+        }
+
         public ArrayLiteralExpressionNode ArrayLiteralExpression(
             TokenNode openingSquareBracket,
             ArrayElementListNode elements,
@@ -544,17 +555,17 @@ namespace Parser
         
         public NamedFunctionHandleNode NamedFunctionHandle(
             TokenNode atSign,
-            IdentifierNameNode identifierName)
+            CompoundNameNode functionName)
         {
             var children = new List<SyntaxNode>
             {
                 atSign,
-                identifierName
+                functionName
             };
             var result = new NamedFunctionHandleNode(
                 children,
                 atSign,
-                identifierName);
+                functionName);
             SetParent(result);
             return result;
         }
