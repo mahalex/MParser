@@ -250,11 +250,14 @@ namespace Parser
        
         private FunctionCallParameterListNode ParseFunctionCallParameterList()
         {
-            var first = ParseExpression();
-            var nodes = new List<SyntaxNode> { first };
-            while (CurrentToken.PureToken.Kind != TokenKind.ClosingBracket)
+            var nodes = new List<SyntaxNode>();
+            while (CurrentToken.Kind != TokenKind.ClosingBracket)
             {
-                nodes.Add(Factory.Token(EatToken(TokenKind.Comma)));
+                if (nodes.Count > 0)
+                {
+                    nodes.Add(Factory.Token(EatToken(TokenKind.Comma)));
+                }
+
                 nodes.Add(ParseExpression());
             }
 
