@@ -32,7 +32,11 @@ namespace Parser
                 children.Add(outputDescription);
             }
             children.Add(name);
-            children.Add(inputDescription);
+            if (inputDescription != null)
+            {
+                children.Add(inputDescription);
+            }
+
             children.Add(body);
             if (end != null)
             {
@@ -142,7 +146,7 @@ namespace Parser
 
         public SwitchCaseNode SwitchCase(
             TokenNode caseKeyword,
-            TokenNode caseIdentifier,
+            ExpressionNode caseIdentifier,
             StatementListNode statementList)
         {
             var children = new List<SyntaxNode>

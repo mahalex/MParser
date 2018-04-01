@@ -185,13 +185,20 @@ namespace Parser
 
         private FunctionInputDescriptionNode ParseFunctionInputDescription()
         {
-            var openingBracket = EatToken(TokenKind.OpeningBracket);
-            var parameterList = ParseParameterList();
-            var closingBracket = EatToken(TokenKind.ClosingBracket);
-            return Factory.FunctionInputDescription(
-                new TokenNode(openingBracket),
-                parameterList,
-                new TokenNode(closingBracket));
+            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            {
+                var openingBracket = EatToken(TokenKind.OpeningBracket);
+                var parameterList = ParseParameterList();
+                var closingBracket = EatToken(TokenKind.ClosingBracket);
+                return Factory.FunctionInputDescription(
+                    new TokenNode(openingBracket),
+                    parameterList,
+                    new TokenNode(closingBracket));
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private TokenNode PossibleSemicolonOrComma()
@@ -564,9 +571,9 @@ namespace Parser
         private SwitchCaseNode ParseSwitchCase()
         {
             var caseKeyword = EatIdentifier("case");
-            var caseId = EatToken(TokenKind.StringLiteral);
+            var caseId = ParseExpression();
             var statementList = ParseStatements();
-            return Factory.SwitchCase(Factory.Token(caseKeyword), Factory.Token(caseId), statementList);
+            return Factory.SwitchCase(Factory.Token(caseKeyword), caseId, statementList);
         }
 
         private SwitchStatementNode ParseSwitchStatement()
@@ -644,7 +651,8 @@ namespace Parser
             var ifKeyword = Factory.Token(EatToken());
             var condition = ParseExpression();
             var commas = new List<TokenNode>();
-            while (CurrentToken.Kind == TokenKind.Comma)
+            while (CurrentToken.Kind == TokenKind.Comma
+                   || CurrentToken.Kind == TokenKind.Semicolon)
             {
                 commas.Add(Factory.Token(EatToken()));
             }

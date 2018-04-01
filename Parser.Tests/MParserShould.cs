@@ -201,6 +201,7 @@ namespace Parser.Tests
             Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
             var a = (ArrayLiteralExpressionNode) actual;
             Assert.AreEqual(0, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
         }
 
         [Test]
@@ -212,6 +213,7 @@ namespace Parser.Tests
             Assert.IsInstanceOf<CellArrayLiteralExpressionNode>(actual);
             var a = (CellArrayLiteralExpressionNode) actual;
             Assert.AreEqual(3, a.Elements.Elements.Count);
+            Assert.AreEqual(text, actual.FullText);            
         }
 
         [Test]
@@ -224,6 +226,7 @@ namespace Parser.Tests
             var a = (MemberAccessNode) actual;
             Assert.IsInstanceOf<IdentifierNameNode>(a.LeftOperand);
             Assert.IsInstanceOf<IndirectMemberAccessNode>(a.RightOperand);
+            Assert.AreEqual(text, actual.FullText);            
         }
 
         [Test]
@@ -236,6 +239,19 @@ namespace Parser.Tests
             var m = (MemberAccessNode) actual;
             Assert.IsInstanceOf<FunctionCallExpressionNode>(m.LeftOperand);
             Assert.IsInstanceOf<IdentifierNameNode>(m.RightOperand);
+            Assert.AreEqual(text, actual.FullText);            
+        }
+
+        [Test]
+        public void ParseFunctionDeclarationWithoutInputs()
+        {
+            var text = "function a = b a = 1";
+            var sut = CreateParser(text);
+            var actual = sut.ParseStatement();
+            Assert.IsInstanceOf<FunctionDeclarationNode>(actual);
+            var f = (FunctionDeclarationNode) actual;
+            Assert.AreEqual(f.InputDescription, null);
+            Assert.AreEqual(text, actual.FullText);            
         }
     }
 }

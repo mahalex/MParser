@@ -216,13 +216,13 @@ namespace Parser
     public class SwitchCaseNode : SyntaxNode
     {
         public TokenNode CaseKeyword { get; }
-        public TokenNode CaseIdentifier { get; }
+        public ExpressionNode CaseIdentifier { get; }
         public StatementListNode StatementList { get; }
 
         public SwitchCaseNode(
             List<SyntaxNode> children,
             TokenNode caseKeyword,
-            TokenNode caseIdentifier,
+            ExpressionNode caseIdentifier,
             StatementListNode statementList
             ) : base(children)
         {
