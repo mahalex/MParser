@@ -282,6 +282,10 @@ namespace Parser
                 var token = CurrentToken;
                 switch(token.Kind) {
                     case TokenKind.OpeningBrace: // cell array element access
+                        if (expression.TrailingTrivia.Any())
+                        {
+                            return expression;
+                        }
                         var openingBrace = EatToken();
                         var index = ParseExpression();
                         var closingBrace = EatToken(TokenKind.ClosingBrace);
@@ -439,6 +443,10 @@ namespace Parser
                 expression = ParseParenthesizedExpression();
             }
 
+            if (expression == null)
+            {
+                return null;
+            }
             return ParsePostfix(expression);
         }
 

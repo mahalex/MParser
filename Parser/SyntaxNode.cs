@@ -9,6 +9,9 @@ namespace Parser
         public SyntaxNode Parent { get; set; }
         public List<SyntaxNode> Children { get; }
 
+        public virtual IEnumerable<Token> ChildTokens =>
+            Children.SelectMany(c => c.ChildTokens);
+
         public SyntaxNode(List<SyntaxNode> children)
         {
             Children = children;
@@ -16,6 +19,23 @@ namespace Parser
 
         public virtual string FullText =>
             string.Join("", Children.Select(c => c.FullText));
+
+        public List<Trivia> TrailingTrivia
+  
+        {
+            get
+            {
+                if (ChildTokens.Any())
+                {
+                    return ChildTokens.Last().TrailingTrivia;
+                }
+                else
+                {
+                    return new List<Trivia>();
+                }
+            }
+        }
+
     }
 
     public class TokenNode : SyntaxNode
@@ -29,6 +49,11 @@ namespace Parser
         }
 
         public override string FullText => Token.FullText;
+
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield return Token; }
+        }
     }
 
     public class OutputIdentifierNode : SyntaxNode
@@ -243,6 +268,12 @@ namespace Parser
         }
 
         public override string FullText => Token.FullText;
+        
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield return Token; }
+        }
+
     }
 
     public class NumberLiteralNode : ExpressionNode
@@ -255,6 +286,12 @@ namespace Parser
         }
 
         public override string FullText => Token.FullText;
+        
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield return Token; }
+        }
+
     }
 
     public class StringLiteralNode : ExpressionNode
@@ -267,6 +304,12 @@ namespace Parser
         }
         
         public override string FullText => Token.FullText;
+        
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield return Token; }
+        }
+
     }
 
     public class StatementNode : SyntaxNode
@@ -397,6 +440,12 @@ namespace Parser
         public EmptyExpressionNode() : base(null)
         {
         }
+        
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield break; }
+        }
+
     }
 
     public class MemberAccessNode : ExpressionNode
