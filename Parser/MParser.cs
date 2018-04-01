@@ -385,7 +385,11 @@ namespace Parser
                     }
                 }
 
-                nodes.Add(ParseExpression(new ParseOptions {ParsingArrayElements = true}));
+                var expression = ParseExpression(new ParseOptions {ParsingArrayElements = true});
+                if (expression != null)
+                {
+                    nodes.Add(expression);
+                }
             }
 
             return Factory.ArrayElementList(nodes);
