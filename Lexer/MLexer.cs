@@ -150,6 +150,11 @@ namespace Lexer
             return c >= '0' && c <= '9';
         }
 
+        private static bool IsDigitOrDot(char c)
+        {
+            return c == '.' || (c >= '0' && c <= '9');
+        }
+
         private static bool IsWhitespace(char c)
         {
             return c == ' ' || c == '\t' || c == '\n';
@@ -168,7 +173,7 @@ namespace Lexer
                 switch (state)
                 {
                     case NumberParsingState.Start:
-                        if (IsDigit(c))
+                        if (IsDigitOrDot(c))
                         {
                             state = NumberParsingState.DigitsBeforeDot;
                         }
@@ -438,6 +443,15 @@ namespace Lexer
 
                     return PureTokenFactory.CreatePunctuation(TokenKind.Assignment);
                 case '.':
+                    if (IsDigit(Window.PeekChar(1)))
+                    {
+                        var possiblyNumberToken2 = ContinueParsingNumber();
+                        if (possiblyNumberToken2 == null)
+                        {
+                            throw new ParsingException($"Unexpected character \"{Window.PeekChar()}\" while parsing a number");
+                        }
+                        return (PureToken)possiblyNumberToken2;
+                    }
                     Window.ConsumeChar();
                     var c = Window.PeekChar();
                     switch (c)

@@ -225,5 +225,14 @@ namespace Parser.Tests
             Assert.AreEqual(TokenKind.StringLiteral, tokens[0].Kind);
             Assert.AreEqual("just a 'string'", tokens[0].PureToken.Value);
         }
+
+        [Test]
+        public void ParseNumberStartingWithDot()
+        {
+            var sut = CreateLexer(".42");
+            var tokens = sut.ParseAll();
+            Assert.AreEqual(2, tokens.Count);
+            Assert.AreEqual(TokenKind.NumberLiteral, tokens[0].Kind);
+        }
     }
 }
