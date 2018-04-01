@@ -549,6 +549,15 @@ namespace Parser
                     throw new ArgumentException(nameof(kind));
             }
         }
+
+        private FunctionHandleNode ParseFunctionHandle()
+        {
+            var atSign = EatToken();
+            var identifierName = EatToken(TokenKind.Identifier);
+            return Factory.FunctionHandle(
+                Factory.Token(atSign),
+                Factory.IdentifierName(identifierName));
+        }
         
         private ExpressionNode ParseSubExpression(ParseOptions options, Precedence precedence)
         {
@@ -560,6 +569,10 @@ namespace Parser
                 var newPrecedence = GetPrecedence(unaryTokenKind);
                 var operand = ParseSubExpression(options, newPrecedence);
                 lhs = Factory.UnaryPrefixOperationExpression(Factory.Token(operation), operand);
+            }
+            else if (CurrentToken.Kind == TokenKind.At)
+            {
+                return ParseFunctionHandle();
             }
             else
             {

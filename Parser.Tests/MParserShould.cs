@@ -350,5 +350,15 @@ namespace Parser.Tests
             Assert.AreEqual(text, actual.FullText);            
         }
 
+        [Test]
+        public void ParseFunctionHandle()
+        {
+            var text = "@sqrt";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<FunctionHandleNode>(actual);
+            var f = (FunctionHandleNode) actual;
+            Assert.AreEqual("sqrt", f.IdentifierName.Token.PureToken.LiteralText);
+        }
     }
 }

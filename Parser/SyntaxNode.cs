@@ -586,4 +586,21 @@ namespace Parser
             ClosingBracket = closingBracket;
         }
     }
+    
+    public class FunctionHandleNode : ExpressionNode
+    {
+        public TokenNode AtSign { get; }
+        public IdentifierNameNode IdentifierName { get; }
+
+        public FunctionHandleNode(
+            List<SyntaxNode> children,
+            TokenNode atSign,
+            IdentifierNameNode identifierName) : base(children)
+        {
+            AtSign = atSign;
+            IdentifierName = identifierName;
+        }
+    }
+
+
 }

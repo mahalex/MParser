@@ -541,5 +541,23 @@ namespace Parser
             SetParent(result);
             return result;
         }
+        
+        public FunctionHandleNode FunctionHandle(
+            TokenNode atSign,
+            IdentifierNameNode identifierName)
+        {
+            var children = new List<SyntaxNode>
+            {
+                atSign,
+                identifierName
+            };
+            var result = new FunctionHandleNode(
+                children,
+                atSign,
+                identifierName);
+            SetParent(result);
+            return result;
+        }
+
     }
 }
