@@ -173,10 +173,14 @@ namespace Parser
         private ParameterListNode ParseParameterList()
         {
             var identifierTokens = new List<Token>();
-            identifierTokens.Add(EatToken(TokenKind.Identifier));
-            while (CurrentToken.PureToken.Kind != TokenKind.ClosingBracket)
+            
+            while (CurrentToken.Kind != TokenKind.ClosingBracket)
             {
-                identifierTokens.Add(EatToken(TokenKind.Comma));
+                if (identifierTokens.Count > 0)
+                {
+                    identifierTokens.Add(EatToken(TokenKind.Comma));
+                }
+
                 identifierTokens.Add(EatToken(TokenKind.Identifier));
             }
 
