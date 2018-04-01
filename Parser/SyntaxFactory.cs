@@ -489,21 +489,28 @@ namespace Parser
             TokenNode forKeyword,
             AssignmentExpressionNode forAssignment,
             StatementListNode body,
-            TokenNode endKeyword)
+            TokenNode endKeyword,
+            List<TokenNode> optionalCommasAfterAssignment)
         {
             var children = new List<SyntaxNode>
             {
                 forKeyword,
                 forAssignment,
-                body,
-                endKeyword
             };
+            if (optionalCommasAfterAssignment != null)
+            {
+                children.AddRange(optionalCommasAfterAssignment);
+            }
+
+            children.Add(body);
+            children.Add(endKeyword);
             var result = new ForStatementNode(
                 children,
                 forKeyword,
                 forAssignment,
                 body,
-                endKeyword);
+                endKeyword,
+                optionalCommasAfterAssignment);
             SetParent(result);
             return result;
         }

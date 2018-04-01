@@ -347,9 +347,14 @@ namespace Parser
                     }
                 }
 
-                nodes.Add(ParseExpression());
+                var expression = ParseExpression();
+                if (expression != null)
+                {
+                    nodes.Add(expression);
+                }
             }
 
+            
             return Factory.ArrayElementList(nodes);
         }
 
@@ -699,9 +704,20 @@ namespace Parser
             }
 
             var forAssignment = (AssignmentExpressionNode) expression;
+            var commas = new List<TokenNode>();
+            while (CurrentToken.Kind == TokenKind.Comma
+                   || CurrentToken.Kind == TokenKind.Semicolon)
+            {
+                commas.Add(Factory.Token(EatToken()));
+            }
+            if (commas.Count == 0)
+            {
+                commas = null;
+            }
+
             var body = ParseStatements();
             var endKeyword = Factory.Token(EatIdentifier("end"));
-            return Factory.ForStatement(forKeyword, forAssignment, body, endKeyword);
+            return Factory.ForStatement(forKeyword, forAssignment, body, endKeyword, commas);
         }
 
         public StatementNode ParseStatementCore()

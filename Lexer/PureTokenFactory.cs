@@ -76,9 +76,14 @@
             return new PureToken(TokenKind.NumberLiteral, s, null, Window.Position); // TODO: actually parse number (here or in the lexer?)
         }
 
+        private string EscapeStringLiteral(string s)
+        {
+            return s.Replace("'", "''");
+        }
+
         public PureToken CreateStringLiteral(string s)
         {
-            return new PureToken(TokenKind.StringLiteral, "'" + s + "'", s, Window.Position);
+            return new PureToken(TokenKind.StringLiteral, "'" + EscapeStringLiteral(s) + "'", s, Window.Position);
         }
         
         public PureToken CreateDoubleQuotedStringLiteral(string s)

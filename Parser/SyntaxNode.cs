@@ -545,6 +545,7 @@ namespace Parser
     {
         public TokenNode ForKeyword { get; }
         public AssignmentExpressionNode ForAssignment { get; }
+        public List<TokenNode> OptionalCommasAfterAssignment { get; }
         public StatementListNode Body { get; }
         public TokenNode EndKeyword { get; }
 
@@ -553,12 +554,15 @@ namespace Parser
             TokenNode forKeyword,
             AssignmentExpressionNode forAssignment,
             StatementListNode body,
-            TokenNode endKeyword) : base(children)
+            TokenNode endKeyword,
+            List<TokenNode> optionalCommasAfterAssignment
+            ) : base(children)
         {
             ForKeyword = forKeyword;
             ForAssignment = forAssignment;
             Body = body;
             EndKeyword = endKeyword;
+            OptionalCommasAfterAssignment = optionalCommasAfterAssignment;
         }
     }
 
