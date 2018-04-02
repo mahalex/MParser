@@ -387,5 +387,18 @@ namespace Parser.Tests
             Assert.IsInstanceOf<BinaryOperationExpressionNode>(f.Body);
             Assert.AreEqual(text, actual.FullText);            
         }
+
+        [Test]
+        public void ParseTildeAsResultReplacement()
+        {
+            var text = "[a, ~, b]";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<ArrayLiteralExpressionNode>(actual);
+            var f = (ArrayLiteralExpressionNode) actual;
+            Assert.AreEqual(3, f.Elements.Elements.Count);
+            Assert.IsInstanceOf<UnaryPrefixOperationExpressionNode>(f.Elements.Elements[1]);
+            Assert.AreEqual(text, actual.FullText);
+        }
     }
 }

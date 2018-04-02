@@ -598,6 +598,17 @@ namespace Parser
                 var unaryTokenKind = ConvertToUnaryTokenKind(operation.Kind);
                 var newPrecedence = GetPrecedence(unaryTokenKind);
                 var operand = ParseSubExpression(options, newPrecedence);
+                if (operand == null)
+                {
+                    if (options.ParsingArrayElements && operation.Kind == TokenKind.Not)
+                    {
+                        operand = Factory.EmptyExpression();
+                    }
+                    else
+                    {
+                        throw new ParsingException($"Unexpected token {CurrentToken.Kind} at {operation.PureToken.Position}.");
+                    }
+                }
                 lhs = Factory.UnaryPrefixOperationExpression(Factory.Token(operation), operand);
             }
             else if (CurrentToken.Kind == TokenKind.At)

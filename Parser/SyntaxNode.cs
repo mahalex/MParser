@@ -449,6 +449,7 @@ namespace Parser
             get { yield break; }
         }
 
+        public override string FullText => "";
     }
 
     public class CompoundNameNode : ExpressionNode
