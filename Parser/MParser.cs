@@ -495,6 +495,7 @@ namespace Parser
                 case TokenKind.Plus:
                 case TokenKind.Minus:
                 case TokenKind.Not:
+                case TokenKind.QuestionMark:
                     return true;
                 default:
                     return false;
@@ -549,6 +550,8 @@ namespace Parser
                     return TokenKind.UnaryMinus;
                 case TokenKind.Not:
                     return TokenKind.UnaryNot;
+                case TokenKind.QuestionMark:
+                    return TokenKind.UnaryQuestionMark;
                 default:
                     throw new ArgumentException(nameof(kind));
             }

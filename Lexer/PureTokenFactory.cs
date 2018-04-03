@@ -58,7 +58,7 @@
             "+", // UnaryPlus = 57,
             "-", // UnaryMinus = 58,
             "~", // UnaryNot = 59,
-
+            "?", // UnaryQuestionMark = 60,
         };
         
         public PureToken CreatePunctuation(TokenKind kind)
