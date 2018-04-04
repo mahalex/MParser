@@ -343,8 +343,9 @@ namespace Parser
 
                         break;
                     case TokenKind.Transpose:
-                        var transposeSign = Factory.Token(EatToken());
-                        expression = Factory.UnaryPostfixOperationExpression(expression, transposeSign);
+                    case TokenKind.DotTranspose:
+                        var operation = Factory.Token(EatToken());
+                        expression = Factory.UnaryPostfixOperationExpression(expression, operation);
                         break;
                     default:
                         return expression;

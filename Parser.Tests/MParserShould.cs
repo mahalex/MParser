@@ -412,6 +412,20 @@ namespace Parser.Tests
             var f = (FunctionDeclarationNode) actual;
             Assert.AreEqual(3, f.InputDescription.Parameters.Parameters.Count);
             CollectionAssert.AreEqual(new[] { "b", "~", "c" }, f.InputDescription.Parameters.Parameters.Select(p => (p as TokenNode).Token.PureToken.LiteralText));
+            Assert.AreEqual(text, actual.FullText);
+        }
+
+        [Test]
+        public void ParseDotTranspose()
+        {
+            var text = "a.'";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<UnaryPostfixOperationExpressionNode>(actual);
+            var e = (UnaryPostfixOperationExpressionNode) actual;
+            Assert.AreEqual(TokenKind.DotTranspose, e.Operation.Token.Kind);
+            Assert.AreEqual("a", (e.Operand as IdentifierNameNode)?.Token.PureToken.LiteralText);
+            Assert.AreEqual(text, actual.FullText);
         }
     }
 }
