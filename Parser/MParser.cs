@@ -873,6 +873,11 @@ namespace Parser
             {
                 return ParseExpressionStatement();
             }
+
+            if (CurrentToken.Kind == TokenKind.Semicolon)
+            {
+                return Factory.ExpressionStatement(Factory.EmptyExpression(), Factory.Token(EatToken()));
+            }
             throw new ParsingException($"Unexpected token: \"{CurrentToken.PureToken}\" at {CurrentToken.PureToken.Position}");
         }
 
