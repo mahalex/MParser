@@ -315,6 +315,23 @@ namespace Parser
 
     }
 
+    public class DoubleQuotedStringLiteralNode : ExpressionNode
+    {
+        public Token Token { get; }
+
+        public DoubleQuotedStringLiteralNode(Token token) : base(null)
+        {
+            Token = token;
+        }
+
+        public override string FullText => Token.FullText;
+
+        public override IEnumerable<Token> ChildTokens
+        {
+            get { yield return Token; }
+        }
+    }
+
     public class StatementNode : SyntaxNode
     {
         public TokenNode SemicolonOrComma { get; set; }

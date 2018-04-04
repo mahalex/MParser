@@ -456,6 +456,11 @@ namespace Parser
                 var str = EatToken();
                 expression = Factory.StringLiteral(str);
             }
+            else if (token.Kind == TokenKind.DoubleQuotedStringLiteral)
+            {
+                var str = EatToken();
+                expression = Factory.DoubleQuotedStringLiteral(str);
+            }
             else if (token.Kind == TokenKind.OpeningSquareBracket) // array literal expression
             {
                 expression = ParseArrayLiteral();

@@ -427,5 +427,17 @@ namespace Parser.Tests
             Assert.AreEqual("a", (e.Operand as IdentifierNameNode)?.Token.PureToken.LiteralText);
             Assert.AreEqual(text, actual.FullText);
         }
+
+        [Test]
+        public void ParseDoubleQuotedStringLiteral()
+        {
+            var text = "\"some string\"";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<DoubleQuotedStringLiteralNode>(actual);
+            var s = (DoubleQuotedStringLiteralNode) actual;
+            Assert.AreEqual("some string", s.Token.PureToken.Value);
+            Assert.AreEqual(text, actual.FullText);
+        }
     }
 }

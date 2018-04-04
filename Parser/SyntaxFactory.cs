@@ -245,6 +245,12 @@ namespace Parser
             return new StringLiteralNode(stringLiteral);
         }
 
+        public DoubleQuotedStringLiteralNode DoubleQuotedStringLiteral(
+            Token stringLiteral)
+        {
+            return new DoubleQuotedStringLiteralNode(stringLiteral);
+        }
+
         public ExpressionStatementNode ExpressionStatement(ExpressionNode expression)
         {
             var children = new List<SyntaxNode> {expression};
