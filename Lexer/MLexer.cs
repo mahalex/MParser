@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lexer
@@ -7,6 +8,7 @@ namespace Lexer
     {
         private ITextWindow Window { get; }
         private Token LastToken { get; set; }
+        private int TokensSinceNewLine { get; set; }
         private PureTokenFactory PureTokenFactory { get; }
 
         public MLexer(ITextWindow window, PureTokenFactory pureTokenFactory)
@@ -67,16 +69,19 @@ namespace Lexer
                         break;
                     case '\r':
                     case '\n':
+                        if (whiteSpaceCache.Length > 0)
+                        {
+                            triviaList.Add(new Trivia(TriviaType.Whitespace, whiteSpaceCache.ToString()));
+                        }
+
+                        whiteSpaceCache.Clear();                 
                         Window.ConsumeChar();
-                        whiteSpaceCache.Append(character);
-                        var whiteSpace = whiteSpaceCache.ToString();
-                        triviaList.Add(new Trivia(TriviaType.Whitespace, whiteSpace));
+                        triviaList.Add(new Trivia(TriviaType.NewLine, character.ToString()));
                         if (isTrailing)
                         {
                             return triviaList;
                         }
 
-                        whiteSpaceCache.Clear();
                         break;
                     case '%':
                         if (whiteSpaceCache.Length > 0)
@@ -595,6 +600,14 @@ namespace Lexer
             var leadingTrivia = LexTrivia(false);
             var token = LexTokenWithoutTrivia(leadingTrivia);
             var trailingTrivia = LexTrivia(true);
+            if (trailingTrivia.Where(t => t.Type == TriviaType.NewLine).Any())
+            {
+                TokensSinceNewLine = 0;
+            }
+            else
+            {
+                TokensSinceNewLine++;
+            }
 
             var result = new Token(token, leadingTrivia, trailingTrivia);
             LastToken = result;

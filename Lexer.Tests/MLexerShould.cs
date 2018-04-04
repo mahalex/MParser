@@ -15,7 +15,7 @@ namespace Parser.Tests
         [Test]
         public void ParseSequenceOfIdentifiers()
         {
-            var sut = CreateLexer("undefined is not a function");
+            var sut = CreateLexer("undefined is not\n a function");
             var tokens = sut.ParseAll();
             Assert.AreEqual(6, tokens.Count);
             CollectionAssert.AreEqual(

@@ -8,6 +8,7 @@
         NumberLiteral = 3,
         StringLiteral = 4,
         DoubleQuotedStringLiteral = 5,
+        UnquotedStringLiteral = 6,
         
         Assignment = 20,
         Equality = 21,

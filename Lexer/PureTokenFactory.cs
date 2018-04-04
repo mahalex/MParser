@@ -12,11 +12,13 @@
         private static readonly string[] PureTokenOfKind =
         {
             null, // None = 0,
-            null, // Identifier = 1,
-            null, // NumberLiteral = 2,
-            null, // StringLiteral = 3,
-            null, // DoubleQuotedStringLiteral = 4,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, // EndOfFile = 1,
+            null, // Identifier = 2,
+            null, // NumberLiteral = 3,
+            null, // StringLiteral = 4,
+            null, // DoubleQuotedStringLiteral = 5,
+            null, // UnquotedStringLiteral = 6
+            null, null, null, null, null, null, null, null, null, null, null, null, null,
             "=", // Assignment = 20,
             "==", // Equality = 21,
             "~=", // Inequality = 22,
