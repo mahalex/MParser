@@ -825,6 +825,16 @@ namespace Parser
             return Factory.ForStatement(forKeyword, forAssignment, body, endKeyword, commas);
         }
 
+        public TryCatchStatementNode ParseTryCatchStatement()
+        {
+            var tryKeyword = Factory.Token(EatIdentifier("try"));
+            var tryBody = ParseStatements();
+            var catchKeyword = Factory.Token(EatIdentifier("catch"));
+            var catchBody = ParseStatements();
+            var endKeyword = Factory.Token(EatIdentifier("end"));
+            return Factory.TryCatchStatement(tryKeyword, tryBody, catchKeyword, catchBody, endKeyword);
+        }
+
         public StatementNode ParseStatementCore()
         {
             if (CurrentToken.Kind == TokenKind.Identifier)
@@ -864,7 +874,15 @@ namespace Parser
                 else if (CurrentToken.PureToken.LiteralText == "for")
                 {
                     return ParseForStatement();
-                }                
+                }
+                else if (CurrentToken.PureToken.LiteralText == "try")
+                {
+                    return ParseTryCatchStatement();
+                }
+                else if (CurrentToken.PureToken.LiteralText == "catch")
+                {
+                    return null;
+                }
 
                 return ParseExpressionStatement();
             }

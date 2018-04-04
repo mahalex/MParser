@@ -595,5 +595,31 @@ namespace Parser
             SetParent(result);
             return result;
         }
+
+        public TryCatchStatementNode TryCatchStatement(
+            TokenNode tryKeyword,
+            StatementListNode tryBody,
+            TokenNode catchKeyword,
+            StatementListNode catchBody,
+            TokenNode endKeyword)
+        {
+            var children = new List<SyntaxNode>
+            {
+                tryKeyword,
+                tryBody,
+                catchKeyword,
+                catchBody,
+                endKeyword
+            };
+            var result = new TryCatchStatementNode(
+                children,
+                tryKeyword,
+                tryBody,
+                catchKeyword,
+                catchBody,
+                endKeyword);
+            SetParent(result);
+            return result;
+        }
     }
 }

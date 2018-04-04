@@ -439,5 +439,15 @@ namespace Parser.Tests
             Assert.AreEqual("some string", s.Token.PureToken.Value);
             Assert.AreEqual(text, actual.FullText);
         }
+
+        [Test]
+        public void ParseTryCatchStatement()
+        {
+            var text = "try a = b catch c = d end";
+            var sut = CreateParser(text);
+            var actual = sut.ParseStatement();
+            Assert.IsInstanceOf<TryCatchStatementNode>(actual);
+            Assert.AreEqual(text, actual.FullText);
+        }
     }
 }

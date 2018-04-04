@@ -658,4 +658,29 @@ namespace Parser
             Body = body;
         }
     }
+
+    public class TryCatchStatementNode : StatementNode
+    {
+        public TokenNode TryKeyword { get; }
+        public StatementListNode TryBody { get; }
+        public TokenNode CatchKeyword { get; }
+        public StatementListNode CatchBody { get; }
+        public TokenNode EndKeyword { get; }
+
+        public TryCatchStatementNode(
+            List<SyntaxNode> children,
+            TokenNode tryKeyword,
+            StatementListNode tryBody,
+            TokenNode catchKeyword,
+            StatementListNode catchBody,
+            TokenNode endKeyword
+        ) : base(children)
+        {
+            TryKeyword = tryKeyword;
+            TryBody = tryBody;
+            CatchKeyword = catchKeyword;
+            CatchBody = catchBody;
+            EndKeyword = endKeyword;
+        }
+    }
 }
