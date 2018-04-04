@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Lexer;
 
 using NUnit.Framework;
@@ -399,6 +400,18 @@ namespace Parser.Tests
             Assert.AreEqual(3, f.Elements.Elements.Count);
             Assert.IsInstanceOf<UnaryPrefixOperationExpressionNode>(f.Elements.Elements[1]);
             Assert.AreEqual(text, actual.FullText);
+        }
+
+        [Test]
+        public void ParseTildeAsFunctionInputReplacement()
+        {
+            var text = "function a(b, ~, c) end";
+            var sut = CreateParser(text);
+            var actual = sut.ParseStatement();
+            Assert.IsInstanceOf<FunctionDeclarationNode>(actual);
+            var f = (FunctionDeclarationNode) actual;
+            Assert.AreEqual(3, f.InputDescription.Parameters.Parameters.Count);
+            CollectionAssert.AreEqual(new[] { "b", "~", "c" }, f.InputDescription.Parameters.Parameters.Select(p => (p as TokenNode).Token.PureToken.LiteralText));
         }
     }
 }

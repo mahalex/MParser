@@ -181,10 +181,18 @@ namespace Parser
                     identifierTokens.Add(EatToken(TokenKind.Comma));
                 }
 
-                identifierTokens.Add(EatToken(TokenKind.Identifier));
+                if (CurrentToken.Kind == TokenKind.Not)
+                {
+                    var notToken = EatToken();
+                    identifierTokens.Add(notToken);
+                }
+                else
+                {
+                    identifierTokens.Add(EatToken(TokenKind.Identifier));
+                }
             }
 
-            return Factory.ParameterList(identifierTokens.Select(token => new TokenNode(token) as SyntaxNode).ToList());
+            return Factory.ParameterList(identifierTokens.Select(token => Factory.Token(token) as SyntaxNode).ToList());
         }
 
         private FunctionInputDescriptionNode ParseFunctionInputDescription()
