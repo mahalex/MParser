@@ -10,8 +10,9 @@ namespace ProjectConsole
 {
     class Program
     {
-        //private const string BaseDirectory = @"C:\Program Files\MATLAB\R2018a\toolbox\matlab\";
-        private const string BaseDirectory = @"/Applications/MATLAB_R2017b.app/toolbox/matlab/";
+        private static readonly string BaseDirectory;
+        private const string BaseDirectoryMacOs = @"/Applications/MATLAB_R2017b.app/toolbox/matlab/";
+        private const string BaseDirectoryWindows = @"C:\Program Files\MATLAB\R2018a\toolbox\matlab\";
 
         private static HashSet<string> skipFiles = new HashSet<string>
         {
@@ -51,6 +52,16 @@ namespace ProjectConsole
             var maxKind = ((int[]) typeof(TokenKind).GetEnumValues()).Max();
             firstTokenCount = new int[maxKind + 1];
             afterFunctionCount = new int[maxKind + 1];
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.MacOSX:
+                case PlatformID.Unix:
+                    BaseDirectory = BaseDirectoryMacOs;
+                    break;
+                default:
+                    BaseDirectory = BaseDirectoryWindows;
+                    break;
+            }
         }
 
         static void AfterFunction(List<Token> tokens)
