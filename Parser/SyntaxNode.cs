@@ -245,18 +245,21 @@ namespace Parser
     {
         public TokenNode CaseKeyword { get; }
         public ExpressionNode CaseIdentifier { get; }
+        public List<TokenNode> OptionalCommasAfterIdentifier { get; }
         public StatementListNode StatementList { get; }
 
         public SwitchCaseNode(
             List<SyntaxNode> children,
             TokenNode caseKeyword,
             ExpressionNode caseIdentifier,
-            StatementListNode statementList
+            StatementListNode statementList,
+            List<TokenNode> optionalCommasAfterIdentifier = null
             ) : base(children)
         {
             CaseKeyword = caseKeyword;
             CaseIdentifier = caseIdentifier;
             StatementList = statementList;
+            OptionalCommasAfterIdentifier = optionalCommasAfterIdentifier;
         }
     }
 

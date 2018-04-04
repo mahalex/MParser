@@ -154,15 +154,20 @@ namespace Parser
         public SwitchCaseNode SwitchCase(
             TokenNode caseKeyword,
             ExpressionNode caseIdentifier,
-            StatementListNode statementList)
+            StatementListNode statementList,
+            List<TokenNode> optionalCommasAfterIdentifier)
         {
             var children = new List<SyntaxNode>
             {
                 caseKeyword,
-                caseIdentifier,
-                statementList
+                caseIdentifier
             };
-            var result = new SwitchCaseNode(children, caseKeyword, caseIdentifier, statementList);
+            if (optionalCommasAfterIdentifier != null)
+            {
+                children.AddRange(optionalCommasAfterIdentifier);
+            }
+            children.Add(statementList);
+            var result = new SwitchCaseNode(children, caseKeyword, caseIdentifier, statementList, optionalCommasAfterIdentifier);
             SetParent(result);
             return result;
         }
@@ -617,6 +622,28 @@ namespace Parser
                 tryBody,
                 catchKeyword,
                 catchBody,
+                endKeyword);
+            SetParent(result);
+            return result;
+        }
+
+        public TryCatchStatementNode TryCatchStatement(
+            TokenNode tryKeyword,
+            StatementListNode tryBody,
+            TokenNode endKeyword)
+        {
+            var children = new List<SyntaxNode>
+            {
+                tryKeyword,
+                tryBody,
+                endKeyword
+            };
+            var result = new TryCatchStatementNode(
+                children,
+                tryKeyword,
+                tryBody,
+                null,
+                null,
                 endKeyword);
             SetParent(result);
             return result;

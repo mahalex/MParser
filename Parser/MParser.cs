@@ -680,8 +680,17 @@ namespace Parser
         {
             var caseKeyword = EatIdentifier("case");
             var caseId = ParseExpression();
+            var commas = new List<TokenNode>();
+            while (CurrentToken.Kind == TokenKind.Comma)
+            {
+                commas.Add(Factory.Token(EatToken()));
+            }
+            if (commas.Count == 0)
+            {
+                commas = null;
+            }
             var statementList = ParseStatements();
-            return Factory.SwitchCase(Factory.Token(caseKeyword), caseId, statementList);
+            return Factory.SwitchCase(Factory.Token(caseKeyword), caseId, statementList, commas);
         }
 
         private SwitchStatementNode ParseSwitchStatement()
@@ -829,10 +838,22 @@ namespace Parser
         {
             var tryKeyword = Factory.Token(EatIdentifier("try"));
             var tryBody = ParseStatements();
-            var catchKeyword = Factory.Token(EatIdentifier("catch"));
-            var catchBody = ParseStatements();
-            var endKeyword = Factory.Token(EatIdentifier("end"));
-            return Factory.TryCatchStatement(tryKeyword, tryBody, catchKeyword, catchBody, endKeyword);
+            if (CurrentToken.PureToken.LiteralText == "catch")
+            {
+                var catchKeyword = Factory.Token(EatIdentifier("catch"));
+                var catchBody = ParseStatements();
+                var endKeyword = Factory.Token(EatIdentifier("end"));
+                return Factory.TryCatchStatement(tryKeyword, tryBody, catchKeyword, catchBody, endKeyword);
+            }
+            else if (CurrentToken.PureToken.LiteralText == "end")
+            {
+                var endKeyword = Factory.Token(EatIdentifier("end"));
+                return Factory.TryCatchStatement(tryKeyword, tryBody, endKeyword);
+            }
+            else
+            {
+                throw new ParsingException($"Unexpected token {CurrentToken.PureToken} while parsing try/catch statement at {CurrentToken.PureToken.Position}.");
+            }
         }
 
         public StatementNode ParseStatementCore()
