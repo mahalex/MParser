@@ -1,8 +1,7 @@
 ﻿using System.Linq;
-using Lexer;
 using NUnit.Framework;
 
-namespace Parser.Tests
+namespace Lexer.Tests
 {
     public class MLexerShould
     {
@@ -22,8 +21,9 @@ namespace Parser.Tests
                 new[] {"undefined", "is", "not", "a", "function"},
                 tokens.Take(5).Select(token => token.PureToken.LiteralText));
             CollectionAssert.AreEqual(
-                Enumerable.Repeat(TokenKind.Identifier, 5),
-                tokens.Take(5).Select(token => token.PureToken.Kind));
+                new[] { TokenKind.Identifier, TokenKind.UnquotedStringLiteral, TokenKind.UnquotedStringLiteral,
+                        TokenKind.Identifier, TokenKind.UnquotedStringLiteral },
+                tokens.Take(5).Select(token => token.Kind));
         }
         
         [Test]

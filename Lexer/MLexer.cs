@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -363,9 +364,55 @@ namespace Lexer
             return PureTokenFactory.CreateDoubleQuotedStringLiteral(literal);
         }
 
+        private PureToken ContinueParsingUnquotedStringLiteral()
+        {
+            var n = 0;
+            while (true)
+            {
+                var c = Window.PeekChar(n);
+                if (c == ' ' || c == '\n' || c == '\0')
+                {
+                    var literal = Window.GetAndConsumeChars(n);
+                    return PureTokenFactory.CreateUnquotedStringLiteral(literal);
+                }
+
+                n++;
+            }
+        }
+
+        private static readonly HashSet<string> Keywords;
+        
+        static MLexer()
+        {
+            Keywords = new HashSet<string>
+            {
+                "for", "if", "function", "while", "case", "try", "catch", "end",
+                "switch", "classdef", "elseif", "persistent",
+            };
+        }
+
         private PureToken LexTokenWithoutTrivia(List<Trivia> leadingTrivia)
         {
             var character = Window.PeekChar();
+            if (character == '\0')
+            {
+                return PureTokenFactory.CreateEndOfFileToken();
+            }
+
+            if (TokensSinceNewLine == 1
+                && LastToken.Kind == TokenKind.Identifier
+                && LastToken.TrailingTrivia.Any()
+                && character != '='
+                && character != '('
+                && !Keywords.Contains(LastToken.PureToken.LiteralText))
+            {
+                return ContinueParsingUnquotedStringLiteral();
+            }
+            if (LastToken?.Kind == TokenKind.UnquotedStringLiteral &&
+                TokensSinceNewLine > 0)
+            {
+                return ContinueParsingUnquotedStringLiteral();
+            }
             switch (character)
             {
                 case 'a':

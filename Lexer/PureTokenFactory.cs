@@ -93,6 +93,11 @@
             return new PureToken(TokenKind.DoubleQuotedStringLiteral, "\"" + s + "\"", s, Window.Position);
         }
 
+        public PureToken CreateUnquotedStringLiteral(string s)
+        {
+            return new PureToken(TokenKind.UnquotedStringLiteral, s, s, Window.Position);
+        }
+
         public PureToken CreateEndOfFileToken()
         {
             return new PureToken(TokenKind.EndOfFile, "", null, Window.Position);

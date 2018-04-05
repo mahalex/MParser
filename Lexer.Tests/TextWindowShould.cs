@@ -1,7 +1,6 @@
-using Lexer;
 using NUnit.Framework;
 
-namespace Parser.Tests
+namespace Lexer.Tests
 {
     [TestFixture]
     public class TestWindowShould
