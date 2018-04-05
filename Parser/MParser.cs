@@ -347,6 +347,21 @@ namespace Parser
                         var operation = Factory.Token(EatToken());
                         expression = Factory.UnaryPostfixOperationExpression(expression, operation);
                         break;
+                    case TokenKind.UnquotedStringLiteral:
+                        if (expression is IdentifierNameNode idNameNode)
+                        {
+                            var arguments = new List<UnquotedStringLiteralNode>();
+                            while (CurrentToken.Kind == TokenKind.UnquotedStringLiteral)
+                            {
+                                arguments.Add(Factory.UnquotedStringLiteral(EatToken()));
+                            }
+
+                            return Factory.CommandExpression(idNameNode, arguments);
+                        }
+                        else
+                        {
+                            throw new ParsingException($"Unexpected token \"{CurrentToken.PureToken.LiteralText}\" during parsing expression \"{expression.FullText}\" at {CurrentToken.PureToken.Position}.");
+                        }
                     default:
                         return expression;
                 }

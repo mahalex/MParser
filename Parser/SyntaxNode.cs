@@ -704,4 +704,20 @@ namespace Parser
             EndKeyword = endKeyword;
         }
     }
+
+    public class CommandExpressionNode : ExpressionNode
+    {
+        public IdentifierNameNode CommandName { get; }
+        public List<UnquotedStringLiteralNode> Arguments { get; }
+
+        public CommandExpressionNode(
+            List<SyntaxNode> children,
+            IdentifierNameNode commandName,
+            List<UnquotedStringLiteralNode> arguments
+        ) : base(children)
+        {
+            CommandName = commandName;
+            Arguments = arguments;
+        }
+    }
 }

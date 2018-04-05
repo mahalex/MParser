@@ -256,6 +256,12 @@ namespace Parser
             return new DoubleQuotedStringLiteralNode(stringLiteral);
         }
 
+        public UnquotedStringLiteralNode UnquotedStringLiteral(
+            Token stringLiteral)
+        {
+            return new UnquotedStringLiteralNode(stringLiteral);
+        }
+
         public ExpressionStatementNode ExpressionStatement(ExpressionNode expression)
         {
             var children = new List<SyntaxNode> {expression};
@@ -645,6 +651,23 @@ namespace Parser
                 null,
                 null,
                 endKeyword);
+            SetParent(result);
+            return result;
+        }
+
+        public CommandExpressionNode CommandExpression(
+            IdentifierNameNode identifierName,
+            List<UnquotedStringLiteralNode> arguments)
+        {
+            var children = new List<SyntaxNode>
+            {
+                identifierName
+            };
+            children.AddRange(arguments);
+            var result = new CommandExpressionNode(
+                children,
+                identifierName,
+                arguments);
             SetParent(result);
             return result;
         }
