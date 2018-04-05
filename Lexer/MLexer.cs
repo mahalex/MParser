@@ -387,7 +387,7 @@ namespace Lexer
             Keywords = new HashSet<string>
             {
                 "for", "if", "function", "while", "case", "try", "catch", "end",
-                "switch", "classdef", "elseif", "persistent",
+                "switch", "classdef", "elseif", "persistent", "else"
             };
         }
 
