@@ -679,5 +679,25 @@ namespace Parser
             SetParent(result);
             return result;
         }
+
+        public BaseClassInvokationNode BaseClassInvokation(
+            IdentifierNameNode methodName,
+            TokenNode atToken,
+            ExpressionNode baseClassNameAndArguments)
+        {
+            var children = new List<SyntaxNode>
+            {
+                methodName,
+                atToken,
+                baseClassNameAndArguments
+            };
+            var result = new BaseClassInvokationNode(
+                children,
+                methodName,
+                atToken,
+                baseClassNameAndArguments);
+            SetParent(result);
+            return result;
+        }
     }
 }

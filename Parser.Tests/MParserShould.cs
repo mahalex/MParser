@@ -465,5 +465,18 @@ namespace Parser.Tests
             Assert.IsInstanceOf<IfStatementNode>(actual);
             Assert.AreEqual(text, actual.FullText);
         }
+
+        [Test]
+        public void ParseBaseClassInvokation()
+        {
+            var text = "a@b.c.d(e, f)";
+            var sut = CreateParser(text);
+            var actual = sut.ParseExpression();
+            Assert.IsInstanceOf<BaseClassInvokationNode>(actual);
+            var e = (BaseClassInvokationNode) actual;
+            Assert.AreEqual("a", e.MethodName.Token.PureToken.LiteralText);
+            Assert.IsInstanceOf<FunctionCallExpressionNode>(e.BaseClassNameAndArguments);
+            Assert.AreEqual(text, actual.FullText);
+        }
     }
 }

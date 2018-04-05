@@ -360,7 +360,19 @@ namespace Parser
                         }
                         else
                         {
-                            throw new ParsingException($"Unexpected token \"{CurrentToken.PureToken.LiteralText}\" during parsing expression \"{expression.FullText}\" at {CurrentToken.PureToken.Position}.");
+                            throw new ParsingException($"Unexpected token \"{CurrentToken.PureToken.LiteralText}\" while parsing expression \"{expression.FullText}\" at {CurrentToken.PureToken.Position}.");
+                        }
+                    case TokenKind.At:
+                        if (expression is IdentifierNameNode idNameNode2
+                            && !expression.TrailingTrivia.Any())
+                        {
+                            var atToken = Factory.Token(EatToken());
+                            var baseClassNameWithArguments = ParseExpression();
+                            return Factory.BaseClassInvokation(idNameNode2, atToken, baseClassNameWithArguments);
+                        }
+                        else
+                        {
+                            throw new ParsingException($"Unexpected token \"{CurrentToken.PureToken.LiteralText}\" at {CurrentToken.PureToken.Position}.");
                         }
                     default:
                         return expression;

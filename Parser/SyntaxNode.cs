@@ -720,4 +720,23 @@ namespace Parser
             Arguments = arguments;
         }
     }
+
+    public class BaseClassInvokationNode : ExpressionNode
+    {
+        public IdentifierNameNode MethodName { get; }
+        public TokenNode AtToken { get; }
+        public ExpressionNode BaseClassNameAndArguments { get; }
+
+        public BaseClassInvokationNode(
+            List<SyntaxNode> children,
+            IdentifierNameNode methodName,
+            TokenNode atToken,
+            ExpressionNode baseClassNameAndArguments
+        ) : base(children)
+        {
+            MethodName = methodName;
+            AtToken = atToken;
+            BaseClassNameAndArguments = baseClassNameAndArguments;
+        }
+    }
 }
