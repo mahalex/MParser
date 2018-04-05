@@ -483,10 +483,18 @@ namespace Parser
             if (elseKeyword != null)
             {
                 children.Add(elseKeyword);
+            }
+
+            if (elseBody != null)
+            {
                 children.Add(elseBody);
             }
 
-            children.Add(endKeyword);
+            if (endKeyword != null)
+            {
+                children.Add(endKeyword);
+            }
+
             var result = new IfStatementNode(
                 children,
                 ifKeyword,

@@ -811,6 +811,21 @@ namespace Parser
                 elseKeyword = Factory.Token(EatToken());
                 elseBody = ParseStatements();
             }
+            if (CurrentToken.Kind == TokenKind.Identifier
+                && CurrentToken.PureToken.LiteralText == "elseif")
+            {
+                elseKeyword = null;
+                var ifStatement = ParseIfStatement();
+                elseBody = Factory.StatementList(new List<SyntaxNode> { ifStatement });
+                return Factory.IfStatement(
+                    ifKeyword,
+                    condition,
+                    body,
+                    null,
+                    elseBody,
+                    null,
+                    commas);
+            }
 
             var endKeyword = Factory.Token(EatIdentifier("end"));
             return Factory.IfStatement(
@@ -900,6 +915,10 @@ namespace Parser
                     return null;
                 }
                 else if (CurrentToken.PureToken.LiteralText == "else")
+                {
+                    return null;
+                }
+                else if (CurrentToken.PureToken.LiteralText == "elseif")
                 {
                     return null;
                 }

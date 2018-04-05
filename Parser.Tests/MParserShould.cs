@@ -449,6 +449,21 @@ namespace Parser.Tests
             Assert.IsInstanceOf<TryCatchStatementNode>(actual);
             Assert.AreEqual(text, actual.FullText);
         }
-        
+
+        [Test]
+        public void ParseElseif()
+        {
+            var text = @"if a == 1
+            f()
+            elseif a == 2
+            g()
+            elseif a == 3
+            h()
+            end";
+            var sut = CreateParser(text);
+            var actual = sut.ParseStatement();
+            Assert.IsInstanceOf<IfStatementNode>(actual);
+            Assert.AreEqual(text, actual.FullText);
+        }
     }
 }
