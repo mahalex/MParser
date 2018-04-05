@@ -11,11 +11,13 @@ namespace Lexer
         private Token LastToken { get; set; }
         private int TokensSinceNewLine { get; set; }
         private PureTokenFactory PureTokenFactory { get; }
+        private Stack<TokenKind> TokenStack { get; }
 
         public MLexer(ITextWindow window, PureTokenFactory pureTokenFactory)
         {
             Window = window;
             PureTokenFactory = pureTokenFactory;
+            TokenStack = new Stack<TokenKind>();
         }
 
         private static bool IsEolOrEof(char c)
@@ -400,6 +402,7 @@ namespace Lexer
             }
 
             if (TokensSinceNewLine == 1
+                && !TokenStack.Any()
                 && LastToken.Kind == TokenKind.Identifier
                 && LastToken.TrailingTrivia.Any()
                 && character != '='
@@ -408,8 +411,9 @@ namespace Lexer
             {
                 return ContinueParsingUnquotedStringLiteral();
             }
-            if (LastToken?.Kind == TokenKind.UnquotedStringLiteral &&
-                TokensSinceNewLine > 0)
+            if (LastToken?.Kind == TokenKind.UnquotedStringLiteral
+                && !TokenStack.Any()
+                && TokensSinceNewLine > 0)
             {
                 return ContinueParsingUnquotedStringLiteral();
             }
@@ -642,6 +646,47 @@ namespace Lexer
             }
         }
 
+        private bool IsOpeningToken(TokenKind tokenKind)
+        {
+            switch (tokenKind)
+            {
+                case TokenKind.OpeningBrace:
+                case TokenKind.OpeningBracket:
+                case TokenKind.OpeningSquareBracket:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsClosingToken(TokenKind tokenKind)
+        {
+            switch (tokenKind)
+            {
+                case TokenKind.ClosingBrace:
+                case TokenKind.ClosingBracket:
+                case TokenKind.ClosingSquareBracket:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private TokenKind? OpeningFromClosing(TokenKind tokenKind)
+        {
+            switch (tokenKind)
+            {
+                case TokenKind.ClosingBrace:
+                    return TokenKind.OpeningBrace;
+                case TokenKind.ClosingBracket:
+                    return TokenKind.OpeningBracket;
+                case TokenKind.ClosingSquareBracket:
+                    return TokenKind.OpeningSquareBracket;
+                default:
+                    return null;
+            }
+        }
+        
         public Token NextToken()
         {
             var leadingTrivia = LexTrivia(false);
@@ -654,6 +699,36 @@ namespace Lexer
             else
             {
                 TokensSinceNewLine++;
+            }
+
+            if (IsOpeningToken(token.Kind))
+            {
+                TokenStack.Push(token.Kind);
+            }
+
+            if (IsClosingToken(token.Kind))
+            {
+                if (TokenStack.TryPeek(out var t))
+                {
+                    if (t == OpeningFromClosing(token.Kind))
+                    {
+                        TokenStack.Pop();
+                    }
+                    else
+                    {
+                        throw new ParsingException($"Unmatched \"{token.LiteralText}\" at {token.Position}.");
+                    }
+                }
+                else
+                {
+                    throw new ParsingException($"Unmatched \"{token.LiteralText}\" at {token.Position}.");
+                }
+            }
+
+            if (token.Kind == TokenKind.EndOfFile
+                && TokenStack.Any())
+            {
+                throw new ParsingException($"Unmatched \"{TokenStack.Pop()}\" by the end of file.");
             }
 
             var result = new Token(token, leadingTrivia, trailingTrivia);
