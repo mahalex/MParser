@@ -219,16 +219,13 @@ namespace Parser
             return new UnquotedStringLiteralNode(stringLiteral);
         }
 
-        public ExpressionStatementNode ExpressionStatement(ExpressionNode expression)
-        {
-            var children = new List<SyntaxNode> {expression};
-            return new ExpressionStatementNode(children, expression, null);
-        }
-
         public ExpressionStatementNode ExpressionStatement(ExpressionNode expression, TokenNode semicolonOrComma)
         {
             var children = new List<SyntaxNode> {expression, semicolonOrComma};
-            return new ExpressionStatementNode(children, expression, semicolonOrComma);
+            return new ExpressionStatementNode(
+                RemoveNulls(children),
+                expression,
+                semicolonOrComma);
         }
 
         public CellArrayElementAccessExpressionNode CellArrayElementAccessExpression(
@@ -356,10 +353,10 @@ namespace Parser
         public WhileStatementNode WhileStatement(
             TokenNode whileKeyword,
             ExpressionNode condition,
+            List<TokenNode> optionalCommasAfterCondition,
             StatementListNode body,
             TokenNode end,
-            List<TokenNode> optionalCommasAfterCondition = null,
-            TokenNode semicolonOrComma = null)
+            TokenNode semicolonOrComma)
         {
             var children = new List<SyntaxNode>
             {
@@ -391,11 +388,12 @@ namespace Parser
         public IfStatementNode IfStatement(
             TokenNode ifKeyword,
             ExpressionNode condition,
+            List<TokenNode> optionalCommasAfterCondition,
             StatementListNode body,
             TokenNode elseKeyword,
             StatementListNode elseBody,
             TokenNode endKeyword,
-            List<TokenNode> optionalCommasAfterCondition = null)
+            TokenNode possibleSemicolonOrComma)
         {
             var children = new List<SyntaxNode>
             {
@@ -407,6 +405,7 @@ namespace Parser
             children.Add(elseKeyword);
             children.Add(elseBody);
             children.Add(endKeyword);
+            children.Add(possibleSemicolonOrComma);
 
             return new IfStatementNode(
                 RemoveNulls(children),
@@ -416,7 +415,8 @@ namespace Parser
                 body,
                 elseKeyword,
                 elseBody,
-                endKeyword);
+                endKeyword,
+                possibleSemicolonOrComma);
         }
 
         public ParenthesizedExpressionNode ParenthesizedExpression(

@@ -676,15 +676,34 @@ namespace Parser
             return lhs;
         }
 
-        private SwitchCaseNode ParseSwitchCase()
+        private List<TokenNode> ParseOptionalCommas()
         {
-            var caseKeyword = EatIdentifier("case");
-            var caseId = ParseExpression();
             var commas = new List<TokenNode>();
             while (CurrentToken.Kind == TokenKind.Comma)
             {
                 commas.Add(Factory.Token(EatToken()));
             }
+
+            return commas;
+        }
+
+        private List<TokenNode> ParseOptionalSemicolonsOrCommas()
+        {
+            var commas = new List<TokenNode>();
+            while (CurrentToken.Kind == TokenKind.Comma
+                   || CurrentToken.Kind == TokenKind.Semicolon)
+            {
+                commas.Add(Factory.Token(EatToken()));
+            }
+
+            return commas;
+        }
+
+        private SwitchCaseNode ParseSwitchCase()
+        {
+            var caseKeyword = EatIdentifier("case");
+            var caseId = ParseExpression();
+            var commas = ParseOptionalCommas();
             var statementList = ParseStatements();
             return Factory.SwitchCase(Factory.Token(caseKeyword), caseId, statementList, commas);
         }
@@ -693,11 +712,7 @@ namespace Parser
         {
             var switchKeyword = EatIdentifier("switch");
             var expression = ParseExpression();
-            var commas = new List<TokenNode>();
-            while (CurrentToken.Kind == TokenKind.Comma)
-            {
-                commas.Add(Factory.Token(EatToken()));
-            }
+            var commas = ParseOptionalCommas();
             var casesList = new List<SwitchCaseNode>();
             while (CurrentToken.Kind == TokenKind.Identifier
                    && CurrentToken.PureToken.LiteralText == "case")
@@ -717,46 +732,30 @@ namespace Parser
         public ExpressionStatementNode ParseExpressionStatement()
         {
             var statement = ParseExpression();
-            if (CurrentToken.Kind == TokenKind.Semicolon)
-            {
-                var semicolon = EatToken();
-                return Factory.ExpressionStatement(statement, Factory.Token(semicolon));
-            }
-
-            return Factory.ExpressionStatement(statement);
+            var possibleSemicolonOrComma = PossibleSemicolonOrComma();
+            return Factory.ExpressionStatement(statement, possibleSemicolonOrComma);
         }
 
         public WhileStatementNode ParseWhileStatement()
         {
             var whileKeyword = EatToken();
             var condition = ParseExpression();
-            var commas = new List<TokenNode>();
-            while (CurrentToken.Kind == TokenKind.Comma)
-            {
-                commas.Add(Factory.Token(EatToken()));
-            }
+            var commas = ParseOptionalCommas();
             var body = ParseStatements();
             var endKeyword = EatIdentifier("end");
+            var semicolonOrComma = PossibleSemicolonOrComma();
             return Factory.WhileStatement(
                 Factory.Token(whileKeyword),
                 condition,
+                commas,
                 body,
                 Factory.Token(endKeyword),
-                commas);
+                semicolonOrComma);
         }
 
         public StatementNode ParseStatement()
         {
             var statement = ParseStatementCore();
-            if (statement != null)
-            {
-                if (CurrentToken.Kind == TokenKind.Semicolon
-                    || CurrentToken.Kind == TokenKind.Comma)
-                {
-                    statement = Factory.AppendSemicolonOrComma(statement, Factory.Token(EatToken()));
-                }
-            }
-
             return statement;
         }
 
@@ -764,12 +763,7 @@ namespace Parser
         {
             var ifKeyword = Factory.Token(EatToken());
             var condition = ParseExpression();
-            var commas = new List<TokenNode>();
-            while (CurrentToken.Kind == TokenKind.Comma
-                   || CurrentToken.Kind == TokenKind.Semicolon)
-            {
-                commas.Add(Factory.Token(EatToken()));
-            }
+            var commas = ParseOptionalSemicolonsOrCommas();
             var body = ParseStatements();
             TokenNode elseKeyword = null;
             StatementListNode elseBody = null;
@@ -788,22 +782,25 @@ namespace Parser
                 return Factory.IfStatement(
                     ifKeyword,
                     condition,
+                    commas,
                     body,
                     null,
                     elseBody,
                     null,
-                    commas);
+                    null);
             }
 
             var endKeyword = Factory.Token(EatIdentifier("end"));
+            var possibleSemicolonOrComma = PossibleSemicolonOrComma();
             return Factory.IfStatement(
                 ifKeyword,
                 condition,
+                commas,
                 body,
                 elseKeyword,
                 elseBody,
                 endKeyword,
-                commas);
+                possibleSemicolonOrComma);
         }
 
         public ForStatementNode ParseForStatement()
@@ -816,12 +813,7 @@ namespace Parser
             }
 
             var forAssignment = (AssignmentExpressionNode) expression;
-            var commas = new List<TokenNode>();
-            while (CurrentToken.Kind == TokenKind.Comma
-                   || CurrentToken.Kind == TokenKind.Semicolon)
-            {
-                commas.Add(Factory.Token(EatToken()));
-            }
+            var commas = ParseOptionalSemicolonsOrCommas();
 
             var body = ParseStatements();
             var endKeyword = Factory.Token(EatIdentifier("end"));

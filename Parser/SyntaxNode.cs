@@ -572,8 +572,9 @@ namespace Parser
             StatementListNode body,
             TokenNode elseKeyword,
             StatementListNode elseBody,
-            TokenNode endKeyword
-            ) : base(children)
+            TokenNode endKeyword,
+            TokenNode possibleSemicolonOrComma
+            ) : base(children, possibleSemicolonOrComma)
         {
             IfKeyword = ifKeyword;
             Condition = condition;
