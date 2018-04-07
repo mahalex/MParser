@@ -6,16 +6,6 @@ namespace Parser
 {
     public class SyntaxFactory
     {
-        private static T SetParent<T>(T parent) where T : SyntaxNode
-        {
-            foreach (var node in parent.Children)
-            {
-                node.Parent = parent;
-            }
-
-            return parent;
-        }
-
         private static List<SyntaxNode> RemoveNulls(List<SyntaxNode> children)
         {
             return children.Where(x => x != null).ToList();
@@ -40,8 +30,7 @@ namespace Parser
                 end,
                 semicolonOrComma
             };
-            var result =
-                new FunctionDeclarationNode(
+            return new FunctionDeclarationNode(
                     RemoveNulls(children),
                     functionKeyword,
                     outputDescription,
@@ -50,7 +39,6 @@ namespace Parser
                     body,
                     end,
                     semicolonOrComma);
-            return SetParent(result);
         }
 
         public FunctionOutputDescriptionNode FunctionOutputDescription(
@@ -59,7 +47,7 @@ namespace Parser
         {
             var children = new List<SyntaxNode>(nodes);
             children.Add(equalitySign);
-            var result = new FunctionOutputDescriptionNode(
+            return new FunctionOutputDescriptionNode(
                 children,
                 children
                     .Where(node => node is TokenNode tokenNode && tokenNode.Token.Kind == TokenKind.Identifier)
@@ -67,25 +55,22 @@ namespace Parser
                     .ToList(),
                 equalitySign
                 );
-            return SetParent(result);
         }
 
         public ParameterListNode ParameterList(List<SyntaxNode> nodes)
         {
-            var result = new ParameterListNode(
+            return new ParameterListNode(
                 nodes,
                 nodes
                     .Where(
                         node => node is TokenNode tokenNode && tokenNode.Token.Kind != TokenKind.Comma
                     )
                     .ToList());
-            return SetParent(result);
         }
 
         public StatementListNode StatementList(List<SyntaxNode> nodes)
         {
-            var result = new StatementListNode(nodes);
-            return SetParent(result);
+            return new StatementListNode(nodes);
         }
 
         public FunctionInputDescriptionNode FunctionInputDescription(
@@ -99,8 +84,7 @@ namespace Parser
                 parameterList,
                 closingBracket
             };
-            var result = new FunctionInputDescriptionNode(children, openingBracket, parameterList, closingBracket);
-            return SetParent(result);
+            return new FunctionInputDescriptionNode(children, openingBracket, parameterList, closingBracket);
         }
 
         public TokenNode Token(Token token)
@@ -122,7 +106,7 @@ namespace Parser
             children.Add(endKeyword);
             children.Add(semicolonOrComma);
 
-            var result = new SwitchStatementNode(
+            return new SwitchStatementNode(
                 RemoveNulls(children),
                 switchKeyword,
                 switchExpression,
@@ -130,7 +114,6 @@ namespace Parser
                 endKeyword,
                 semicolonOrComma,
                 optionalCommasAfterExpression);
-            return SetParent(result);
         }
 
         public SwitchCaseNode SwitchCase(
@@ -146,13 +129,12 @@ namespace Parser
             };
             children.AddRange(optionalCommasAfterIdentifier);
             children.Add(statementList);
-            var result = new SwitchCaseNode(
+            return new SwitchCaseNode(
                 RemoveNulls(children),
                 caseKeyword,
                 caseIdentifier,
                 statementList,
                 optionalCommasAfterIdentifier);
-            return SetParent(result);
         }
 
         public AssignmentExpressionNode AssignmentExpression(
@@ -166,8 +148,7 @@ namespace Parser
                 assignmentSign,
                 rhs
             };
-            var result = new AssignmentExpressionNode(children, lhs, assignmentSign, rhs);
-            return SetParent(result);
+            return new AssignmentExpressionNode(children, lhs, assignmentSign, rhs);
         }
 
         public UnaryPrefixOperationExpressionNode UnaryPrefixOperationExpression(
@@ -179,8 +160,7 @@ namespace Parser
                 operation,
                 operand
             };
-            var result = new UnaryPrefixOperationExpressionNode(children, operation, operand);
-            return SetParent(result);
+            return new UnaryPrefixOperationExpressionNode(children, operation, operand);
         }
 
         public UnaryPostfixOperationExpressionNode UnaryPostfixOperationExpression(
@@ -192,8 +172,7 @@ namespace Parser
                 operand,
                 operation
             };
-            var result = new UnaryPostfixOperationExpressionNode(children, operand, operation);
-            return SetParent(result);
+            return new UnaryPostfixOperationExpressionNode(children, operand, operation);
         }
 
         public BinaryOperationExpressionNode BinaryOperationExpression(
@@ -207,8 +186,7 @@ namespace Parser
                 operation,
                 rhs
             };
-            var result = new BinaryOperationExpressionNode(children, lhs, operation, rhs);
-            return SetParent(result);
+            return new BinaryOperationExpressionNode(children, lhs, operation, rhs);
         }
 
         public IdentifierNameNode IdentifierName(
@@ -244,15 +222,13 @@ namespace Parser
         public ExpressionStatementNode ExpressionStatement(ExpressionNode expression)
         {
             var children = new List<SyntaxNode> {expression};
-            var result = new ExpressionStatementNode(children, expression, null);
-            return SetParent(result);
+            return new ExpressionStatementNode(children, expression, null);
         }
 
         public ExpressionStatementNode ExpressionStatement(ExpressionNode expression, TokenNode semicolonOrComma)
         {
             var children = new List<SyntaxNode> {expression, semicolonOrComma};
-            var result = new ExpressionStatementNode(children, expression, semicolonOrComma);
-            return SetParent(result);
+            return new ExpressionStatementNode(children, expression, semicolonOrComma);
         }
 
         public CellArrayElementAccessExpressionNode CellArrayElementAccessExpression(
@@ -262,13 +238,12 @@ namespace Parser
             TokenNode closingBrace)
         {
             var children = new List<SyntaxNode> {cellArray, openingBrace, indices, closingBrace};
-            var result = new CellArrayElementAccessExpressionNode(
+            return new CellArrayElementAccessExpressionNode(
                 children,
                 cellArray,
                 openingBrace,
                 indices,
                 closingBrace);
-            return SetParent(result);
         }
 
         public FunctionCallExpressionNode FunctionCallExpression(
@@ -284,43 +259,39 @@ namespace Parser
                 parameters,
                 closingBracket
             };
-            var result = new FunctionCallExpressionNode(
+            return new FunctionCallExpressionNode(
                 children,
                 functionName,
                 openingBracket,
                 parameters,
                 closingBracket);
-            return SetParent(result);
         }
         
         public FunctionCallParameterListNode FunctionCallParameterList(List<SyntaxNode> nodes)
         {
-            var result = new FunctionCallParameterListNode(
+            return new FunctionCallParameterListNode(
                 nodes,
                 nodes
                     .OfType<ExpressionNode>()
                     .ToList());
-            return SetParent(result);
         }
 
         public ArrayElementListNode ArrayElementList(List<SyntaxNode> nodes)
         {
-            var result = new ArrayElementListNode(
+            return new ArrayElementListNode(
                 nodes,
                 nodes
                     .OfType<ExpressionNode>()
                     .ToList());
-            return SetParent(result);
         }
 
         public CompoundNameNode CompoundName(List<SyntaxNode> nodes)
         {
-            var result = new CompoundNameNode(
+            return new CompoundNameNode(
                 nodes,
                 nodes
                     .OfType<IdentifierNameNode>()
                     .ToList());
-            return SetParent(result);
         }
 
         public ArrayLiteralExpressionNode ArrayLiteralExpression(
@@ -334,12 +305,11 @@ namespace Parser
                 elements,
                 closingSquareBracket
             };
-            var result = new ArrayLiteralExpressionNode(
+            return new ArrayLiteralExpressionNode(
                 children,
                 openingSquareBracket,
                 elements,
                 closingSquareBracket);
-            return SetParent(result);
         }
 
         public CellArrayLiteralExpressionNode CellArrayLiteralExpression(
@@ -353,12 +323,11 @@ namespace Parser
                 elements,
                 closingBrace
             };
-            var result = new CellArrayLiteralExpressionNode(
+            return new CellArrayLiteralExpressionNode(
                 children,
                 openingBrace,
                 elements,
                 closingBrace);
-            return SetParent(result);
         }
 
         public EmptyExpressionNode EmptyExpression()
@@ -377,12 +346,11 @@ namespace Parser
                 dot,
                 rightOperand
             };
-            var result = new MemberAccessNode(
+            return new MemberAccessNode(
                 children,
                 leftOperand,
                 dot,
                 rightOperand);
-            return SetParent(result);
         }
 
         public WhileStatementNode WhileStatement(
@@ -402,7 +370,7 @@ namespace Parser
             children.Add(body);
             children.Add(end);
             children.Add(semicolonOrComma);
-            var result = new WhileStatementNode(
+            return new WhileStatementNode(
                 RemoveNulls(children),
                 whileKeyword,
                 condition,
@@ -410,7 +378,6 @@ namespace Parser
                 body,
                 end,
                 semicolonOrComma);
-            return SetParent(result);
         }
 
         public StatementNode AppendSemicolonOrComma(StatementNode statement, TokenNode semicolonOrComma)
@@ -441,7 +408,7 @@ namespace Parser
             children.Add(elseBody);
             children.Add(endKeyword);
 
-            var result = new IfStatementNode(
+            return new IfStatementNode(
                 RemoveNulls(children),
                 ifKeyword,
                 condition,
@@ -450,7 +417,6 @@ namespace Parser
                 elseKeyword,
                 elseBody,
                 endKeyword);
-            return SetParent(result);
         }
 
         public ParenthesizedExpressionNode ParenthesizedExpression(
@@ -464,12 +430,11 @@ namespace Parser
                 expression,
                 closeParen
             };
-            var result = new ParenthesizedExpressionNode(
+            return new ParenthesizedExpressionNode(
                 children,
                 openParen,
                 expression,
                 closeParen);
-            return SetParent(result);
         }
 
         public ForStatementNode ForStatement(
@@ -487,14 +452,13 @@ namespace Parser
             children.AddRange(optionalCommasAfterAssignment);
             children.Add(body);
             children.Add(endKeyword);
-            var result = new ForStatementNode(
+            return new ForStatementNode(
                 RemoveNulls(children),
                 forKeyword,
                 forAssignment,
                 body,
                 endKeyword,
                 optionalCommasAfterAssignment);
-            return SetParent(result);
         }
 
         public IndirectMemberAccessNode IndirectMemberAccess(
@@ -508,14 +472,13 @@ namespace Parser
                 indirectMemberName,
                 closingBracket
             };
-            var result = new IndirectMemberAccessNode(
+            return new IndirectMemberAccessNode(
                 children,
                 openingBracket,
                 indirectMemberName,
                 closingBracket);
-            return SetParent(result);
         }
-        
+
         public NamedFunctionHandleNode NamedFunctionHandle(
             TokenNode atSign,
             CompoundNameNode functionName)
@@ -525,11 +488,10 @@ namespace Parser
                 atSign,
                 functionName
             };
-            var result = new NamedFunctionHandleNode(
+            return new NamedFunctionHandleNode(
                 children,
                 atSign,
                 functionName);
-            return SetParent(result);
         }
 
         public LambdaNode Lambda(
@@ -543,12 +505,11 @@ namespace Parser
                 input,
                 body
             };
-            var result = new LambdaNode(
+            return new LambdaNode(
                 children,
                 atSign,
                 input,
                 body);
-            return SetParent(result);
         }
 
         public TryCatchStatementNode TryCatchStatement(
@@ -566,14 +527,13 @@ namespace Parser
                 catchBody,
                 endKeyword
             };
-            var result = new TryCatchStatementNode(
+            return new TryCatchStatementNode(
                 children,
                 tryKeyword,
                 tryBody,
                 catchKeyword,
                 catchBody,
                 endKeyword);
-            return SetParent(result);
         }
 
         public TryCatchStatementNode TryCatchStatement(
@@ -587,14 +547,13 @@ namespace Parser
                 tryBody,
                 endKeyword
             };
-            var result = new TryCatchStatementNode(
+            return new TryCatchStatementNode(
                 children,
                 tryKeyword,
                 tryBody,
                 null,
                 null,
                 endKeyword);
-            return SetParent(result);
         }
 
         public CommandExpressionNode CommandExpression(
@@ -606,11 +565,10 @@ namespace Parser
                 identifierName
             };
             children.AddRange(arguments);
-            var result = new CommandExpressionNode(
+            return new CommandExpressionNode(
                 children,
                 identifierName,
                 arguments);
-            return SetParent(result);
         }
 
         public BaseClassInvokationNode BaseClassInvokation(
@@ -624,12 +582,11 @@ namespace Parser
                 atToken,
                 baseClassNameAndArguments
             };
-            var result = new BaseClassInvokationNode(
+            return new BaseClassInvokationNode(
                 children,
                 methodName,
                 atToken,
                 baseClassNameAndArguments);
-            return SetParent(result);
         }
     }
 }

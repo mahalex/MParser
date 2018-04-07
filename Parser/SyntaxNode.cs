@@ -15,6 +15,13 @@ namespace Parser
         public SyntaxNode(List<SyntaxNode> children)
         {
             Children = children;
+            if (children != null)
+            {
+                foreach (var child in children)
+                {
+                    child.Parent = this;
+                }
+            }
         }
 
         public virtual string FullText =>
