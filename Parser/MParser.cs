@@ -301,7 +301,7 @@ namespace Parser
                             return expression;
                         }
                         var openingBrace = EatToken();
-                        var indices = ParseCellArrayElementList();
+                        var indices = ParseArrayElementList(TokenKind.ClosingBrace);
                         var closingBrace = EatToken(TokenKind.ClosingBrace);
                         expression = Factory.CellArrayElementAccessExpression(
                             expression,
@@ -379,11 +379,11 @@ namespace Parser
             }
         }
 
-        private ArrayElementListNode ParseArrayElementList()
+        private ArrayElementListNode ParseArrayElementList(TokenKind closing)
         {
             var nodes = new List<SyntaxNode> {};
             
-            while (CurrentToken.Kind != TokenKind.ClosingSquareBracket)
+            while (CurrentToken.Kind != closing)
             {
                 if (nodes.Count > 0)
                 {
@@ -400,40 +400,14 @@ namespace Parser
                     nodes.Add(expression);
                 }
             }
-
             
-            return Factory.ArrayElementList(nodes);
-        }
-
-        private ArrayElementListNode ParseCellArrayElementList()
-        {
-            var nodes = new List<SyntaxNode> {};
-            
-            while (CurrentToken.Kind != TokenKind.ClosingBrace)
-            {
-                if (nodes.Count > 0)
-                {
-                    if (CurrentToken.Kind == TokenKind.Comma
-                        || CurrentToken.Kind == TokenKind.Semicolon)
-                    {
-                        nodes.Add(Factory.Token(EatToken()));
-                    }
-                }
-
-                var expression = ParseExpression(new ParseOptions {ParsingArrayElements = true});
-                if (expression != null)
-                {
-                    nodes.Add(expression);
-                }
-            }
-
-            return Factory.ArrayElementList(nodes);
+            return Factory.ArrayElementList(nodes);            
         }
 
         private ArrayLiteralExpressionNode ParseArrayLiteral()
         {
             var openingSquareBracket = EatToken(TokenKind.OpeningSquareBracket);
-            var elements = ParseArrayElementList();
+            var elements = ParseArrayElementList(TokenKind.ClosingSquareBracket);
             var closingSquareBracket = EatToken(TokenKind.ClosingSquareBracket);
             return Factory.ArrayLiteralExpression(
                 Factory.Token(openingSquareBracket),
@@ -444,7 +418,7 @@ namespace Parser
         private CellArrayLiteralExpressionNode ParseCellArrayLiteral()
         {
             var openingBrace = EatToken(TokenKind.OpeningBrace);
-            var elements = ParseCellArrayElementList();
+            var elements = ParseArrayElementList(TokenKind.ClosingBrace);
             var closingBrace = EatToken(TokenKind.ClosingBrace);
             return Factory.CellArrayLiteralExpression(
                 Factory.Token(openingBrace),
