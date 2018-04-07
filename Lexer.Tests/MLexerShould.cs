@@ -227,6 +227,16 @@ namespace Lexer.Tests
         }
 
         [Test]
+        public void ParseDoubleQuotedStringLiteralWithEscapedQuotes()
+        {
+            var sut = CreateLexer("\"just a \"\"string\"\"\"");
+            var tokens = sut.ParseAll();
+            Assert.AreEqual(2, tokens.Count);
+            Assert.AreEqual(TokenKind.DoubleQuotedStringLiteral, tokens[0].Kind);
+            Assert.AreEqual("just a \"string\"", tokens[0].PureToken.Value);
+        }
+
+        [Test]
         public void ParseNumberStartingWithDot()
         {
             var sut = CreateLexer(".42");

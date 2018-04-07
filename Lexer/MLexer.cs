@@ -406,14 +406,38 @@ namespace Lexer
         {
             Window.ConsumeChar();
             var n = 0;
-            while (Window.PeekChar(n) != '"')
+            var pieces = new List<string>();
+            while (true)
             {
+                if (Window.PeekChar(n) == '"')
+                {
+                    if (Window.PeekChar(n + 1) == '"')
+                    {
+                        var piece = Window.GetAndConsumeChars(n);
+                        pieces.Add(piece);
+                        Window.ConsumeChar();
+                        Window.ConsumeChar();
+                        pieces.Add("\"");
+                        n = -1;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (IsEolOrEof(Window.PeekChar(n)))
+                {
+                    throw new ParsingException("Unfinished double-quoted string literal.");
+                }
+
                 n++;
             }
 
-            var literal = Window.GetAndConsumeChars(n);
+            var lastPiece = Window.GetAndConsumeChars(n);
+            pieces.Add(lastPiece);
+            var total = string.Join("", pieces);
             Window.ConsumeChar();
-            return PureTokenFactory.CreateDoubleQuotedStringLiteral(literal);
+            return PureTokenFactory.CreateDoubleQuotedStringLiteral(total);
         }
 
         private PureToken ContinueParsingUnquotedStringLiteral()

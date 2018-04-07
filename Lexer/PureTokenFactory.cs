@@ -88,9 +88,14 @@
             return new PureToken(TokenKind.StringLiteral, "'" + EscapeStringLiteral(s) + "'", s, Window.Position);
         }
         
+        private string EscapeDoubleQuotedStringLiteral(string s)
+        {
+            return s.Replace("\"", "\"\"");            
+        }
+
         public PureToken CreateDoubleQuotedStringLiteral(string s)
         {
-            return new PureToken(TokenKind.DoubleQuotedStringLiteral, "\"" + s + "\"", s, Window.Position);
+            return new PureToken(TokenKind.DoubleQuotedStringLiteral, "\"" + EscapeDoubleQuotedStringLiteral(s) + "\"", s, Window.Position);
         }
 
         public PureToken CreateUnquotedStringLiteral(string s)
