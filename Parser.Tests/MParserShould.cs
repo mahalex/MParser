@@ -478,5 +478,18 @@ namespace Parser.Tests
             Assert.IsInstanceOf<FunctionCallExpressionNode>(e.BaseClassNameAndArguments);
             Assert.AreEqual(text, actual.FullText);
         }
+
+        [Test]
+        public void ParseFunctionWithEmptyOutputsList()
+        {
+            var text = "function [] = a(b) end";
+            var sut = CreateParser(text);
+            var actual = sut.ParseStatement();
+            Assert.IsInstanceOf<FunctionDeclarationNode>(actual);
+            var f = (FunctionDeclarationNode) actual;
+            Assert.AreEqual(0, f.OutputDescription.Outputs.Count);
+            Assert.AreEqual(text, actual.FullText);            
+
+        }
     }
 }

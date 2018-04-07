@@ -128,10 +128,9 @@ namespace Parser
         private List<SyntaxNode> ParseFunctionOutputList()
         {
             var outputs = new List<Token>();
-            outputs.Add(EatToken(TokenKind.Identifier));
             while (CurrentToken.Kind != TokenKind.ClosingSquareBracket)
             {
-                if (CurrentToken.Kind == TokenKind.Comma)
+                if (outputs.Count > 0 && CurrentToken.Kind == TokenKind.Comma)
                 {
                     outputs.Add(EatToken());
                 }
