@@ -16,6 +16,11 @@ namespace Parser
 
             return parent;
         }
+
+        private static List<SyntaxNode> RemoveNulls(List<SyntaxNode> children)
+        {
+            return children.Where(x => x != null).ToList();
+        }
         
         public FunctionDeclarationNode FunctionDeclaration(
             TokenNode functionKeyword,
@@ -26,29 +31,19 @@ namespace Parser
             TokenNode end,
             TokenNode semicolonOrComma = null)
         {
-            var children = new List<SyntaxNode> {functionKeyword};
-            if (outputDescription != null)
+            var children = new List<SyntaxNode>
             {
-                children.Add(outputDescription);
-            }
-            children.Add(name);
-            if (inputDescription != null)
-            {
-                children.Add(inputDescription);
-            }
-
-            children.Add(body);
-            if (end != null)
-            {
-                children.Add(end);
-            }
-            if (semicolonOrComma != null)
-            {
-                children.Add(semicolonOrComma);
-            }
+                functionKeyword,
+                outputDescription,
+                name,
+                inputDescription,
+                body,
+                end,
+                semicolonOrComma
+            };
             var result =
                 new FunctionDeclarationNode(
-                    children,
+                    RemoveNulls(children),
                     functionKeyword,
                     outputDescription,
                     name,
@@ -65,12 +60,12 @@ namespace Parser
             TokenNode equalitySign)
         {
             var children = new List<SyntaxNode>(nodes);
-            nodes.Add(equalitySign);
+            children.Add(equalitySign);
             var result = new FunctionOutputDescriptionNode(
-                nodes,
-                nodes
-                    .Where(node => node is TokenNode && ((TokenNode) node).Token.Kind == TokenKind.Identifier)
-                    .Select(node => node as TokenNode)
+                children,
+                children
+                    .Where(node => node is TokenNode tokenNode && tokenNode.Token.Kind == TokenKind.Identifier)
+                    .Select(node => (TokenNode)node)
                     .ToList(),
                 equalitySign
                 );
@@ -84,8 +79,9 @@ namespace Parser
                 nodes,
                 nodes
                     .Where(
-                        node => node is TokenNode && ((TokenNode) node).Token.Kind != TokenKind.Comma
-                    ).ToList());
+                        node => node is TokenNode tokenNode && tokenNode.Token.Kind != TokenKind.Comma
+                    )
+                    .ToList());
             SetParent(result);
             return result;
         }
@@ -127,20 +123,13 @@ namespace Parser
             TokenNode semicolonOrComma = null)
         {
             var children = new List<SyntaxNode> { switchKeyword, switchExpression };
-            if (optionalCommasAfterExpression != null)
-            {
-                children.AddRange(optionalCommasAfterExpression);
-            }
-
+            children.AddRange(optionalCommasAfterExpression);
             children.AddRange(cases);
             children.Add(endKeyword);
-            if (semicolonOrComma != null)
-            {
-                children.Add(semicolonOrComma);
-            }
+            children.Add(semicolonOrComma);
 
             var result = new SwitchStatementNode(
-                children,
+                RemoveNulls(children),
                 switchKeyword,
                 switchExpression,
                 cases,
@@ -162,12 +151,14 @@ namespace Parser
                 caseKeyword,
                 caseIdentifier
             };
-            if (optionalCommasAfterIdentifier != null)
-            {
-                children.AddRange(optionalCommasAfterIdentifier);
-            }
+            children.AddRange(optionalCommasAfterIdentifier);
             children.Add(statementList);
-            var result = new SwitchCaseNode(children, caseKeyword, caseIdentifier, statementList, optionalCommasAfterIdentifier);
+            var result = new SwitchCaseNode(
+                RemoveNulls(children),
+                caseKeyword,
+                caseIdentifier,
+                statementList,
+                optionalCommasAfterIdentifier);
             SetParent(result);
             return result;
         }
@@ -429,19 +420,12 @@ namespace Parser
                 whileKeyword,
                 condition,
             };
-            if (optionalCommasAfterCondition != null)
-            {
-                children.AddRange(optionalCommasAfterCondition);
-            }
-
+            children.AddRange(optionalCommasAfterCondition);
             children.Add(body);
             children.Add(end);
-            if (semicolonOrComma != null)
-            {
-                children.Add(semicolonOrComma);
-            }
+            children.Add(semicolonOrComma);
             var result = new WhileStatementNode(
-                children,
+                RemoveNulls(children),
                 whileKeyword,
                 condition,
                 optionalCommasAfterCondition,
@@ -474,29 +458,14 @@ namespace Parser
                 ifKeyword,
                 condition
             };
-            if (optionalCommasAfterCondition != null)
-            {
-                children.AddRange(optionalCommasAfterCondition);
-            }
-
+            children.AddRange(optionalCommasAfterCondition);
             children.Add(body);
-            if (elseKeyword != null)
-            {
-                children.Add(elseKeyword);
-            }
-
-            if (elseBody != null)
-            {
-                children.Add(elseBody);
-            }
-
-            if (endKeyword != null)
-            {
-                children.Add(endKeyword);
-            }
+            children.Add(elseKeyword);
+            children.Add(elseBody);
+            children.Add(endKeyword);
 
             var result = new IfStatementNode(
-                children,
+                RemoveNulls(children),
                 ifKeyword,
                 condition,
                 optionalCommasAfterCondition,
@@ -540,15 +509,11 @@ namespace Parser
                 forKeyword,
                 forAssignment,
             };
-            if (optionalCommasAfterAssignment != null)
-            {
-                children.AddRange(optionalCommasAfterAssignment);
-            }
-
+            children.AddRange(optionalCommasAfterAssignment);
             children.Add(body);
             children.Add(endKeyword);
             var result = new ForStatementNode(
-                children,
+                RemoveNulls(children),
                 forKeyword,
                 forAssignment,
                 body,

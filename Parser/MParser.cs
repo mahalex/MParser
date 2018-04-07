@@ -711,10 +711,6 @@ namespace Parser
             {
                 commas.Add(Factory.Token(EatToken()));
             }
-            if (commas.Count == 0)
-            {
-                commas = null;
-            }
             var statementList = ParseStatements();
             return Factory.SwitchCase(Factory.Token(caseKeyword), caseId, statementList, commas);
         }
@@ -727,10 +723,6 @@ namespace Parser
             while (CurrentToken.Kind == TokenKind.Comma)
             {
                 commas.Add(Factory.Token(EatToken()));
-            }
-            if (commas.Count == 0)
-            {
-                commas = null;
             }
             var casesList = new List<SwitchCaseNode>();
             while (CurrentToken.Kind == TokenKind.Identifier
@@ -769,11 +761,6 @@ namespace Parser
             {
                 commas.Add(Factory.Token(EatToken()));
             }
-            if (commas.Count == 0)
-            {
-                commas = null;
-            }
-            
             var body = ParseStatements();
             var endKeyword = EatIdentifier("end");
             return Factory.WhileStatement(
@@ -808,10 +795,6 @@ namespace Parser
                    || CurrentToken.Kind == TokenKind.Semicolon)
             {
                 commas.Add(Factory.Token(EatToken()));
-            }
-            if (commas.Count == 0)
-            {
-                commas = null;
             }
             var body = ParseStatements();
             TokenNode elseKeyword = null;
@@ -864,10 +847,6 @@ namespace Parser
                    || CurrentToken.Kind == TokenKind.Semicolon)
             {
                 commas.Add(Factory.Token(EatToken()));
-            }
-            if (commas.Count == 0)
-            {
-                commas = null;
             }
 
             var body = ParseStatements();
