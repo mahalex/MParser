@@ -359,6 +359,10 @@ namespace Lexer
 
             if (success)
             {
+                if (Window.PeekChar(n) == 'i' || Window.PeekChar(n) == 'j')
+                {
+                    n++;
+                }
                 var s = Window.GetAndConsumeChars(n);
                 return PureTokenFactory.CreateNumberLiteral(s);
             }

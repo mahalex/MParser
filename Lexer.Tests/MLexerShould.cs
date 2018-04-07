@@ -261,5 +261,16 @@ namespace Lexer.Tests
                 Assert.Less(1, tokens.Count);
             }
         }
+
+        [TestCase(".42i")]
+        [TestCase("42i")]
+        [TestCase("42e-1i")]
+        public void ParseComplexNumbers(string text)
+        {
+            var sut = CreateLexer(text);
+            var tokens = sut.ParseAll();
+            Assert.AreEqual(2, tokens.Count);
+            Assert.AreEqual(TokenKind.NumberLiteral, tokens[0].Kind);            
+        }
     }
 }
