@@ -27,6 +27,10 @@ namespace Lexer
 
         private Trivia LexComment()
         {
+            if (TokensSinceNewLine == 0 && Window.PeekChar(1) == '{')
+            {
+                return LexMultilineComment();
+            } 
             var n = 1;
             while (!IsEolOrEof(Window.PeekChar(n)))
             {
@@ -34,6 +38,52 @@ namespace Lexer
             }
 
             return new Trivia(TriviaType.Comment, Window.GetAndConsumeChars(n));
+        }
+
+        private Trivia LexMultilineComment()
+        {
+            var n = 2;
+            var metPercentSign = false;
+            var atFirstLine = true;
+            while (true)
+            {
+                var c = Window.PeekChar(n);
+                if (c == '\0')
+                {
+                    throw new ParsingException($"Unexpected end of file while parsing multi-line comment.");
+                }
+
+                if (c == '\n')
+                {
+                    atFirstLine = false;
+                }
+
+                if (atFirstLine && !IsWhitespace(c)) // this is a one-line comment
+                {
+                    while (!IsEolOrEof(Window.PeekChar(n)))
+                    {
+                        n++;
+                    }
+
+                    return new Trivia(TriviaType.Comment, Window.GetAndConsumeChars(n));
+                }
+
+                if (metPercentSign && c == '}')
+                {
+                    return new Trivia(TriviaType.MultiLineComment, Window.GetAndConsumeChars(n+1));
+                }
+
+                if (c == '%')
+                {
+                    metPercentSign = true;
+                }
+                else
+                {
+                    metPercentSign = false;
+                }
+
+                n++;
+            }
         }
 
         private List<Trivia> LexCommentAfterDotDotDot()

@@ -52,8 +52,19 @@
 
         public void ConsumeChars(int n)
         {
+            for (var i = 0; i < n; i++)
+            {
+                if (PeekChar(i) == '\n' || PeekChar(i) == '\r')
+                {
+                    _position.Line++;
+                    _position.Column = 0;
+                }
+                else
+                {
+                    _position.Column++;
+                }
+            }
             Offset += n;
-            _position.Column += n;
         }
 
         public char GetAndConsumeChar()

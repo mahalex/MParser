@@ -4,6 +4,7 @@
     {
         Whitespace,
         NewLine,
-        Comment
+        Comment,
+        MultiLineComment
     }
 }

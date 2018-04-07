@@ -234,5 +234,22 @@ namespace Lexer.Tests
             Assert.AreEqual(2, tokens.Count);
             Assert.AreEqual(TokenKind.NumberLiteral, tokens[0].Kind);
         }
+
+        [TestCase("%{\nabc\n%}", true)]
+        [TestCase("%{ a\nabc\n%}", false)]
+        [TestCase("if %{\nabc\n%}", false)]
+        public void ParseMultilineComments(string text, bool isMultiline)
+        {
+            var sut = CreateLexer(text);
+            var tokens = sut.ParseAll();
+            if (isMultiline)
+            {
+                Assert.AreEqual(1, tokens.Count);
+            }
+            else
+            {
+                Assert.Less(1, tokens.Count);
+            }
+        }
     }
 }
