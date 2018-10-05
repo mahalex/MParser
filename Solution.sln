@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectConsole", "ProjectConsole\ProjectConsole.csproj", "{5025FD8F-0F1A-43E5-A996-7753BC703D62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleDemo", "ConsoleDemo\ConsoleDemo.csproj", "{5025FD8F-0F1A-43E5-A996-7753BC703D62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csproj", "{B20EDC10-E6E6-4430-8527-B95206DEF941}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parser", "Parser\Parser.csproj", "{1B8E5BBC-E5CD-427B-A6C7-F30047AA4A39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser.Tests", "Parser.Tests\Parser.Tests.csproj", "{83008C72-2EFC-41EB-AC8D-023C6AE1709F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parser.Tests", "Parser.Tests\Parser.Tests.csproj", "{7BFEAD86-EAC3-43C8-9388-EBAB377938D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexer", "Lexer\Lexer.csproj", "{1B8E5BBC-E5CD-427B-A6C7-F30047AA4A39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyntaxGenerator", "SyntaxGenerator\SyntaxGenerator.csproj", "{03487753-C1F5-4753-B576-593294ED86D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexer.Tests", "Lexer.Tests\Lexer.Tests.csproj", "{7BFEAD86-EAC3-43C8-9388-EBAB377938D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantics", "Semantics\Semantics.csproj", "{4595633B-7F9A-4771-B348-F12BB9DD7ABC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,6 @@ Global
 		{5025FD8F-0F1A-43E5-A996-7753BC703D62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5025FD8F-0F1A-43E5-A996-7753BC703D62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5025FD8F-0F1A-43E5-A996-7753BC703D62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B20EDC10-E6E6-4430-8527-B95206DEF941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B20EDC10-E6E6-4430-8527-B95206DEF941}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B20EDC10-E6E6-4430-8527-B95206DEF941}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B20EDC10-E6E6-4430-8527-B95206DEF941}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83008C72-2EFC-41EB-AC8D-023C6AE1709F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83008C72-2EFC-41EB-AC8D-023C6AE1709F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83008C72-2EFC-41EB-AC8D-023C6AE1709F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83008C72-2EFC-41EB-AC8D-023C6AE1709F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B8E5BBC-E5CD-427B-A6C7-F30047AA4A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B8E5BBC-E5CD-427B-A6C7-F30047AA4A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B8E5BBC-E5CD-427B-A6C7-F30047AA4A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +31,14 @@ Global
 		{7BFEAD86-EAC3-43C8-9388-EBAB377938D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BFEAD86-EAC3-43C8-9388-EBAB377938D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BFEAD86-EAC3-43C8-9388-EBAB377938D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03487753-C1F5-4753-B576-593294ED86D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03487753-C1F5-4753-B576-593294ED86D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03487753-C1F5-4753-B576-593294ED86D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03487753-C1F5-4753-B576-593294ED86D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4595633B-7F9A-4771-B348-F12BB9DD7ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4595633B-7F9A-4771-B348-F12BB9DD7ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4595633B-7F9A-4771-B348-F12BB9DD7ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4595633B-7F9A-4771-B348-F12BB9DD7ABC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

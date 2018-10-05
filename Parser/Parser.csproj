@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lexer\Lexer.csproj" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Syntax xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Class Name="FileSyntaxNode" BaseClass="SyntaxNode" Kind="File">
+        <Field Type="SyntaxList" Name="statementList" />
+        <Field Type="SyntaxToken" Name="endOfFile" />
+    </Class>
+    <Class Name="FunctionDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="FunctionDeclaration">
+        <Field Type="SyntaxToken" Name="functionKeyword" />
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="SyntaxToken" Name="name" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
+        <Field Type="SyntaxList" Name="body" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="FunctionOutputDescriptionSyntaxNode" BaseClass="SyntaxNode" Kind="FunctionOutputDescription">
+        <Field Type="SyntaxList" Name="outputList" />
+        <Field Type="SyntaxToken" Name="assignmentSign" />
+    </Class>
+    <Class Name="FunctionInputDescriptionSyntaxNode" BaseClass="SyntaxNode" Kind="FunctionInputDescription">
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="SyntaxList" Name="parameterList" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="SwitchStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="SwitchStatement">
+        <Field Type="SyntaxToken" Name="switchKeyword" />
+        <Field Type="ExpressionSyntaxNode" Name="switchExpression" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList&lt;SwitchCaseSyntaxNode&gt;" Name="cases" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="SwitchCaseSyntaxNode" BaseClass="SyntaxNode" Kind="SwitchCase">
+        <Field Type="SyntaxToken" Name="caseKeyword" />
+        <Field Type="ExpressionSyntaxNode" Name="caseIdentifier" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList" Name="body" />
+    </Class>
+    <Class Name="WhileStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="WhileStatement">
+        <Field Type="SyntaxToken" Name="whileKeyword" />
+        <Field Type="ExpressionSyntaxNode" Name="condition" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList" Name="body" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="ElseifClause" BaseClass="SyntaxNode" Kind="ElseifClause">
+        <Field Type="SyntaxToken" Name="elseifKeyword" />
+        <Field Type="ExpressionSyntaxNode" Name="condition" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList" Name="body" />
+    </Class>
+    <Class Name="ElseClause" BaseClass="SyntaxNode" Kind="ElseClause">
+        <Field Type="SyntaxToken" Name="elseKeyword" />
+        <Field Type="SyntaxList" Name="body" />
+    </Class>
+    <Class Name="IfStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="IfStatement">
+        <Field Type="SyntaxToken" Name="ifKeyword" />
+        <Field Type="ExpressionSyntaxNode" Name="condition" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList" Name="body" />
+        <Field Type="SyntaxList&lt;ElseifClause&gt;" Name="elseifClauses" />
+        <Field Type="ElseClause" Name="elseClause" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="ForStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ForStatement">
+        <Field Type="SyntaxToken" Name="forKeyword" />
+        <Field Type="AssignmentExpressionSyntaxNode" Name="assignment" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
+        <Field Type="SyntaxList" Name="body" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="AssignmentExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="AssignmentExpression">
+        <Field Type="ExpressionSyntaxNode" Name="lhs" />
+        <Field Type="SyntaxToken" Name="assignmentSign" />
+        <Field Type="ExpressionSyntaxNode" Name="rhs" />
+    </Class>
+    <Class Name="CatchClauseSyntaxNode" BaseClass="SyntaxNode" Kind="CatchClause">
+        <Field Type="SyntaxToken" Name="catchKeyword" />
+        <Field Type="SyntaxList" Name="catchBody" />
+    </Class>
+    <Class Name="TryCatchStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="TryCatchStatement">
+        <Field Type="SyntaxToken" Name="tryKeyword" />
+        <Field Type="SyntaxList" Name="tryBody" />
+        <Field Type="CatchClauseSyntaxNode" Name="catchClause" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="ExpressionStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ExpressionStatement">
+        <Field Type="ExpressionSyntaxNode" Name="expression" />
+    </Class>
+    <Class Name="EmptyStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="EmptyStatement">
+        <Field Type="SyntaxToken" Name="semicolon" />
+    </Class>
+    <Class Name="EmptyExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="EmptyExpression">
+    </Class>
+    <Class Name="UnaryPrefixOperationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnaryPrefixOperationExpression">
+        <Field Type="SyntaxToken" Name="operation" />
+        <Field Type="ExpressionSyntaxNode" Name="operand" />
+    </Class>
+    <Class Name="CompoundNameSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="CompoundName">
+        <Field Type="SyntaxList" Name="nodes" />
+    </Class>
+    <Class Name="NamedFunctionHandleSyntaxNode" BaseClass="FunctionHandleSyntaxNode" Kind="NamedFunctionHandle">
+        <Field Type="SyntaxToken" Name="atSign" />
+        <Field Type="CompoundNameSyntaxNode" Name="functionName" />
+    </Class>
+    <Class Name="LambdaSyntaxNode" BaseClass="FunctionHandleSyntaxNode" Kind="Lambda">
+        <Field Type="SyntaxToken" Name="atSign" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="input" />
+        <Field Type="ExpressionSyntaxNode" Name="body" />
+    </Class>
+    <Class Name="BinaryOperationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="BinaryOperation">
+        <Field Type="ExpressionSyntaxNode" Name="lhs" />
+        <Field Type="SyntaxToken" Name="operation" />
+        <Field Type="ExpressionSyntaxNode" Name="rhs" />
+    </Class>
+    <Class Name="IdentifierNameSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="IdentifierName">
+        <Field Type="SyntaxToken" Name="name" />
+    </Class>
+    <Class Name="NumberLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="NumberLiteralExpression">
+        <Field Type="SyntaxToken" Name="number" />
+    </Class>
+    <Class Name="StringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="StringLiteralExpression">
+        <Field Type="SyntaxToken" Name="stringToken" />
+    </Class>
+    <Class Name="DoubleQuotedStringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="DoubleQuotedStringLiteralExpression">
+        <Field Type="SyntaxToken" Name="stringToken" />
+    </Class>
+    <Class Name="UnquotedStringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnquotedStringLiteralExpression">
+        <Field Type="SyntaxToken" Name="stringToken" />
+    </Class>
+    <Class Name="ArrayLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ArrayLiteralExpression">
+        <Field Type="SyntaxToken" Name="openingSquareBracket" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="closingSquareBracket" />
+    </Class>
+    <Class Name="CellArrayLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="CellArrayLiteralExpression">
+        <Field Type="SyntaxToken" Name="openingBrace" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="closingBrace" />
+    </Class>
+    <Class Name="ParenthesizedExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ParenthesizedExpression">
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="ExpressionSyntaxNode" Name="expression" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="CellArrayElementAccessExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="CellArrayElementAccess">
+        <Field Type="ExpressionSyntaxNode" Name="expression" />
+        <Field Type="SyntaxToken" Name="openingBrace" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="closingBrace" />
+    </Class>
+    <Class Name="FunctionCallExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="FunctionCall">
+        <Field Type="ExpressionSyntaxNode" Name="functionName" />
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="MemberAccessSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="MemberAccess">
+        <Field Type="SyntaxNode" Name="leftOperand" />
+        <Field Type="SyntaxToken" Name="dot" />
+        <Field Type="SyntaxNode" Name="rightOperand" />
+    </Class>
+    <Class Name="UnaryPostixOperationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnaryPostfixOperationExpression">
+        <Field Type="ExpressionSyntaxNode" Name="operand" />
+        <Field Type="SyntaxToken" Name="operation" />
+    </Class>
+    <Class Name="IndirectMemberAccessSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="IndirectMemberAccess">
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="ExpressionSyntaxNode" Name="expression" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="CommandExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="Command">
+        <Field Type="IdentifierNameSyntaxNode" Name="commandName" />
+        <Field Type="SyntaxList&lt;UnquotedStringLiteralSyntaxNode&gt;" Name="arguments" />
+    </Class>
+    <Class Name="BaseClassInvokationSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ClassInvokation">
+        <Field Type="ExpressionSyntaxNode" Name="methodName" />
+        <Field Type="SyntaxToken" Name="atSign" />
+        <Field Type="ExpressionSyntaxNode" Name="baseClassNameAndArguments" />
+    </Class>
+    <Class Name="AttributeAssignmentSyntaxNode" BaseClass="SyntaxNode" Kind="AttributeAssignment">
+        <Field Type="SyntaxToken" Name="assignmentSign"/>
+        <Field Type="ExpressionSyntaxNode" Name="value" />
+    </Class>
+    <Class Name="AttributeSyntaxNode" BaseClass="SyntaxNode" Kind="Attribute">
+        <Field Type="IdentifierNameSyntaxNode" Name="name" />
+        <Field Type="AttributeAssignmentSyntaxNode" Name="assignment" />
+    </Class>
+    <Class Name="AttributeListSyntaxNode" BaseClass="SyntaxNode" Kind="AttributeList">
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="MethodDefinitionSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="MethodDefinition">
+        <Field Type="SyntaxToken" Name="functionKeyword" />
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="CompoundNameSyntaxNode" Name="name" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
+        <Field Type="SyntaxList" Name="body" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="AbstractMethodDeclarationSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="AbstractMethodDeclaration">
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="CompoundNameSyntaxNode" Name="name" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+    </Class>
+    <Class Name="MethodsListSyntaxNode" BaseClass="SyntaxNode" Kind="MethodsList">
+        <Field Type="SyntaxToken" Name="methodsKeyword" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="SyntaxList" Name="methods" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="PropertiesListSyntaxNode" BaseClass="SyntaxNode" Kind="PropertiesList">
+        <Field Type="SyntaxToken" Name="propertiesKeyword" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="SyntaxList" Name="properties" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="BaseClassListSyntaxNode" BaseClass="SyntaxNode" Kind="BaseClassList">
+        <Field Type="SyntaxToken" Name="lessSign" />
+        <Field Type="SyntaxList" Name="baseClasses" />
+    </Class>
+    <Class Name="ClassDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ClassDeclaration">
+        <Field Type="SyntaxToken" Name="classdefKeyword" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="IdentifierNameSyntaxNode" Name="className" />
+        <Field Type="BaseClassListSyntaxNode" Name="baseClassList" />
+        <Field Type="SyntaxList" Name="nodes" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="EnumerationItemValueSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationItemValue">
+        <Field Type="SyntaxToken" Name="openingBracket" />
+        <Field Type="SyntaxList" Name="values" />
+        <Field Type="SyntaxToken" Name="closingBracket" />
+    </Class>
+    <Class Name="EnumerationItemSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationItem">
+        <Field Type="IdentifierNameSyntaxNode" Name="name" />
+        <Field Type="EnumerationItemValueSyntaxNode" Name="values" />
+        <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
+    </Class>
+    <Class Name="EnumerationListSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationList">
+        <Field Type="SyntaxToken" Name="enumerationKeyword" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="SyntaxList&lt;EnumerationItemSyntaxNode&gt;" Name="items" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="EventsListSyntaxNode" BaseClass="SyntaxNode" Kind="EventsList">
+        <Field Type="SyntaxToken" Name="eventsKeyword" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="SyntaxList" Name="events" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+</Syntax>

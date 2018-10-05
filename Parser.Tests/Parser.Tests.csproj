@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
@@ -9,9 +9,6 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Parser\Parser.csproj">
-      <Project>{B20EDC10-E6E6-4430-8527-B95206DEF941}</Project>
-      <Name>Parser</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Parser\Parser.csproj" />
   </ItemGroup>
 </Project>
