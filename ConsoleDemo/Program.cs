@@ -34,19 +34,14 @@ namespace ConsoleDemo
         private static void ProcessFile(string fileName)
         {
             var text = File.ReadAllText(fileName);
-            //Console.Write($"Parsing {fileName}...");
             var window = new TextWindowWithNull(text, fileName);
             var parser = CreateParser(window);
             var tree = parser.Parse();
-            //Console.WriteLine("Done.");
             var actual = tree.FullText;
             if (actual != text)
             {
                 throw new ApplicationException();
             }
-            //var printer = new PrettyPrinter();
-            //printer.Visit(tree);
-            //Console.ReadKey();
         }
 
         static Program()

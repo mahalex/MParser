@@ -143,7 +143,7 @@ namespace Parser.Internal
             }
             else
             {
-                throw new ParsingException($"Unexpected token {CurrentToken} during parsing function output descritpion at {CurrentPosition}.");
+                throw new ParsingException($"Unexpected token {CurrentToken} during parsing function output description at {CurrentPosition}.");
             }
 
             return Factory.FunctionOutputDescriptionSyntax(builder.ToList(), assignmentSign);
