@@ -20,7 +20,36 @@ namespace Semantics
 
         public bool FindFunction(string name)
         {
-            return Root.Functions.ContainsKey(name);
+            var names = name.Split('.');
+            var currentPackage = Root;
+            for (var i = 0; i < names.Length - 1; i++)
+            {
+                if (!currentPackage.SubPackages.ContainsKey(names[i]))
+                {
+                    return false;
+                }
+
+                currentPackage = currentPackage.SubPackages[names[i]];
+            }
+
+            return currentPackage.Functions.ContainsKey(names[names.Length - 1]);
+        }
+
+        public bool FindClass(string name)
+        {
+            var names = name.Split('.');
+            var currentPackage = Root;
+            for (var i = 0; i < names.Length - 1; i++)
+            {
+                if (!currentPackage.SubPackages.ContainsKey(names[i]))
+                {
+                    return false;
+                }
+
+                currentPackage = currentPackage.SubPackages[names[i]];
+            }
+
+            return currentPackage.Classes.ContainsKey(names[names.Length - 1]);
         }
 
         private void ScanFunction(PackageContext context, string fileName)
@@ -114,10 +143,18 @@ namespace Semantics
             foreach (var subDirectory in subDirectories)
             {
                 var lastName = subDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Last();
+                if (lastName == "specgraph")
+                {
+                    Console.WriteLine("gotcha.");
+                }
                 var packageName = GetPackageNameFromFolder(lastName);
                 if (packageName != null)
                 {
-                    currentContext.SubPackages[packageName] = new PackageContext(packageName);
+                    if (!currentContext.SubPackages.ContainsKey(packageName))
+                    {
+                        currentContext.SubPackages[packageName] = new PackageContext(packageName);
+                    }
+
                     ScanDirectory(currentContext.SubPackages[packageName], subDirectory);
                     continue;
                 }
@@ -125,7 +162,14 @@ namespace Semantics
                 var className = GetClassNameFromFolder(lastName);
                 if (className != null)
                 {
-                    currentContext.Classes[className] = new ClassContext(className);
+                    if (currentContext.Classes.ContainsKey(className))
+                    {
+                        //throw new Exception($"Re-definition of class {className}.");
+                    }
+                    else
+                    {
+                        currentContext.Classes[className] = new ClassContext(className);
+                    }
                     ScanClassDirectory(currentContext.Classes[className], subDirectory);
                     continue;
                 }

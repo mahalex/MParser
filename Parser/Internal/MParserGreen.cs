@@ -11,11 +11,13 @@ namespace Parser.Internal
         private Position CurrentPosition => Pairs[_index].position;
         private SyntaxToken PeekToken(int n) => Pairs[_index + n].token;
         private SyntaxFactory Factory { get; }
+        private List<string> Errors { get; }
 
         public MParserGreen(List<(SyntaxToken, Position)> pairs, SyntaxFactory factory)
         {
             Pairs = pairs;
             Factory = factory;
+            Errors = new List<string>();
         }
 
         private SyntaxToken EatToken()
@@ -30,7 +32,8 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != kind)
             {
-                throw new ParsingException($"Unexpected token \"{token.Text}\" instead of {kind} at {CurrentPosition}.");
+                Errors.Add($"Unexpected token \"{token.Text}\" instead of {kind} at {CurrentPosition}.");
+                return TokenFactory.CreateMissing(kind, null, null);
             }
             _index++;
             return token;
@@ -38,13 +41,7 @@ namespace Parser.Internal
 
         private SyntaxToken EatIdentifier()
         {
-            var token = CurrentToken;
-            if (token.Kind != TokenKind.Identifier)
-            {
-                throw new ParsingException($"Unexpected token \"{token}\" instead of identifier at {CurrentPosition}.");
-            }
-            _index++;
-            return token;
+            return EatToken(TokenKind.Identifier);
         }
 
         private bool IsIdentifier(SyntaxToken token, string s)
@@ -57,12 +54,14 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != TokenKind.Identifier)
             {
-                throw new ParsingException($"Unexpected token \"{token}\" instead of identifier \"{s}\" at {CurrentPosition}.");
+                Errors.Add($"Unexpected token \"{token.Text}\" instead of {TokenKind.Identifier} at {CurrentPosition}.");
+                return TokenFactory.CreateMissing(TokenKind.Identifier, null, null);
             }
 
             if (token.Text != s)
             {
-                throw new ParsingException($"Unexpected identifier \"{token.Text}\" instead of \"{s}\" at {CurrentPosition}.");
+                Errors.Add($"Unexpected token \"{token.Text}\" instead of identifier {s} at {CurrentPosition}.");
+                return TokenFactory.CreateMissing(TokenKind.Identifier, null, null);
             }
 
             _index++;
@@ -143,7 +142,9 @@ namespace Parser.Internal
             }
             else
             {
-                throw new ParsingException($"Unexpected token {CurrentToken} during parsing function output description at {CurrentPosition}.");
+                Errors.Add(
+                    $"Unexpected token {CurrentToken} during parsing function output description at {CurrentPosition}.");
+                return null;
             }
 
             return Factory.FunctionOutputDescriptionSyntax(builder.ToList(), assignmentSign);

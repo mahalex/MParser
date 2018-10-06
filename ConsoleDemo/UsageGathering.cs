@@ -34,6 +34,10 @@ namespace ConsoleDemo
             {
                 Console.WriteLine("found.");
             }
+            else if (_context.FindClass(name))
+            {
+                Console.WriteLine("found class constructor.");
+            }
             else
             {
                 Console.WriteLine("NOT FOUND.");
