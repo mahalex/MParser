@@ -153,11 +153,11 @@ namespace ConsoleDemo
 
         public static void Main(string[] args)
         {
-            ParserDemo();
+            //ParserDemo();
             //SemanticsDemo();
             //ContextDemo();
             //DumbPrinterDemo();
-            //UsageDemo();
+            UsageDemo();
             Console.ReadKey();
         }
     }

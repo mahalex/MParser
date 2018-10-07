@@ -19,7 +19,7 @@ namespace Parser.Internal
         
         public GreenNode(TokenKind kind, int slots)
         {
-            Kind =kind;
+            Kind = kind;
             Slots = slots;
         }
                 
