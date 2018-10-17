@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Parser;
 using ProjectConsole;
 using Semantics;
@@ -40,9 +41,9 @@ namespace ConsoleDemo
             }
         }
 
-        public static void Render(SyntaxNode node)
+        public static void RenderTree(SyntaxTree tree)
         {
-            RenderNode(node, "", true);
+            RenderNode(tree.Root, "", true);
         }
     }
 
@@ -79,15 +80,24 @@ namespace ConsoleDemo
                 function [a, b c] = functionName(d, e, f)
                     a = d + e;
                 end
+%{
+comment
                 ";
             var window = new TextWindowWithNull(text, "noname");
             var parser = CreateParser(window);
             var tree = parser.Parse();
-            TreeRenderer.Render(tree);
+            TreeRenderer.RenderTree(tree);
+            if (tree.Diagnostics.Any())
+            {
+                foreach (var diagnostic in tree.Diagnostics)
+                {
+                    Console.WriteLine($"ERROR: {diagnostic.Message} at position {diagnostic.Span.Start}");
+                }
+            }
             Console.ReadKey();            
         }
 
-        private static FileSyntaxNode GetTree(string fileName)
+        private static SyntaxTree GetTree(string fileName)
         {
             var text = File.ReadAllText(fileName);
             var window = new TextWindowWithNull(text, fileName);
@@ -104,10 +114,11 @@ namespace ConsoleDemo
                 "@table",
                 "table.m");
             var tree = GetTree(fileName);
-            var childNodesAndTokens = tree.GetChildNodesAndTokens();
+            var root = tree.Root;
+            var childNodesAndTokens = root.GetChildNodesAndTokens();
             var node = childNodesAndTokens[0].AsNode();
             var classChildNodesAndTokens = node.GetChildNodesAndTokens();
-            var c = GetClass.FromTree(tree, fileName);
+            var c = GetClass.FromTree(root, fileName);
             Console.WriteLine(c.Name);
             foreach (var m in c.Methods)
             {
@@ -135,7 +146,7 @@ namespace ConsoleDemo
                 "heatmap.m");
             var tree = GetTree(fileName);
             var printer = new DumbWalker(context);
-            printer.Visit(tree);
+            printer.Visit(tree.Root);
         }
 
         public static void UsageDemo()
@@ -148,16 +159,16 @@ namespace ConsoleDemo
                 "heatmap.m");
             var tree = GetTree(fileName);
             var printer = new UsageGathering(context);
-            printer.Visit(tree);
+            printer.Visit(tree.Root);
         }
 
         public static void Main(string[] args)
         {
-            //ParserDemo();
+            ParserDemo();
             //SemanticsDemo();
             //ContextDemo();
             //DumbPrinterDemo();
-            UsageDemo();
+            //UsageDemo();
             Console.ReadKey();
         }
     }

@@ -19,6 +19,8 @@ namespace Parser.Internal
         private int TokensSinceNewLine { get; set; }
         private Stack<TokenKind> TokenStack { get; }
 
+        public DiagnosticsBag Diagnostics { get; } = new DiagnosticsBag();
+
         public MLexerGreen(ITextWindow window)
         {
             Window = window;
@@ -50,10 +52,11 @@ namespace Parser.Internal
                 var c = Window.PeekChar(n);
                 if (c == '\0')
                 {
-                    throw new ParsingException("Unexpected end of file while parsing multi-line comment.");
+                    Diagnostics.ReportUnexpectedEndOfFile(new TextSpan(Window.Position.Offset, 0));
+                    return TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n));
                 }
 
-                if (c == '\n')
+                if (c == '\n' || (c == '\r' && Window.PeekChar(n + 1) == '\n'))
                 {
                     atFirstLine = false;
                 }

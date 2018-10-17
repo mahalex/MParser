@@ -13,7 +13,7 @@
 
         public override char PeekChar(int n)
         {
-            return Offset + n >= Text.Length ? '\0' : base.PeekChar(n);
+            return Position.Offset + n >= Text.Length ? '\0' : base.PeekChar(n);
         }
     }
 }
