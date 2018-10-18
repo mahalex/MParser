@@ -6,22 +6,23 @@
         // SYNTAX TOKENS
 
         None = 0,
+        BadToken = 1,
         // The lexer puts a virtual "end of file" token at the end of the parsed file.
-        EndOfFile = 1,
+        EndOfFile = 2,
         // Identifier: could be a reserved word, a variable name, a class name, etc.
-        Identifier = 2,
+        Identifier = 3,
         // Number literal: 123, 45.678, 2e-5, etc.
-        NumberLiteral = 3,
+        NumberLiteral = 4,
         // String literal: 'abc', '123', etc. The "usual" string literals are single-quoted and are just char arrays.
-        StringLiteral = 4,
+        StringLiteral = 5,
         // Double-quoted string literal: "abc", "123", etc. These are the "new" string literal that are more like strings
         // and less like char arrays (for example, char arrays could be columns instead of rows, or even multi-dimensional).
-        DoubleQuotedStringLiteral = 5,
+        DoubleQuotedStringLiteral = 6,
         // This is for supporting "command statements" like
         // > cd some/+folder/
         // In this example, "some/folder" should be treated as a string literal (for example, "+' there should be a part
         // of it, and not parsed as a binary operator).
-        UnquotedStringLiteral = 6,
+        UnquotedStringLiteral = 7,
         
         // trivia
         

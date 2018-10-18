@@ -76,13 +76,7 @@ namespace ConsoleDemo
         private static void ParserDemo()
         {
             Console.WriteLine("Hello World!");
-            var text = @"
-                function [a, b c] = functionName(d, e, f)
-                    a = d + e;
-                end
-%{
-comment
-                ";
+            var text = @"x = 'abc";
             var window = new TextWindowWithNull(text, "noname");
             var parser = CreateParser(window);
             var tree = parser.Parse();

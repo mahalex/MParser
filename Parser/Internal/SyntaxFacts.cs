@@ -94,6 +94,16 @@ namespace Parser.Internal
             return c == '\n' || c == '\r' || c == '\0';
         }
 
+        public static bool IsEof(char c)
+        {
+            return c == '\0';
+        }
+
+        public static bool IsEol(char c)
+        {
+            return c == '\n' || c == '\r';
+        }
+
         public static bool IsWhitespace(char c)
         {
             return c == ' ' || c == '\t' || c == '\n';

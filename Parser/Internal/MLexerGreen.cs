@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -230,7 +231,7 @@ namespace Parser.Internal
                         }
                         else
                         {
-                            fail = true;
+                            throw new Exception($"Unexpected symbol '{c}' at the beginning of number literal.");
                         }
                         break;
                     case NumberParsingState.DigitsBeforeDot:
@@ -328,7 +329,10 @@ namespace Parser.Internal
 
                 if (fail)
                 {
-                    throw new ParsingException("Error while parsing number.");
+                    var s = Window.GetAndConsumeChars(n);
+                    tokenInfo.Kind = TokenKind.NumberLiteral;
+                    tokenInfo.Text = s;
+                    return false;
                 }
 
                 if (success)
@@ -368,6 +372,7 @@ namespace Parser.Internal
 
         private bool ContinueLexingGeneralStringLiteral(ref TokenInfo tokenInfo, char quote)
         {
+            var status = 0; // no errors
             Window.ConsumeChar();
             var textBuilder = new StringBuilder();
             textBuilder.Append(quote);
@@ -394,9 +399,15 @@ namespace Parser.Internal
                         break;
                     }
                 }
-                if (SyntaxFacts.IsEolOrEof(Window.PeekChar(n)))
+                if (SyntaxFacts.IsEof(Window.PeekChar(n)))
                 {
-                    throw new ParsingException("Unfinished string literal.");
+                    status = 1;
+                    break;
+                }
+                if (SyntaxFacts.IsEol(Window.PeekChar(n)))
+                {
+                    status = 2;
+                    break;
                 }
                 n++;
             }
@@ -404,11 +415,24 @@ namespace Parser.Internal
             var lastPiece = Window.GetAndConsumeChars(n);
             textBuilder.Append(lastPiece);
             valueBuilder.Append(lastPiece);
-            Window.ConsumeChar();
-            textBuilder.Append(quote);
+            switch (status) {
+                case 0:
+                    Window.ConsumeChar();
+                    textBuilder.Append(quote);
+                    break;
+                case 1:
+                    Diagnostics.ReportUnexpectedEndOfFile(new TextSpan(Window.Position.Offset, 1));
+                    break;
+                case 2:
+                    Diagnostics.ReportUnexpectedEOLWhileParsingString(new TextSpan(Window.Position.Offset, 1));
+                    break;
+                default:
+                    throw new Exception($"Unexpected status of parsing string literal: {status}.");
+            }
+
             tokenInfo.Text = textBuilder.ToString();
             tokenInfo.StringValue = valueBuilder.ToString();
-            return true;
+            return status == 0;
         }
 
         private bool ContinueLexingStringLiteral(ref TokenInfo tokenInfo)
@@ -520,7 +544,7 @@ namespace Parser.Internal
                     var parsedNumber = ContinueLexingNumber(ref tokenInfo);
                     if (!parsedNumber)
                     {
-                        throw new ParsingException($"Unexpected character \"{Window.PeekChar()}\" while parsing a number");
+                        Diagnostics.ReportUnexpectedCharacterWhileParsingNumber(new TextSpan(Window.Position.Offset, 1), Window.PeekChar());
                     }
                     return true;
                 case '=':
@@ -542,7 +566,7 @@ namespace Parser.Internal
                         var possiblyNumberToken2 = ContinueLexingNumber(ref tokenInfo);
                         if (!possiblyNumberToken2)
                         {
-                            throw new ParsingException($"Unexpected character \"{Window.PeekChar()}\" while parsing a number");
+                            Diagnostics.ReportUnexpectedCharacterWhileParsingNumber(new TextSpan(Window.Position.Offset, 1), Window.PeekChar());
                         }
 
                         return true;
@@ -732,9 +756,11 @@ namespace Parser.Internal
                     tokenInfo.Kind = TokenKind.EndOfFile;
                     return true;
                 default:
-                    throw new ParsingException(
-                        $"Unknown symbol \"{character}\" at {Window.Position}."
-                        );
+                    Diagnostics.ReportUnknownSymbol(new TextSpan(Window.Position.Offset, 1), character);
+                    Window.ConsumeChar();
+                    tokenInfo.Kind = TokenKind.BadToken;
+                    tokenInfo.Text = character.ToString();
+                    return true;
             }
         }
 

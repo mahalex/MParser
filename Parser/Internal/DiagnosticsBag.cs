@@ -25,6 +25,21 @@ namespace Parser.Internal
             Report(span, "Unexpected end of file.");
         }
 
+        internal void ReportUnexpectedCharacterWhileParsingNumber(TextSpan span, char c)
+        {
+            Report(span, $"Unexpected character '{c}' while parsing a number.");
+        }
+
+        internal void ReportUnexpectedEOLWhileParsingString(TextSpan span)
+        {
+            Report(span, "Unexpected end of line while parsing a string literal.");
+        }
+
+        internal void ReportUnknownSymbol(TextSpan span, char c)
+        {
+            Report(span, $"Unknown symbol '{c}'.");
+        }
+
         public IEnumerator<Diagnostic> GetEnumerator()
         {
             return _diagnostics.GetEnumerator();
