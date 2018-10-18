@@ -48,7 +48,7 @@ namespace Parser.Tests
             var window = new TextWindowWithNull(text, fileName);
             var parser = CreateParser(window);
             var tree = parser.Parse();
-            var actual = tree.FullText;
+            var actual = tree.Root.FullText;
             Assert.That(actual == text);
         }
 

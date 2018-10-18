@@ -17,7 +17,7 @@ namespace Parser.Tests
             var text = "a = b";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var assignment = actual.StatementList[0].AsNode();
+            var assignment = actual.Root.StatementList[0].AsNode();
             Assert.IsInstanceOf<ExpressionStatementSyntaxNode>(assignment);
             Assert.IsInstanceOf<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
@@ -28,7 +28,7 @@ namespace Parser.Tests
             var text = "a = ";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var assignment = actual.StatementList[0].AsNode();
+            var assignment = actual.Root.StatementList[0].AsNode();
             Assert.IsInstanceOf<ExpressionStatementSyntaxNode>(assignment);
             Assert.IsInstanceOf<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
