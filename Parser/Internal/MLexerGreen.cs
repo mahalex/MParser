@@ -445,7 +445,7 @@ namespace Parser.Internal
         private bool ContinueLexingDoubleQuotedStringLiteral(ref TokenInfo tokenInfo)
         {
             ContinueLexingGeneralStringLiteral(ref tokenInfo, '"');
-            tokenInfo.Kind = TokenKind.StringLiteral;
+            tokenInfo.Kind = TokenKind.DoubleQuotedStringLiteral;
             return true;
         }
 
@@ -845,6 +845,13 @@ namespace Parser.Internal
                         leadingTrivia,
                         trailingTrivia);
                 case TokenKind.StringLiteral:
+                    return TokenFactory.CreateTokenWithValueAndTrivia<string>(
+                        tokenInfo.Kind,
+                        tokenInfo.Text,
+                        tokenInfo.StringValue,
+                        leadingTrivia,
+                        trailingTrivia);
+                case TokenKind.DoubleQuotedStringLiteral:
                     return TokenFactory.CreateTokenWithValueAndTrivia<string>(
                         tokenInfo.Kind,
                         tokenInfo.Text,
