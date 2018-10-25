@@ -1,7 +1,7 @@
 ﻿using System;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using Xunit;
 
 namespace Parser.Tests
 {
@@ -49,7 +49,7 @@ namespace Parser.Tests
             var parser = CreateParser(window);
             var tree = parser.Parse();
             var actual = tree.Root.FullText;
-            Assert.That(actual == text);
+            Assert.Equal(text, actual);
         }
 
         private static void ProcessDirectory(string directory)
@@ -72,8 +72,7 @@ namespace Parser.Tests
             }
         }
 
-        [Category("Slow")]
-        [Test]
+        [Fact]
         public void TestEverything()
         {
             ProcessDirectory(BaseDirectory);

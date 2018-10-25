@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace Parser.Tests
 {
@@ -11,26 +11,26 @@ namespace Parser.Tests
             return parser;
         }
         
-        [Test]
+        [Fact]
         public void ParseAssignmentExpression()
         {
             var text = "a = b";
             var sut = GetSut(text);
             var actual = sut.Parse();
             var assignment = actual.Root.StatementList[0].AsNode();
-            Assert.IsInstanceOf<ExpressionStatementSyntaxNode>(assignment);
-            Assert.IsInstanceOf<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
+            Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
+            Assert.IsType<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
 
-        [Test]
+        [Fact]
         public void ParseAssignmentExpression_Incomplete()
         {
             var text = "a = ";
             var sut = GetSut(text);
             var actual = sut.Parse();
             var assignment = actual.Root.StatementList[0].AsNode();
-            Assert.IsInstanceOf<ExpressionStatementSyntaxNode>(assignment);
-            Assert.IsInstanceOf<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
+            Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
+            Assert.IsType<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
     }
 }

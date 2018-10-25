@@ -1,36 +1,35 @@
-using NUnit.Framework;
+using Xunit;
 
 namespace Parser.Tests
 {
-    [TestFixture]
     public class TestWindowShould
     {
-        [Test]
+        [Fact]
         public void ReturnEofGivenEmptyText()
         {
             var sut = new TextWindow("");
-            Assert.IsTrue(sut.IsEof());
+            Assert.True(sut.IsEof());
         }
 
-        [Test]
+        [Fact]
         public void ReturnNotEofGivenNonEmptyText()
         {
             var sut = new TextWindow("Text.");
-            Assert.IsFalse(sut.IsEof());
+            Assert.False(sut.IsEof());
         }
 
-        [Test]
+        [Fact]
         public void ReturnCharsInCorrectOrder()
         {
             var text = "abc";
             var sut = new TextWindow(text);
-            Assert.AreEqual('a', sut.PeekChar());
+            Assert.Equal('a', sut.PeekChar());
             sut.ConsumeChar();
-            Assert.AreEqual('b', sut.PeekChar());
+            Assert.Equal('b', sut.PeekChar());
             sut.ConsumeChar();
-            Assert.AreEqual('c', sut.PeekChar());
+            Assert.Equal('c', sut.PeekChar());
             sut.ConsumeChar();
-            Assert.IsTrue(sut.IsEof());
+            Assert.True(sut.IsEof());
         }
     }
 }
