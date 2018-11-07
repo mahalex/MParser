@@ -158,13 +158,14 @@ namespace Parser.Internal
         private static readonly string[] StringFromKind =
         {
             null, // None = 0,
-            "", // EndOfFile = 1,
-            null, // Identifier = 2,
-            null, // NumberLiteral = 3,
-            null, // StringLiteral = 4,
-            null, // DoubleQuotedStringLiteral = 5,
-            null, // UnquotedStringLiteral = 6
-            null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, // BadToken = 1,
+            null, // EndOfFile = 2,
+            null, // Identifier = 3,
+            null, // NumberLiteral = 4,
+            null, // StringLiteral = 5,
+            null, // DoubleQuotedStringLiteral = 6,
+            null, // UnquotedStringLiteral = 7
+            null, null, null, null, null, null, null, null, null, null, null, null,
             "=", // Assignment = 20,
             "==", // Equality = 21,
             "~=", // Inequality = 22,
@@ -201,7 +202,7 @@ namespace Parser.Internal
             "(", // OpeningBracket = 53,
             ")", // ClosingBracket = 54,
             ".", // Dot = 55,
-            "...", // DotDotDot = 56,
+            null, // DotDotDot = 56, // This is not used at the moment.
             
             "+", // UnaryPlus = 57,
             "-", // UnaryMinus = 58,
@@ -211,7 +212,12 @@ namespace Parser.Internal
         
         public static string GetText(TokenKind kind)
         {
-            return StringFromKind[(int) kind];
+            if ((int) kind < (int) TokenKind.File)
+            {
+                return StringFromKind[(int) kind];
+            }
+
+            return null;
         }
         
         public static bool IsUnaryOperator(TokenKind kind)
@@ -222,6 +228,20 @@ namespace Parser.Internal
                 case TokenKind.Minus:
                 case TokenKind.Not:
                 case TokenKind.QuestionMark:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsUnaryTokenKind(TokenKind kind)
+        {
+            switch (kind)
+            {
+                case TokenKind.UnaryPlus:
+                case TokenKind.UnaryMinus:
+                case TokenKind.UnaryNot:
+                case TokenKind.UnaryQuestionMark:
                     return true;
                 default:
                     return false;

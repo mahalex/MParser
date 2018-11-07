@@ -1,4 +1,5 @@
-﻿using Parser.Internal;
+﻿using System;
+using Parser.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -24,12 +25,22 @@ namespace Parser.Tests
 
         public static IEnumerable<object[]> SingleTokensData()
         {
-            return SingleTokens().Select(pair => new object[] { pair.kind, pair.text });
+            return GetTokens().Select(pair => new object[] { pair.kind, pair.text });
         }
 
-        public static IEnumerable<(TokenKind kind, string text)> SingleTokens()
+        public static IEnumerable<(TokenKind kind, string text)> GetTokens()
         {
-            return new[]
+            var fixedTokens = Enum.GetValues(typeof(TokenKind))
+                .Cast<TokenKind>()
+                .Select(k => (kind: k, text: SyntaxFacts.GetText(k)))
+                .Where(t => !(t.text is null))
+                .Where(t => !(SyntaxFacts.IsUnaryTokenKind(t.kind)
+                              || SyntaxFacts.IsOpeningToken(t.kind)
+                              || SyntaxFacts.IsClosingToken(t.kind)
+                              || t.kind == TokenKind.Transpose));
+            
+            
+            var dynamicTokens = new[]
             {
                 (TokenKind.Identifier, "a"),
                 (TokenKind.Identifier, "abc"),
@@ -39,44 +50,9 @@ namespace Parser.Tests
                 (TokenKind.NumberLiteral, "14.5e-3"),
                 (TokenKind.NumberLiteral, "3.14e8"),
                 (TokenKind.StringLiteral, "'what is that'"),
-                (TokenKind.DoubleQuotedStringLiteral, "\"Another ' string\""),
-
-                (TokenKind.Assignment, "="),
-                (TokenKind.Equality, "=="),
-                (TokenKind.Inequality, "~="),
-                (TokenKind.LogicalAnd, "&&"),
-                (TokenKind.LogicalOr, "||"),
-                (TokenKind.BitwiseAnd, "&"),
-                (TokenKind.BitwiseOr, "|"),
-                (TokenKind.Less, "<"),
-                (TokenKind.LessOrEqual, "<="),
-                (TokenKind.Greater, ">"),
-                (TokenKind.GreaterOrEqual, ">="),
-                (TokenKind.Not, "~"),
-                (TokenKind.Plus, "+"),
-                (TokenKind.Minus, "-"),
-                (TokenKind.Multiply, "*"),
-                (TokenKind.Divide, "/"),
-                (TokenKind.Power, "^"),
-                (TokenKind.Backslash, "\\"),
-                (TokenKind.DotMultiply, ".*"),
-                (TokenKind.DotDivide, "./"),
-                (TokenKind.DotPower, ".^"),
-                (TokenKind.DotBackslash, ".\\"),
-                (TokenKind.DotTranspose, ".'"),
-                (TokenKind.At, "@"),
-                (TokenKind.Colon, ":"),
-                (TokenKind.QuestionMark, "?"),
-                (TokenKind.Comma, ","),
-                (TokenKind.Semicolon, ";"),
-                //(TokenKind.OpeningBrace, "{"),
-                //(TokenKind.ClosingBrace, "}"),
-                //(TokenKind.OpeningSquareBracket, "["),
-                //(TokenKind.ClosingSquareBracket, "]"),
-                //(TokenKind.OpeningBracket, "("),
-                //(TokenKind.ClosingBracket, ")"),
-                (TokenKind.Dot, "."),
+                (TokenKind.DoubleQuotedStringLiteral, "\"Another ' string\"")
             };
+            return fixedTokens.Concat(dynamicTokens);
         }
     }
 }
