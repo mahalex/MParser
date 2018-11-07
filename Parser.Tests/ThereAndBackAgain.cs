@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Parser.Tests
@@ -42,7 +43,9 @@ namespace Parser.Tests
             return new MParser(window);
         }
 
-        private static void ProcessFile(string fileName)
+        [Theory]
+        [MemberData(nameof(FilesData))]
+        public void TestFile(string fileName)
         {
             var text = File.ReadAllText(fileName);
             var window = new TextWindowWithNull(text, fileName);
@@ -51,31 +54,39 @@ namespace Parser.Tests
             var actual = tree.Root.FullText;
             Assert.Equal(text, actual);
         }
-
-        private static void ProcessDirectory(string directory)
+        
+        public static IEnumerable<object[]> FilesData()
         {
-            var files = Directory.GetFiles(directory, "*.m");
-            foreach (var file in files)
+            return Files().Select(fileName => new object[] { fileName });
+        }
+
+        public static IEnumerable<string> Files()
+        {
+            return Files(BaseDirectory);
+        }
+        
+        public static IEnumerable<string> Files(string path)
+        {
+            var fileNames = Directory.GetFiles(path, "*.m");
+            foreach (var fileName in fileNames)
             {
-                var relativePath = Path.GetRelativePath(BaseDirectory, file);
+                var relativePath = Path.GetRelativePath(BaseDirectory, fileName);
                 if (SkipFiles.Contains(relativePath))
                 {
                     continue;
                 }
-                ProcessFile(file);
+
+                yield return fileName;
             }
 
-            var subDirectories = Directory.GetDirectories(directory);
+            var subDirectories = Directory.GetDirectories(path);
             foreach (var subDirectory in subDirectories)
             {
-                ProcessDirectory(subDirectory);
+                foreach (var fileName in Files(subDirectory))
+                {
+                    yield return fileName;
+                }
             }
-        }
-
-        [Fact]
-        public void TestEverything()
-        {
-            ProcessDirectory(BaseDirectory);
         }
     }
 }
