@@ -349,6 +349,7 @@ namespace Parser.Internal
                     case NumberParsingState.DigitsBeforeDot:
                     case NumberParsingState.DigitsAfterDot:
                     case NumberParsingState.DigitsAfterE:
+                    case NumberParsingState.AfterDot:
                         success = true;
                         break;
                 }

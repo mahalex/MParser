@@ -23,9 +23,25 @@ namespace Parser.Tests
             Assert.Equal(kind, token.Kind);
         }
 
+        [Theory]
+        [MemberData(nameof(PairTokensData))]
+        public void MLexerGreen_Parses_PairOfTokens(TokenKind kind1, string text1, TokenKind kind2, string text2)
+        {
+            var text = text1 + text2;
+            var tokens = ParseText(text).ToArray();
+            Assert.Equal(2, tokens.Length);
+            Assert.Equal(kind1, tokens[0].Kind);
+            Assert.Equal(kind2, tokens[1].Kind);
+        }
+
         public static IEnumerable<object[]> SingleTokensData()
         {
             return GetTokens().Select(pair => new object[] { pair.kind, pair.text });
+        }
+
+        public static IEnumerable<object[]> PairTokensData()
+        {
+            return GetPairsOfTokens().Select(data => new object[] {data.kind1, data.text1, data.kind2, data.text2});
         }
 
         public static IEnumerable<(TokenKind kind, string text)> GetTokens()
@@ -53,6 +69,149 @@ namespace Parser.Tests
                 (TokenKind.DoubleQuotedStringLiteral, "\"Another ' string\"")
             };
             return fixedTokens.Concat(dynamicTokens);
+        }
+
+        public static IEnumerable<(TokenKind kind1, string text1, TokenKind kind2, string text2)> GetPairsOfTokens()
+        {
+            foreach (var token1 in GetTokens())
+            {
+                foreach (var token2 in GetTokens())
+                {
+                    if (!RequiresSeparator(token1.kind, token2.kind))
+                    {
+                        yield return (token1.kind, token1.text, token2.kind, token2.text);
+                    }
+                }
+            }
+        }
+
+        private static bool RequiresSeparator(TokenKind kind1, TokenKind kind2)
+        {
+            if (kind1 == TokenKind.Less && kind2 == TokenKind.Equality)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Less && kind2 == TokenKind.Assignment)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Greater && kind2 == TokenKind.Equality)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Greater && kind2 == TokenKind.Assignment)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Not && kind2 == TokenKind.Assignment)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Not && kind2 == TokenKind.Equality)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Assignment && kind2 == TokenKind.Assignment)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Assignment && kind2 == TokenKind.Equality)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.BitwiseAnd && kind2 == TokenKind.LogicalAnd)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.BitwiseAnd && kind2 == TokenKind.BitwiseAnd)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.BitwiseOr && kind2 == TokenKind.LogicalOr)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.BitwiseOr && kind2 == TokenKind.BitwiseOr)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Multiply)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Divide)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Backslash)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Power)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.NumberLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.NumberLiteral && kind2 == TokenKind.Dot)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Dot && kind2 == TokenKind.StringLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.NumberLiteral && kind2 == TokenKind.NumberLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.StringLiteral && kind2 == TokenKind.StringLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.DoubleQuotedStringLiteral && kind2 == TokenKind.DoubleQuotedStringLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.Identifier)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.NumberLiteral)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.StringLiteral)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
