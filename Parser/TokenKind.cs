@@ -8,114 +8,115 @@
         None = 0,
         BadToken = 1,
         // The lexer puts a virtual "end of file" token at the end of the parsed file.
-        EndOfFile = 2,
+        EndOfFileToken = 2,
         // Identifier: could be a reserved word, a variable name, a class name, etc.
-        Identifier = 3,
+        IdentifierToken = 3,
         // Number literal: 123, 45.678, 2e-5, etc.
-        NumberLiteral = 4,
+        NumberLiteralToken = 4,
         // String literal: 'abc', '123', etc. The "usual" string literals are single-quoted and are just char arrays.
-        StringLiteral = 5,
+        StringLiteralToken = 5,
         // Double-quoted string literal: "abc", "123", etc. These are the "new" string literal that are more like strings
         // and less like char arrays (for example, char arrays could be columns instead of rows, or even multi-dimensional).
-        DoubleQuotedStringLiteral = 6,
+        DoubleQuotedStringLiteralToken = 6,
         // This is for supporting "command statements" like
         // > cd some/+folder/
         // In this example, "some/folder" should be treated as a string literal (for example, "+' there should be a part
         // of it, and not parsed as a binary operator).
-        UnquotedStringLiteral = 7,
+        UnquotedStringLiteralToken = 7,
         
         // trivia
         
         // Spaces, tabs, etc.
-        Whitespace = 10,
+        WhitespaceToken = 10,
         // New line characters.
-        Newline = 11,
+        NewlineToken = 11,
         // There are three types of comments:
         // * comments starting with % and lasting till the end of the line;
         // * comments starting with %{ and ending with %}, possibly spanning several lines;
         // * comments starting with ... and lasting till the end of the line.
         // At the moment, this token is used to accomodate all of them, so the other two
         // (MultilineComment = 13 and DotDotDot = 56 are not used).
-        Comment = 12,
+        CommentToken = 12,
         // Comments starting with %{ and ending with %}, possibly spanning several lines. Not used, see Comment = 12.
-        MultilineComment = 13,
+        MultilineCommentToken = 13,
         
         // operators
 
         // =
-        Assignment = 20,
+        EqualsToken = 20,
         // ==
-        Equality = 21,
+        EqualsEqualsToken = 21,
         // ~=
-        Inequality = 22,
+        TildeEqualsToken = 22,
         // &&
-        LogicalAnd = 23,
+        AmpersandAmpersandToken = 23,
         // ||
-        LogicalOr = 24,
+        PipePipeToken = 24,
         // &
-        BitwiseAnd = 25,
+        AmpersandToken = 25,
         // |
-        BitwiseOr = 26,
+        PipeToken = 26,
         // <
-        Less = 27,
+        LessToken = 27,
         // <=
-        LessOrEqual = 28,
+        LessOrEqualsToken = 28,
         // >
-        Greater = 29,
+        GreaterToken = 29,
         // >=
-        GreaterOrEqual = 30,
+        GreaterOrEqualsToken = 30,
         // ~
-        Not = 31,
+        TildeToken = 31,
         // +
-        Plus = 32,
+        PlusToken = 32,
         // -
-        Minus = 33,
+        MinusToken = 33,
         // *
-        Multiply = 34,
+        StarToken = 34,
         // /
-        Divide = 35,
+        SlashToken = 35,
         // ^
-        Power = 36,
+        CaretToken = 36,
         // \
-        Backslash = 37,
+        BackslashToken = 37,
         // ' (this is the same as starting string literal; we'll have some fun distinguishing those).
-        Transpose = 38,
+        ApostropheToken = 38,
         // .*
-        DotMultiply = 39,
+        DotStarToken = 39,
         // ./
-        DotDivide = 40,
+        DotSlashToken = 40,
         // .^
-        DotPower = 41,
+        DotCaretToken = 41,
         // .\
-        DotBackslash = 42,
+        DotBackslashToken = 42,
         // .'
-        DotTranspose = 43,
+        DotApostropheToken = 43,
         // @
-        At = 44,
+        AtToken = 44,
         // :
-        Colon = 45,
+        ColonToken = 45,
         // ?
-        QuestionMark = 46,
+        QuestionToken = 46,
         // ,
-        Comma = 47,
+        CommaToken = 47,
         // ;
-        Semicolon = 48,
+        SemicolonToken = 48,
         // {
-        OpeningBrace = 49,
+        OpenBraceToken = 49,
         // }
-        ClosingBrace = 50,
+        CloseBraceToken = 50,
         // [
-        OpeningSquareBracket = 51,
+        OpenSquareBracketToken = 51,
         // ]
-        ClosingSquareBracket = 52,
+        CloseSquareBracketToken = 52,
         // (
-        OpeningBracket = 53,
+        OpenParenthesisToken = 53,
         // )
-        ClosingBracket = 54,
+        CloseParenthesisToken = 54,
         // .
-        Dot = 55,
+        DotToken = 55,
         // Comments starting with ... and lasting till the end of the line.  Not used, see Comment = 12.
-        DotDotDot = 56,
+        DotDotDotToken = 56,
+
         // Unary tokens are not recognized during lexing; they are contextually recognized while parsing.
         UnaryPlus = 57,
         UnaryMinus = 58,

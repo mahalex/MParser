@@ -41,27 +41,27 @@ namespace Parser.Internal
 
         private SyntaxToken EatIdentifier()
         {
-            return EatToken(TokenKind.Identifier);
+            return EatToken(TokenKind.IdentifierToken);
         }
 
         private bool IsIdentifier(SyntaxToken token, string s)
         {
-            return token.Kind == TokenKind.Identifier && token.Text == s;
+            return token.Kind == TokenKind.IdentifierToken && token.Text == s;
         }
 
         private SyntaxToken EatIdentifier(string s)
         {
             var token = CurrentToken;
-            if (token.Kind != TokenKind.Identifier)
+            if (token.Kind != TokenKind.IdentifierToken)
             {
-                Errors.Add($"Unexpected token \"{token.Text}\" instead of {TokenKind.Identifier} at {CurrentPosition}.");
-                return TokenFactory.CreateMissing(TokenKind.Identifier, null, null);
+                Errors.Add($"Unexpected token \"{token.Text}\" instead of {TokenKind.IdentifierToken} at {CurrentPosition}.");
+                return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
             if (token.Text != s)
             {
                 Errors.Add($"Unexpected token \"{token.Text}\" instead of identifier {s} at {CurrentPosition}.");
-                return TokenFactory.CreateMissing(TokenKind.Identifier, null, null);
+                return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
             _index++;
@@ -71,7 +71,7 @@ namespace Parser.Internal
         private SyntaxToken PossiblyEatIdentifier(string s)
         {
             var token = CurrentToken;
-            if (token.Kind == TokenKind.Identifier && token.Text == s)
+            if (token.Kind == TokenKind.IdentifierToken && token.Text == s)
             {
                 return EatToken();
             }
@@ -82,13 +82,13 @@ namespace Parser.Internal
         private SyntaxToken EatPossiblyMissingIdentifier(string s)
         {
             var token = CurrentToken;
-            if (token.Kind == TokenKind.Identifier && token.Text == s)
+            if (token.Kind == TokenKind.IdentifierToken && token.Text == s)
             {
                 return EatToken();
             }
 
             return TokenFactory.CreateMissing(
-                TokenKind.Identifier,
+                TokenKind.IdentifierToken,
                 new List<SyntaxTrivia>(),
                 new List<SyntaxTrivia>());
         }
@@ -97,15 +97,15 @@ namespace Parser.Internal
         {
             var outputs = new SyntaxListBuilder();
             var firstToken = true;
-            while (CurrentToken.Kind != TokenKind.ClosingSquareBracket)
+            while (CurrentToken.Kind != TokenKind.CloseSquareBracketToken)
             {
-                if (!firstToken && CurrentToken.Kind == TokenKind.Comma)
+                if (!firstToken && CurrentToken.Kind == TokenKind.CommaToken)
                 {
                     outputs.Add(EatToken());
                 }
 
                 firstToken = false;
-                outputs.Add(Factory.IdentifierNameSyntax(EatToken(TokenKind.Identifier)));
+                outputs.Add(Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken)));
             }
 
             return outputs.ToList();
@@ -116,19 +116,19 @@ namespace Parser.Internal
             SyntaxToken assignmentSign;
             var builder = new SyntaxListBuilder();
             
-            if (CurrentToken.Kind == TokenKind.Identifier)
+            if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
-                if (PeekToken(1).Kind == TokenKind.Assignment)
+                if (PeekToken(1).Kind == TokenKind.EqualsToken)
                 {
                     builder.Add(Factory.IdentifierNameSyntax(EatToken()));
-                    assignmentSign = EatToken(TokenKind.Assignment);
+                    assignmentSign = EatToken(TokenKind.EqualsToken);
                 }
                 else
                 {
                     return null;
                 }
             }
-            else if (CurrentToken.Kind == TokenKind.OpeningSquareBracket)
+            else if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken)
             {
                 builder.Add(EatToken());
                 var outputs = ParseFunctionOutputList();
@@ -137,8 +137,8 @@ namespace Parser.Internal
                     builder.AddRange(outputs);
                 }
 
-                builder.Add(EatToken(TokenKind.ClosingSquareBracket));
-                assignmentSign = EatToken(TokenKind.Assignment);
+                builder.Add(EatToken(TokenKind.CloseSquareBracketToken));
+                assignmentSign = EatToken(TokenKind.EqualsToken);
             }
             else
             {
@@ -154,25 +154,25 @@ namespace Parser.Internal
         {
             var builder = new SyntaxListBuilder();
             var firstToken = true;
-            while (CurrentToken.Kind != TokenKind.ClosingBracket)
+            while (CurrentToken.Kind != TokenKind.CloseParenthesisToken)
             {
                 if (!firstToken)
                 {
-                    builder.Add(EatToken(TokenKind.Comma));
+                    builder.Add(EatToken(TokenKind.CommaToken));
                 }
                 else
                 {
                     firstToken = false;
                 }
 
-                if (CurrentToken.Kind == TokenKind.Not)
+                if (CurrentToken.Kind == TokenKind.TildeToken)
                 {
                     var notToken = EatToken();
                     builder.Add(notToken);
                 }
                 else
                 {
-                    var identifierToken = EatToken(TokenKind.Identifier);
+                    var identifierToken = EatToken(TokenKind.IdentifierToken);
                     builder.Add(Factory.IdentifierNameSyntax(identifierToken));
                 }
             }
@@ -182,11 +182,11 @@ namespace Parser.Internal
 
         private FunctionInputDescriptionSyntaxNode ParseFunctionInputDescription()
         {
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
-                var openingBracket = EatToken(TokenKind.OpeningBracket);
+                var openingBracket = EatToken(TokenKind.OpenParenthesisToken);
                 var parameterList = ParseParameterList();
-                var closingBracket = EatToken(TokenKind.ClosingBracket);
+                var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                 return Factory.FunctionInputDescriptionSyntax(
                     openingBracket,
                     parameterList,
@@ -202,7 +202,7 @@ namespace Parser.Internal
         {
             var functionKeyword = EatIdentifier("function");
             var outputDescription = ParseFunctionOutputDescription();
-            var name = EatToken(TokenKind.Identifier);
+            var name = EatToken(TokenKind.IdentifierToken);
             var inputDescription = ParseFunctionInputDescription();
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
@@ -236,9 +236,9 @@ namespace Parser.Internal
 
         private ArrayLiteralExpressionSyntaxNode ParseArrayLiteral()
         {
-            var openingSquareBracket = EatToken(TokenKind.OpeningSquareBracket);
-            var elements = ParseArrayElementList(TokenKind.ClosingSquareBracket);
-            var closingSquareBracket = EatToken(TokenKind.ClosingSquareBracket);
+            var openingSquareBracket = EatToken(TokenKind.OpenSquareBracketToken);
+            var elements = ParseArrayElementList(TokenKind.CloseSquareBracketToken);
+            var closingSquareBracket = EatToken(TokenKind.CloseSquareBracketToken);
             return Factory.ArrayLiteralExpressionSyntax(
                 openingSquareBracket,
                 elements,
@@ -247,9 +247,9 @@ namespace Parser.Internal
 
         private CellArrayLiteralExpressionSyntaxNode ParseCellArrayLiteral()
         {
-            var openingBrace = EatToken(TokenKind.OpeningBrace);
-            var elements = ParseArrayElementList(TokenKind.ClosingBrace);
-            var closingBrace = EatToken(TokenKind.ClosingBrace);
+            var openingBrace = EatToken(TokenKind.OpenBraceToken);
+            var elements = ParseArrayElementList(TokenKind.CloseBraceToken);
+            var closingBrace = EatToken(TokenKind.CloseBraceToken);
             return Factory.CellArrayLiteralExpressionSyntax(
                 openingBrace,
                 elements,
@@ -265,8 +265,8 @@ namespace Parser.Internal
             {
                 if (!firstToken)
                 {
-                    if (CurrentToken.Kind == TokenKind.Comma
-                        || CurrentToken.Kind == TokenKind.Semicolon)
+                    if (CurrentToken.Kind == TokenKind.CommaToken
+                        || CurrentToken.Kind == TokenKind.SemicolonToken)
                     {
                         builder.Add(EatToken());
                     }
@@ -292,28 +292,28 @@ namespace Parser.Internal
             ExpressionSyntaxNode expression = null;
             switch (token.Kind)
             {
-                case TokenKind.Identifier:
+                case TokenKind.IdentifierToken:
                     expression = Factory.IdentifierNameSyntax(EatToken());
                     break;
-                case TokenKind.NumberLiteral:
+                case TokenKind.NumberLiteralToken:
                     expression = Factory.NumberLiteralSyntax(EatToken());
                     break;
-                case TokenKind.StringLiteral:
+                case TokenKind.StringLiteralToken:
                     expression = Factory.StringLiteralSyntax(EatToken());
                     break;
-                case TokenKind.DoubleQuotedStringLiteral:
+                case TokenKind.DoubleQuotedStringLiteralToken:
                     expression = Factory.DoubleQuotedStringLiteralSyntax(EatToken());
                     break;
-                case TokenKind.OpeningSquareBracket:
+                case TokenKind.OpenSquareBracketToken:
                     expression = ParseArrayLiteral();
                     break;
-                case TokenKind.OpeningBrace:
+                case TokenKind.OpenBraceToken:
                     expression = ParseCellArrayLiteral();
                     break;
-                case TokenKind.Colon:
+                case TokenKind.ColonToken:
                     expression = Factory.EmptyExpressionSyntax();
                     break;
-                case TokenKind.OpeningBracket:
+                case TokenKind.OpenParenthesisToken:
                     expression = ParseParenthesizedExpression();
                     break;
             }
@@ -332,14 +332,14 @@ namespace Parser.Internal
                 var token = CurrentToken;
                 switch (token.Kind)
                 {
-                    case TokenKind.OpeningBrace: // cell array element access
+                    case TokenKind.OpenBraceToken: // cell array element access
                         if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
                         {
                             return expression;
                         }
                         var openingBrace = EatToken();
-                        var indices = ParseArrayElementList(TokenKind.ClosingBrace);
-                        var closingBrace = EatToken(TokenKind.ClosingBrace);
+                        var indices = ParseArrayElementList(TokenKind.CloseBraceToken);
+                        var closingBrace = EatToken(TokenKind.CloseBraceToken);
                         expression = Factory.CellArrayElementAccessExpressionSyntax(
                             expression,
                             openingBrace,
@@ -347,21 +347,21 @@ namespace Parser.Internal
                             closingBrace
                         );
                         break;
-                    case TokenKind.OpeningBracket: // function call
+                    case TokenKind.OpenParenthesisToken: // function call
                         if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
                         {
                             return expression;
                         }
                         var openingBracket = EatToken();
                         var parameters = ParseFunctionCallParameterList();
-                        var closingBracket = EatToken(TokenKind.ClosingBracket);
+                        var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                         expression = Factory.FunctionCallExpressionSyntax(
                             expression,
                             openingBracket,
                             parameters,
                             closingBracket);
                         break;
-                    case TokenKind.Dot: // member access
+                    case TokenKind.DotToken: // member access
                         if (expression is IdentifierNameSyntaxNode
                             || expression is MemberAccessSyntaxNode
                             || expression is FunctionCallExpressionSyntaxNode
@@ -378,14 +378,14 @@ namespace Parser.Internal
                         }
 
                         break;
-                    case TokenKind.Transpose:
-                    case TokenKind.DotTranspose:
+                    case TokenKind.ApostropheToken:
+                    case TokenKind.DotApostropheToken:
                         var operation = EatToken();
                         expression = Factory.UnaryPostixOperationExpressionSyntax(expression, operation);
                         break;
-                    case TokenKind.UnquotedStringLiteral:
+                    case TokenKind.UnquotedStringLiteralToken:
                         return ParseCommandExpression(expression);
-                    case TokenKind.At:
+                    case TokenKind.AtToken:
                         if (expression.TrailingTrivia.Any())
                         {
                             return expression;
@@ -402,7 +402,7 @@ namespace Parser.Internal
             if (expression is IdentifierNameSyntaxNode idNameNode)
             {
                 var builder = new SyntaxListBuilder<UnquotedStringLiteralSyntaxNode>();
-                while (CurrentToken.Kind == TokenKind.UnquotedStringLiteral)
+                while (CurrentToken.Kind == TokenKind.UnquotedStringLiteralToken)
                 {
                     builder.Add(Factory.UnquotedStringLiteralSyntax(EatToken()));
                 }
@@ -433,15 +433,15 @@ namespace Parser.Internal
 
         private ExpressionSyntaxNode ParseMemberAccess()
         {
-            if (CurrentToken.Kind == TokenKind.Identifier)
+            if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
                 return Factory.IdentifierNameSyntax(EatToken());
             }
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 var openingBracket = EatToken();
                 var indirectMember = ParseExpression();
-                var closingBracket = EatToken(TokenKind.ClosingBracket);
+                var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                 return Factory.IndirectMemberAccessSyntax(
                     openingBracket,
                     indirectMember,
@@ -454,11 +454,11 @@ namespace Parser.Internal
         {
             var builder = new SyntaxListBuilder();
             var firstToken = true;
-            while (CurrentToken.Kind != TokenKind.ClosingBracket)
+            while (CurrentToken.Kind != TokenKind.CloseParenthesisToken)
             {
                 if (!firstToken)
                 {
-                    builder.Add(EatToken(TokenKind.Comma));
+                    builder.Add(EatToken(TokenKind.CommaToken));
                 }
                 else
                 {
@@ -473,9 +473,9 @@ namespace Parser.Internal
 
         private ParenthesizedExpressionSyntaxNode ParseParenthesizedExpression()
         {
-            var openParen = EatToken(TokenKind.OpeningBracket);
+            var openParen = EatToken(TokenKind.OpenParenthesisToken);
             var expression = ParseExpression();
-            var closeParen = EatToken(TokenKind.ClosingBracket);
+            var closeParen = EatToken(TokenKind.CloseParenthesisToken);
             return Factory.ParenthesizedExpressionSyntax(
                 openParen,
                 expression,
@@ -484,16 +484,16 @@ namespace Parser.Internal
 
         private CompoundNameSyntaxNode ParseCompoundName()
         {
-            var lastToken = EatToken(TokenKind.Identifier);
+            var lastToken = EatToken(TokenKind.IdentifierToken);
             var firstName = lastToken;
             var builder = new SyntaxListBuilder();
             builder.Add(firstName);
-            while (CurrentToken.Kind == TokenKind.Dot
+            while (CurrentToken.Kind == TokenKind.DotToken
                    && !lastToken.TrailingTrivia.Any())
             {
                 var dot = EatToken();
                 builder.Add(dot);
-                lastToken = EatToken(TokenKind.Identifier);
+                lastToken = EatToken(TokenKind.IdentifierToken);
                 builder.Add(lastToken);
             }
 
@@ -503,14 +503,14 @@ namespace Parser.Internal
         private FunctionHandleSyntaxNode ParseFunctionHandle()
         {
             var atSign = EatToken();
-            if (CurrentToken.Kind == TokenKind.Identifier)
+            if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
                 var compoundName = ParseCompoundName();
                 return Factory.NamedFunctionHandleSyntax(
                     atSign,
                     compoundName);
             }
-            else if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            else if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 var inputs = ParseFunctionInputDescription();
                 var body = ParseExpression();
@@ -532,7 +532,7 @@ namespace Parser.Internal
                 var operand = ParseSubExpression(options, newPrecedence);
                 if (operand == null)
                 {
-                    if (options.ParsingArrayElements && operation.Kind == TokenKind.Not)
+                    if (options.ParsingArrayElements && operation.Kind == TokenKind.TildeToken)
                     {
                         operand = Factory.EmptyExpressionSyntax();
                     }
@@ -543,7 +543,7 @@ namespace Parser.Internal
                 }
                 lhs = Factory.UnaryPrefixOperationExpressionSyntax(operation, operand);
             }
-            else if (CurrentToken.Kind == TokenKind.At)
+            else if (CurrentToken.Kind == TokenKind.AtToken)
             {
                 return ParseFunctionHandle();
             }
@@ -570,11 +570,11 @@ namespace Parser.Internal
 
                     EatToken();
                     var rhs = ParseSubExpression(options, newPrecedence);
-                    if (rhs == null && token.Kind == TokenKind.Colon) // for parsing things like a{:}
+                    if (rhs == null && token.Kind == TokenKind.ColonToken) // for parsing things like a{:}
                     {
                         rhs = Factory.EmptyExpressionSyntax();
                     }
-                    if (token.Kind == TokenKind.Assignment)
+                    if (token.Kind == TokenKind.EqualsToken)
                     {
                         lhs = Factory.AssignmentExpressionSyntax(lhs, token, rhs);
                     }
@@ -595,7 +595,7 @@ namespace Parser.Internal
         private SyntaxList<SyntaxToken> ParseOptionalCommas()
         {
             var builder = new SyntaxListBuilder<SyntaxToken>();
-            while (CurrentToken.Kind == TokenKind.Comma)
+            while (CurrentToken.Kind == TokenKind.CommaToken)
             {
                 builder.Add(EatToken());
             }
@@ -606,8 +606,8 @@ namespace Parser.Internal
         private SyntaxList<SyntaxToken> ParseOptionalSemicolonsOrCommas()
         {
             var builder = new SyntaxListBuilder<SyntaxToken>();
-            while (CurrentToken.Kind == TokenKind.Comma
-                   || CurrentToken.Kind == TokenKind.Semicolon)
+            while (CurrentToken.Kind == TokenKind.CommaToken
+                   || CurrentToken.Kind == TokenKind.SemicolonToken)
             {
                 builder.Add(EatToken());
             }
@@ -763,7 +763,7 @@ namespace Parser.Internal
 
         private AttributeAssignmentSyntaxNode ParseAttributeAssignment()
         {
-            if (CurrentToken.Kind == TokenKind.Assignment)
+            if (CurrentToken.Kind == TokenKind.EqualsToken)
             {
                 var assignmentSign = EatToken();
                 var value = ParseExpression();
@@ -775,7 +775,7 @@ namespace Parser.Internal
 
         private AttributeSyntaxNode ParseAttribute()
         {
-            var name = Factory.IdentifierNameSyntax(EatToken(TokenKind.Identifier));
+            var name = Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken));
             var assignment = ParseAttributeAssignment();
             return Factory.AttributeSyntax(name, assignment);
         }
@@ -785,11 +785,11 @@ namespace Parser.Internal
             var openingBracket = EatToken();
             var first = true;
             var builder = new SyntaxListBuilder();
-            while (CurrentToken.Kind != TokenKind.ClosingBracket)
+            while (CurrentToken.Kind != TokenKind.CloseParenthesisToken)
             {
                 if (!first)
                 {
-                    var comma = EatToken(TokenKind.Comma);
+                    var comma = EatToken(TokenKind.CommaToken);
                     builder.Add(comma);
                 }
 
@@ -816,13 +816,13 @@ namespace Parser.Internal
                 return ParseMethodDefinition();
             }
 
-            if (CurrentToken.Kind == TokenKind.OpeningSquareBracket
-                || CurrentToken.Kind == TokenKind.Identifier)
+            if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken
+                || CurrentToken.Kind == TokenKind.IdentifierToken)
             {
                 return ParseAbstractMethodDeclaration();
             }
 
-            if (CurrentToken.Kind == TokenKind.Semicolon)
+            if (CurrentToken.Kind == TokenKind.SemicolonToken)
             {
                 return Factory.EmptyStatementSyntax(EatToken());
             }
@@ -852,7 +852,7 @@ namespace Parser.Internal
         {
             var methodsKeyword = EatToken();
             AttributeListSyntaxNode attributes = null;
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
@@ -870,7 +870,7 @@ namespace Parser.Internal
 
         private GreenNode ParsePropertyDeclaration()
         {
-            if (CurrentToken.Kind == TokenKind.Comma)
+            if (CurrentToken.Kind == TokenKind.CommaToken)
             {
                 return EatToken();
             }
@@ -886,7 +886,7 @@ namespace Parser.Internal
         {
             var propertiesKeyword = EatToken();
             AttributeListSyntaxNode attributes = null;
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
@@ -903,18 +903,18 @@ namespace Parser.Internal
 
         private EnumerationItemValueSyntaxNode ParseEnumerationValue()
         {
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 var builder = new SyntaxListBuilder();
-                var openingBracket = EatToken(TokenKind.OpeningBracket);
+                var openingBracket = EatToken(TokenKind.OpenParenthesisToken);
                 var expression = ParseExpression() ?? Factory.EmptyExpressionSyntax();
                 builder.Add(expression);
-                while (CurrentToken.Kind == TokenKind.Comma)
+                while (CurrentToken.Kind == TokenKind.CommaToken)
                 {
                     builder.Add(EatToken());
                     builder.Add(ParseExpression());
                 }
-                var closingBracket = EatToken(TokenKind.ClosingBracket);
+                var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                 return Factory.EnumerationItemValueSyntax(openingBracket, builder.ToList(), closingBracket);
             }
             return null;
@@ -933,7 +933,7 @@ namespace Parser.Internal
             var enumerationKeyword = EatToken();
             var builder = new SyntaxListBuilder<EnumerationItemSyntaxNode>();
             AttributeListSyntaxNode attributes = null;
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
@@ -955,7 +955,7 @@ namespace Parser.Internal
         {
             var eventsKeyword = EatToken();
             AttributeListSyntaxNode attributes = null;
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
@@ -974,7 +974,7 @@ namespace Parser.Internal
         {
             var builder = new SyntaxListBuilder();
             builder.Add(ParseCompoundName());
-            while (CurrentToken.Kind == TokenKind.BitwiseAnd)
+            while (CurrentToken.Kind == TokenKind.AmpersandToken)
             {
                 builder.Add(EatToken());
                 builder.Add(ParseCompoundName());
@@ -994,13 +994,13 @@ namespace Parser.Internal
         {
             var classdefKeyword = EatToken();
             AttributeListSyntaxNode attributes = null;
-            if (CurrentToken.Kind == TokenKind.OpeningBracket)
+            if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
-            var className = Factory.IdentifierNameSyntax(EatToken(TokenKind.Identifier));
+            var className = Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken));
             BaseClassListSyntaxNode baseClassList = null;
-            if (CurrentToken.Kind == TokenKind.Less)
+            if (CurrentToken.Kind == TokenKind.LessToken)
             {
                 baseClassList = ParseBaseClassList();
             }
@@ -1046,7 +1046,7 @@ namespace Parser.Internal
 
         private StatementSyntaxNode ParseStatement()
         {
-            if (CurrentToken.Kind == TokenKind.Identifier)
+            if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
                 switch (CurrentToken.Text)
                 {
@@ -1075,12 +1075,12 @@ namespace Parser.Internal
                 }
             }
 
-            if (CurrentToken.Kind == TokenKind.OpeningSquareBracket)
+            if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken)
             {
                 return ParseExpressionStatement();
             }
 
-            if (CurrentToken.Kind == TokenKind.Semicolon)
+            if (CurrentToken.Kind == TokenKind.SemicolonToken)
             {
                 return Factory.EmptyStatementSyntax(EatToken());
             }
@@ -1090,7 +1090,7 @@ namespace Parser.Internal
         private SyntaxList ParseStatementList()
         {
             var builder = new SyntaxListBuilder();
-            while (CurrentToken.Kind != TokenKind.EndOfFile)
+            while (CurrentToken.Kind != TokenKind.EndOfFileToken)
             {
                 var node = ParseStatement();
                 if (node == null)
@@ -1098,8 +1098,8 @@ namespace Parser.Internal
                     break;
                 }
                 builder.Add(node);
-                while (CurrentToken.Kind == TokenKind.Comma
-                    || CurrentToken.Kind == TokenKind.Semicolon)
+                while (CurrentToken.Kind == TokenKind.CommaToken
+                    || CurrentToken.Kind == TokenKind.SemicolonToken)
                 {
                     builder.Add(EatToken());
                 } 

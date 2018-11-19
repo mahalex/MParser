@@ -38,41 +38,41 @@ namespace Parser.Internal
         {
             switch (kind)
             {
-                case TokenKind.Assignment:
+                case TokenKind.EqualsToken:
                     return Precedence.Assignment;
-                case TokenKind.LogicalOr:
+                case TokenKind.PipePipeToken:
                     return Precedence.LogicalOr;
-                case TokenKind.LogicalAnd:
+                case TokenKind.AmpersandAmpersandToken:
                     return Precedence.LogicalAnd;
-                case TokenKind.BitwiseOr:
+                case TokenKind.PipeToken:
                     return Precedence.BitwiseOr;
-                case TokenKind.BitwiseAnd:
+                case TokenKind.AmpersandToken:
                     return Precedence.BitwiseAnd;
-                case TokenKind.Less:
-                case TokenKind.LessOrEqual:
-                case TokenKind.Greater:
-                case TokenKind.GreaterOrEqual:
-                case TokenKind.Equality:
-                case TokenKind.Inequality:
+                case TokenKind.LessToken:
+                case TokenKind.LessOrEqualsToken:
+                case TokenKind.GreaterToken:
+                case TokenKind.GreaterOrEqualsToken:
+                case TokenKind.EqualsEqualsToken:
+                case TokenKind.TildeEqualsToken:
                     return Precedence.Relational;
-                case TokenKind.Colon:
+                case TokenKind.ColonToken:
                     return Precedence.Colon;
-                case TokenKind.Plus:
-                case TokenKind.Minus:
+                case TokenKind.PlusToken:
+                case TokenKind.MinusToken:
                     return Precedence.Additive;
-                case TokenKind.Multiply:
-                case TokenKind.DotMultiply:
-                case TokenKind.Divide:
-                case TokenKind.DotDivide:
-                case TokenKind.Backslash:
-                case TokenKind.DotBackslash:
+                case TokenKind.StarToken:
+                case TokenKind.DotStarToken:
+                case TokenKind.SlashToken:
+                case TokenKind.DotSlashToken:
+                case TokenKind.BackslashToken:
+                case TokenKind.DotBackslashToken:
                     return Precedence.Multiplicative;
-                case TokenKind.Not:
+                case TokenKind.TildeToken:
                     return Precedence.Unary;
-                case TokenKind.Power:
-                case TokenKind.DotPower:
-                case TokenKind.Transpose:
-                case TokenKind.DotTranspose:
+                case TokenKind.CaretToken:
+                case TokenKind.DotCaretToken:
+                case TokenKind.ApostropheToken:
+                case TokenKind.DotApostropheToken:
                     return Precedence.Power;
                 default:
                     return Precedence.Expression;
@@ -113,9 +113,9 @@ namespace Parser.Internal
         {
             switch (tokenKind)
             {
-                case TokenKind.OpeningBrace:
-                case TokenKind.OpeningBracket:
-                case TokenKind.OpeningSquareBracket:
+                case TokenKind.OpenBraceToken:
+                case TokenKind.OpenParenthesisToken:
+                case TokenKind.OpenSquareBracketToken:
                     return true;
                 default:
                     return false;
@@ -126,9 +126,9 @@ namespace Parser.Internal
         {
             switch (tokenKind)
             {
-                case TokenKind.ClosingBrace:
-                case TokenKind.ClosingBracket:
-                case TokenKind.ClosingSquareBracket:
+                case TokenKind.CloseBraceToken:
+                case TokenKind.CloseParenthesisToken:
+                case TokenKind.CloseSquareBracketToken:
                     return true;
                 default:
                     return false;
@@ -144,12 +144,12 @@ namespace Parser.Internal
         {
             switch (tokenKind)
             {
-                case TokenKind.ClosingBrace:
-                    return TokenKind.OpeningBrace;
-                case TokenKind.ClosingBracket:
-                    return TokenKind.OpeningBracket;
-                case TokenKind.ClosingSquareBracket:
-                    return TokenKind.OpeningSquareBracket;
+                case TokenKind.CloseBraceToken:
+                    return TokenKind.OpenBraceToken;
+                case TokenKind.CloseParenthesisToken:
+                    return TokenKind.OpenParenthesisToken;
+                case TokenKind.CloseSquareBracketToken:
+                    return TokenKind.OpenSquareBracketToken;
                 default:
                     return null;
             }
@@ -224,10 +224,10 @@ namespace Parser.Internal
         {
             switch (kind)
             {
-                case TokenKind.Plus:
-                case TokenKind.Minus:
-                case TokenKind.Not:
-                case TokenKind.QuestionMark:
+                case TokenKind.PlusToken:
+                case TokenKind.MinusToken:
+                case TokenKind.TildeToken:
+                case TokenKind.QuestionToken:
                     return true;
                 default:
                     return false;
@@ -252,29 +252,29 @@ namespace Parser.Internal
         {
             switch (kind)
             {
-                case TokenKind.Assignment:
-                case TokenKind.LogicalOr:
-                case TokenKind.LogicalAnd:
-                case TokenKind.BitwiseOr:
-                case TokenKind.BitwiseAnd:
-                case TokenKind.Less:
-                case TokenKind.LessOrEqual:
-                case TokenKind.Greater:
-                case TokenKind.GreaterOrEqual:
-                case TokenKind.Equality:
-                case TokenKind.Inequality:
-                case TokenKind.Colon:
-                case TokenKind.Plus:
-                case TokenKind.Minus:
-                case TokenKind.Multiply:
-                case TokenKind.DotMultiply:
-                case TokenKind.Divide:
-                case TokenKind.DotDivide:
-                case TokenKind.Backslash:
-                case TokenKind.DotBackslash:
-                case TokenKind.Not:
-                case TokenKind.Power:
-                case TokenKind.DotPower:
+                case TokenKind.EqualsToken:
+                case TokenKind.PipePipeToken:
+                case TokenKind.AmpersandAmpersandToken:
+                case TokenKind.PipeToken:
+                case TokenKind.AmpersandToken:
+                case TokenKind.LessToken:
+                case TokenKind.LessOrEqualsToken:
+                case TokenKind.GreaterToken:
+                case TokenKind.GreaterOrEqualsToken:
+                case TokenKind.EqualsEqualsToken:
+                case TokenKind.TildeEqualsToken:
+                case TokenKind.ColonToken:
+                case TokenKind.PlusToken:
+                case TokenKind.MinusToken:
+                case TokenKind.StarToken:
+                case TokenKind.DotStarToken:
+                case TokenKind.SlashToken:
+                case TokenKind.DotSlashToken:
+                case TokenKind.BackslashToken:
+                case TokenKind.DotBackslashToken:
+                case TokenKind.TildeToken:
+                case TokenKind.CaretToken:
+                case TokenKind.DotCaretToken:
                     return true;
                 default:
                     return false;
@@ -290,13 +290,13 @@ namespace Parser.Internal
         {
             switch (kind)
             {
-                case TokenKind.Plus:
+                case TokenKind.PlusToken:
                     return TokenKind.UnaryPlus;
-                case TokenKind.Minus:
+                case TokenKind.MinusToken:
                     return TokenKind.UnaryMinus;
-                case TokenKind.Not:
+                case TokenKind.TildeToken:
                     return TokenKind.UnaryNot;
-                case TokenKind.QuestionMark:
+                case TokenKind.QuestionToken:
                     return TokenKind.UnaryQuestionMark;
                 default:
                     throw new ArgumentException(nameof(kind));

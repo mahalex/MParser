@@ -150,7 +150,7 @@ namespace ProjectConsole
                 if (nodeOrToken.IsToken)
                 {
                     var token = nodeOrToken.AsToken();
-                    if (token.Kind == TokenKind.Identifier)
+                    if (token.Kind == TokenKind.IdentifierToken)
                     {
                         OutputIdentifier(token);
                     }

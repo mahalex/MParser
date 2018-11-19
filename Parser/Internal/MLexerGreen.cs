@@ -40,7 +40,7 @@ namespace Parser.Internal
                 n++;
             }
 
-            return TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n));
+            return TokenFactory.CreateTrivia(TokenKind.CommentToken, Window.GetAndConsumeChars(n));
         }
 
         private SyntaxTrivia LexMultilineComment()
@@ -54,7 +54,7 @@ namespace Parser.Internal
                 if (c == '\0')
                 {
                     Diagnostics.ReportUnexpectedEndOfFile(new TextSpan(Window.Position.Offset, 0));
-                    return TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n));
+                    return TokenFactory.CreateTrivia(TokenKind.CommentToken, Window.GetAndConsumeChars(n));
                 }
 
                 if (c == '\n' || (c == '\r' && Window.PeekChar(n + 1) == '\n'))
@@ -69,12 +69,12 @@ namespace Parser.Internal
                         n++;
                     }
 
-                    return TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n));
+                    return TokenFactory.CreateTrivia(TokenKind.CommentToken, Window.GetAndConsumeChars(n));
                 }
 
                 if (metPercentSign && c == '}')
                 {
-                    return TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n+1));
+                    return TokenFactory.CreateTrivia(TokenKind.CommentToken, Window.GetAndConsumeChars(n+1));
                 }
 
                 metPercentSign = c == '%';
@@ -91,13 +91,13 @@ namespace Parser.Internal
                 n++;
             }
 
-            var comment = TokenFactory.CreateTrivia(TokenKind.Comment, Window.GetAndConsumeChars(n));
+            var comment = TokenFactory.CreateTrivia(TokenKind.CommentToken, Window.GetAndConsumeChars(n));
             var result = new List<SyntaxTrivia> { comment };
             var character = Window.PeekChar();
             if (character == '\n' || character == '\r')
             {
                 Window.ConsumeChar();
-                result.Add(TokenFactory.CreateTrivia(TokenKind.Whitespace, character.ToString()));
+                result.Add(TokenFactory.CreateTrivia(TokenKind.WhitespaceToken, character.ToString()));
             }
 
             return result;
@@ -112,7 +112,7 @@ namespace Parser.Internal
             {
                 if (whitespaceCache.Length > 0)
                 {
-                    triviaList.Add(TokenFactory.CreateTrivia(TokenKind.Whitespace, whitespaceCache.ToString()));
+                    triviaList.Add(TokenFactory.CreateTrivia(TokenKind.WhitespaceToken, whitespaceCache.ToString()));
                 }
 
                 whitespaceCache.Clear();
@@ -132,7 +132,7 @@ namespace Parser.Internal
                     case '\n':
                         FlushWhitespaceCache();
                         Window.ConsumeChar();
-                        triviaList.Add(TokenFactory.CreateTrivia(TokenKind.Newline, character.ToString()));
+                        triviaList.Add(TokenFactory.CreateTrivia(TokenKind.NewlineToken, character.ToString()));
                         if (isTrailing)
                         {
                             return triviaList;
@@ -177,7 +177,7 @@ namespace Parser.Internal
             }
 
             var identifier = Window.GetAndConsumeChars(n);
-            tokenInfo.Kind = TokenKind.Identifier;
+            tokenInfo.Kind = TokenKind.IdentifierToken;
             tokenInfo.Text = identifier;
             return true;
         }
@@ -191,7 +191,7 @@ namespace Parser.Internal
                 if (c == ' ' || c == '\n' || c == '\0')
                 {
                     var literal = Window.GetAndConsumeChars(n);
-                    tokenInfo.Kind = TokenKind.UnquotedStringLiteral;
+                    tokenInfo.Kind = TokenKind.UnquotedStringLiteralToken;
                     tokenInfo.Text = literal;
                     tokenInfo.StringValue = literal;
                     return true;
@@ -330,7 +330,7 @@ namespace Parser.Internal
                 if (fail)
                 {
                     var s = Window.GetAndConsumeChars(n);
-                    tokenInfo.Kind = TokenKind.NumberLiteral;
+                    tokenInfo.Kind = TokenKind.NumberLiteralToken;
                     tokenInfo.Text = s;
                     return false;
                 }
@@ -363,7 +363,7 @@ namespace Parser.Internal
                 }
                 var s = Window.GetAndConsumeChars(n);
 
-                tokenInfo.Kind = TokenKind.NumberLiteral;
+                tokenInfo.Kind = TokenKind.NumberLiteralToken;
                 tokenInfo.Text = s;
                 return true;
             }
@@ -439,14 +439,14 @@ namespace Parser.Internal
         private bool ContinueLexingStringLiteral(ref TokenInfo tokenInfo)
         {
             ContinueLexingGeneralStringLiteral(ref tokenInfo, '\'');
-            tokenInfo.Kind = TokenKind.StringLiteral;
+            tokenInfo.Kind = TokenKind.StringLiteralToken;
             return true;
         }
 
         private bool ContinueLexingDoubleQuotedStringLiteral(ref TokenInfo tokenInfo)
         {
             ContinueLexingGeneralStringLiteral(ref tokenInfo, '"');
-            tokenInfo.Kind = TokenKind.DoubleQuotedStringLiteral;
+            tokenInfo.Kind = TokenKind.DoubleQuotedStringLiteralToken;
             return true;
         }
 
@@ -455,14 +455,14 @@ namespace Parser.Internal
             var character = Window.PeekChar();
             if (character == '\0')
             {
-                tokenInfo.Kind = TokenKind.EndOfFile;
+                tokenInfo.Kind = TokenKind.EndOfFileToken;
                 tokenInfo.Text = "";
                 return true;
             }
             
             if (TokensSinceNewLine == 1
                 && !TokenStack.Any()
-                && LastToken.Kind == TokenKind.Identifier
+                && LastToken.Kind == TokenKind.IdentifierToken
                 && LastToken.TrailingTrivia.Any()
                 && character != '='
                 && character != '('
@@ -470,7 +470,7 @@ namespace Parser.Internal
             {
                 return ContinueParsingUnquotedStringLiteral(ref tokenInfo);
             }
-            if (LastToken?.Kind == TokenKind.UnquotedStringLiteral
+            if (LastToken?.Kind == TokenKind.UnquotedStringLiteralToken
                 && !TokenStack.Any()
                 && TokensSinceNewLine > 0)
             {
@@ -553,11 +553,11 @@ namespace Parser.Internal
                     if (Window.PeekChar() == '=')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.Equality;
+                        tokenInfo.Kind = TokenKind.EqualsEqualsToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.Assignment;
+                        tokenInfo.Kind = TokenKind.EqualsToken;
                     }
 
                     return true;
@@ -578,72 +578,72 @@ namespace Parser.Internal
                     {
                         case '*':
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.DotMultiply;
+                            tokenInfo.Kind = TokenKind.DotStarToken;
                             break;
                         case '/':
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.DotDivide;
+                            tokenInfo.Kind = TokenKind.DotSlashToken;
                             break;
                         case '^':
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.DotPower;
+                            tokenInfo.Kind = TokenKind.DotCaretToken;
                             break;
                         case '\\':
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.DotBackslash;
+                            tokenInfo.Kind = TokenKind.DotBackslashToken;
                             break;
                         case '\'':
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.DotTranspose;
+                            tokenInfo.Kind = TokenKind.DotApostropheToken;
                             break;
                         default:
-                            tokenInfo.Kind = TokenKind.Dot;
+                            tokenInfo.Kind = TokenKind.DotToken;
                             break;
                     }
 
                     return true;
                 case '(':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.OpeningBracket;
+                    tokenInfo.Kind = TokenKind.OpenParenthesisToken;
                     return true;
                 case ')':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.ClosingBracket;
+                    tokenInfo.Kind = TokenKind.CloseParenthesisToken;
                     return true;
                 case '[':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.OpeningSquareBracket;
+                    tokenInfo.Kind = TokenKind.OpenSquareBracketToken;
                     return true;
                 case ']':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.ClosingSquareBracket;
+                    tokenInfo.Kind = TokenKind.CloseSquareBracketToken;
                     return true;
                 case '{':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.OpeningBrace;
+                    tokenInfo.Kind = TokenKind.OpenBraceToken;
                     return true;
                 case '}':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.ClosingBrace;
+                    tokenInfo.Kind = TokenKind.CloseBraceToken;
                     return true;
                 case ',':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Comma;
+                    tokenInfo.Kind = TokenKind.CommaToken;
                     return true;
                 case ';':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Semicolon;
+                    tokenInfo.Kind = TokenKind.SemicolonToken;
                     return true;
                 case '&':
                     Window.ConsumeChar();
                     if (Window.PeekChar() == '&')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.LogicalAnd;
+                        tokenInfo.Kind = TokenKind.AmpersandAmpersandToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.BitwiseAnd;
+                        tokenInfo.Kind = TokenKind.AmpersandToken;
                     }
 
                     return true;
@@ -652,11 +652,11 @@ namespace Parser.Internal
                     if (Window.PeekChar() == '|')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.LogicalOr;
+                        tokenInfo.Kind = TokenKind.PipePipeToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.BitwiseOr;
+                        tokenInfo.Kind = TokenKind.PipeToken;
 
                     }
 
@@ -666,11 +666,11 @@ namespace Parser.Internal
                     if (Window.PeekChar() == '=')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.LessOrEqual;
+                        tokenInfo.Kind = TokenKind.LessOrEqualsToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.Less;
+                        tokenInfo.Kind = TokenKind.LessToken;
                     }
 
                     return true;
@@ -679,11 +679,11 @@ namespace Parser.Internal
                     if (Window.PeekChar() == '=')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.GreaterOrEqual;
+                        tokenInfo.Kind = TokenKind.GreaterOrEqualsToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.Greater;
+                        tokenInfo.Kind = TokenKind.GreaterToken;
                     }
 
                     return true;
@@ -692,61 +692,61 @@ namespace Parser.Internal
                     if (Window.PeekChar() == '=')
                     {
                         Window.ConsumeChar();
-                        tokenInfo.Kind = TokenKind.Inequality;
+                        tokenInfo.Kind = TokenKind.TildeEqualsToken;
                     }
                     else
                     {
-                        tokenInfo.Kind = TokenKind.Not;                        
+                        tokenInfo.Kind = TokenKind.TildeToken;                        
                     }
 
                     return true;
                 case '+':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Plus;
+                    tokenInfo.Kind = TokenKind.PlusToken;
                     return true;
                 case '-':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Minus;
+                    tokenInfo.Kind = TokenKind.MinusToken;
                     return true;
                 case '*':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Multiply;
+                    tokenInfo.Kind = TokenKind.StarToken;
                     return true;
                 case '/':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Divide;
+                    tokenInfo.Kind = TokenKind.SlashToken;
                     return true;
                 case '\\':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Backslash;
+                    tokenInfo.Kind = TokenKind.BackslashToken;
                     return true;
                 case '^':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Power;
+                    tokenInfo.Kind = TokenKind.CaretToken;
                     return true;
                 case '@':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.At;
+                    tokenInfo.Kind = TokenKind.AtToken;
                     return true;
                 case ':':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.Colon;
+                    tokenInfo.Kind = TokenKind.ColonToken;
                     return true;
                 case '?':
                     Window.ConsumeChar();
-                    tokenInfo.Kind = TokenKind.QuestionMark;
+                    tokenInfo.Kind = TokenKind.QuestionToken;
                     return true;
                 case '\'':
                     if (LastToken != null &&
-                        (LastToken.Kind == TokenKind.ClosingBrace
-                        || LastToken.Kind == TokenKind.ClosingBracket
-                        || LastToken.Kind == TokenKind.ClosingSquareBracket
-                        || LastToken.Kind == TokenKind.Identifier))
+                        (LastToken.Kind == TokenKind.CloseBraceToken
+                        || LastToken.Kind == TokenKind.CloseParenthesisToken
+                        || LastToken.Kind == TokenKind.CloseSquareBracketToken
+                        || LastToken.Kind == TokenKind.IdentifierToken))
                     {
                         if (LastToken.TrailingTrivia.Count == 0 && leadingTrivia.Count == 0)
                         {
                             Window.ConsumeChar();
-                            tokenInfo.Kind = TokenKind.Transpose;
+                            tokenInfo.Kind = TokenKind.ApostropheToken;
                             return true;
                         }
                     }
@@ -754,7 +754,7 @@ namespace Parser.Internal
                 case '"':
                     return ContinueLexingDoubleQuotedStringLiteral(ref tokenInfo);
                 case '\0':
-                    tokenInfo.Kind = TokenKind.EndOfFile;
+                    tokenInfo.Kind = TokenKind.EndOfFileToken;
                     return true;
                 default:
                     Diagnostics.ReportUnknownSymbol(new TextSpan(Window.Position.Offset, 1), character);
@@ -772,7 +772,7 @@ namespace Parser.Internal
             var tokenInfo = new TokenInfo();
             LexTokenWithoutTrivia(leadingTrivia, ref tokenInfo);
             var trailingTrivia = LexTrivia(true);
-            if (trailingTrivia.Any(t => t.Kind == TokenKind.Newline))
+            if (trailingTrivia.Any(t => t.Kind == TokenKind.NewlineToken))
             {
                 TokensSinceNewLine = 0;
             }
@@ -806,7 +806,7 @@ namespace Parser.Internal
                 }
             }
 
-            if (tokenInfo.Kind == TokenKind.EndOfFile
+            if (tokenInfo.Kind == TokenKind.EndOfFileToken
                 && TokenStack.Any())
             {
                 throw new ParsingException($"Unmatched \"{TokenStack.Pop()}\" by the end of file.");
@@ -827,32 +827,32 @@ namespace Parser.Internal
         {
             switch (tokenInfo.Kind)
             {
-                case TokenKind.Identifier:
+                case TokenKind.IdentifierToken:
                     return TokenFactory.CreateIdentifier(
                         tokenInfo.Text,
                         leadingTrivia,
                         trailingTrivia);
-                case TokenKind.UnquotedStringLiteral:
+                case TokenKind.UnquotedStringLiteralToken:
                     return TokenFactory.CreateUnquotedStringLiteral(
                         tokenInfo.Text,
                         tokenInfo.StringValue,
                         leadingTrivia,
                         trailingTrivia);
-                case TokenKind.NumberLiteral:
+                case TokenKind.NumberLiteralToken:
                     return TokenFactory.CreateTokenWithValueAndTrivia<double>(
                         tokenInfo.Kind,
                         tokenInfo.Text,
                         tokenInfo.DoubleValue,
                         leadingTrivia,
                         trailingTrivia);
-                case TokenKind.StringLiteral:
+                case TokenKind.StringLiteralToken:
                     return TokenFactory.CreateTokenWithValueAndTrivia<string>(
                         tokenInfo.Kind,
                         tokenInfo.Text,
                         tokenInfo.StringValue,
                         leadingTrivia,
                         trailingTrivia);
-                case TokenKind.DoubleQuotedStringLiteral:
+                case TokenKind.DoubleQuotedStringLiteralToken:
                     return TokenFactory.CreateTokenWithValueAndTrivia<string>(
                         tokenInfo.Kind,
                         tokenInfo.Text,
@@ -879,7 +879,7 @@ namespace Parser.Internal
                     throw new ParsingException($"Unexpected character: '{Window.PeekChar()}' at {Window.Position}.");
                 }
                 result.Add(pair);
-                if (token.Kind == TokenKind.EndOfFile)
+                if (token.Kind == TokenKind.EndOfFileToken)
                 {
                     return result;
                 }

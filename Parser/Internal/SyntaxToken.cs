@@ -124,7 +124,7 @@ namespace Parser.Internal
 
             public SyntaxIdentifier(
                 string text
-                ) : base(TokenKind.Identifier)
+                ) : base(TokenKind.IdentifierToken)
             {
                 _text = text;
             }

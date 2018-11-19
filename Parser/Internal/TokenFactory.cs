@@ -42,7 +42,7 @@ namespace Parser.Internal
             IReadOnlyList<SyntaxTrivia> trailingTrivia)
         {
             return new SyntaxToken.SyntaxTokenWithValueAndTrivia<string>(
-                TokenKind.UnquotedStringLiteral,
+                TokenKind.UnquotedStringLiteralToken,
                 text,
                 value,
                 leadingTrivia,

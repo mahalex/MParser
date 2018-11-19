@@ -53,7 +53,7 @@ namespace ConsoleDemo
         {
             switch (token.Kind)
             {
-                case TokenKind.Comma:
+                case TokenKind.CommaToken:
                     return true;
                 default:
                     break;

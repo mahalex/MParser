@@ -11,7 +11,7 @@ namespace Parser.Tests
         private IEnumerable<Internal.SyntaxToken> ParseText(string text)
         {
             var lexer = new MLexerGreen(new TextWindowWithNull(text));
-            return lexer.ParseAll().Select(x => x.Item1).Where(x => x.Kind != TokenKind.EndOfFile);
+            return lexer.ParseAll().Select(x => x.Item1).Where(x => x.Kind != TokenKind.EndOfFileToken);
         }
 
         [Theory]
@@ -40,12 +40,12 @@ namespace Parser.Tests
         {
             var text = text1 + separatorText + text2;
             var tokens = ParseText(text).ToArray();
-            if (kind1 == TokenKind.Identifier && !ContainsNewLine(separatorText))
+            if (kind1 == TokenKind.IdentifierToken && !ContainsNewLine(separatorText))
             {
-                Assert.Equal(TokenKind.Identifier, tokens[0].Kind);
+                Assert.Equal(TokenKind.IdentifierToken, tokens[0].Kind);
                 foreach (var token in tokens.Skip(1))
                 {
-                    Assert.Equal(TokenKind.UnquotedStringLiteral, token.Kind);
+                    Assert.Equal(TokenKind.UnquotedStringLiteralToken, token.Kind);
                 }
             }
             else
@@ -85,20 +85,20 @@ namespace Parser.Tests
                 .Where(t => !(SyntaxFacts.IsUnaryTokenKind(t.kind)
                               || SyntaxFacts.IsOpeningToken(t.kind)
                               || SyntaxFacts.IsClosingToken(t.kind)
-                              || t.kind == TokenKind.Transpose));
+                              || t.kind == TokenKind.ApostropheToken));
             
             
             var dynamicTokens = new[]
             {
-                (TokenKind.Identifier, "a"),
-                (TokenKind.Identifier, "abc"),
-                (TokenKind.NumberLiteral, "1"),
-                (TokenKind.NumberLiteral, "123"),
-                (TokenKind.NumberLiteral, "145.67"),
-                (TokenKind.NumberLiteral, "14.5e-3"),
-                (TokenKind.NumberLiteral, "3.14e8"),
-                (TokenKind.StringLiteral, "'what is that'"),
-                (TokenKind.DoubleQuotedStringLiteral, "\"Another ' string\"")
+                (TokenKind.IdentifierToken, "a"),
+                (TokenKind.IdentifierToken, "abc"),
+                (TokenKind.NumberLiteralToken, "1"),
+                (TokenKind.NumberLiteralToken, "123"),
+                (TokenKind.NumberLiteralToken, "145.67"),
+                (TokenKind.NumberLiteralToken, "14.5e-3"),
+                (TokenKind.NumberLiteralToken, "3.14e8"),
+                (TokenKind.StringLiteralToken, "'what is that'"),
+                (TokenKind.DoubleQuotedStringLiteralToken, "\"Another ' string\"")
             };
             return fixedTokens.Concat(dynamicTokens);
         }
@@ -136,127 +136,127 @@ namespace Parser.Tests
 
         private static bool RequiresSeparator(TokenKind kind1, TokenKind kind2)
         {
-            if (kind1 == TokenKind.Less && kind2 == TokenKind.Equality)
+            if (kind1 == TokenKind.LessToken && kind2 == TokenKind.EqualsEqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Less && kind2 == TokenKind.Assignment)
+            if (kind1 == TokenKind.LessToken && kind2 == TokenKind.EqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Greater && kind2 == TokenKind.Equality)
+            if (kind1 == TokenKind.GreaterToken && kind2 == TokenKind.EqualsEqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Greater && kind2 == TokenKind.Assignment)
+            if (kind1 == TokenKind.GreaterToken && kind2 == TokenKind.EqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Not && kind2 == TokenKind.Assignment)
+            if (kind1 == TokenKind.TildeToken && kind2 == TokenKind.EqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Not && kind2 == TokenKind.Equality)
+            if (kind1 == TokenKind.TildeToken && kind2 == TokenKind.EqualsEqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Assignment && kind2 == TokenKind.Assignment)
+            if (kind1 == TokenKind.EqualsToken && kind2 == TokenKind.EqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Assignment && kind2 == TokenKind.Equality)
+            if (kind1 == TokenKind.EqualsToken && kind2 == TokenKind.EqualsEqualsToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.BitwiseAnd && kind2 == TokenKind.LogicalAnd)
+            if (kind1 == TokenKind.AmpersandToken && kind2 == TokenKind.AmpersandAmpersandToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.BitwiseAnd && kind2 == TokenKind.BitwiseAnd)
+            if (kind1 == TokenKind.AmpersandToken && kind2 == TokenKind.AmpersandToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.BitwiseOr && kind2 == TokenKind.LogicalOr)
+            if (kind1 == TokenKind.PipeToken && kind2 == TokenKind.PipePipeToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.BitwiseOr && kind2 == TokenKind.BitwiseOr)
+            if (kind1 == TokenKind.PipeToken && kind2 == TokenKind.PipeToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Multiply)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.StarToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Divide)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.SlashToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Backslash)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.BackslashToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.Power)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.CaretToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.NumberLiteral)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.NumberLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.NumberLiteral && kind2 == TokenKind.Dot)
+            if (kind1 == TokenKind.NumberLiteralToken && kind2 == TokenKind.DotToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Dot && kind2 == TokenKind.StringLiteral)
+            if (kind1 == TokenKind.DotToken && kind2 == TokenKind.StringLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.NumberLiteral && kind2 == TokenKind.NumberLiteral)
+            if (kind1 == TokenKind.NumberLiteralToken && kind2 == TokenKind.NumberLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.StringLiteral && kind2 == TokenKind.StringLiteral)
+            if (kind1 == TokenKind.StringLiteralToken && kind2 == TokenKind.StringLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.DoubleQuotedStringLiteral && kind2 == TokenKind.DoubleQuotedStringLiteral)
+            if (kind1 == TokenKind.DoubleQuotedStringLiteralToken && kind2 == TokenKind.DoubleQuotedStringLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.Identifier)
+            if (kind1 == TokenKind.IdentifierToken && kind2 == TokenKind.IdentifierToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.NumberLiteral)
+            if (kind1 == TokenKind.IdentifierToken && kind2 == TokenKind.NumberLiteralToken)
             {
                 return true;
             }
 
-            if (kind1 == TokenKind.Identifier && kind2 == TokenKind.StringLiteral)
+            if (kind1 == TokenKind.IdentifierToken && kind2 == TokenKind.StringLiteralToken)
             {
                 return true;
             }
