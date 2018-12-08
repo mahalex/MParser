@@ -72,12 +72,12 @@ namespace Semantics
 
         private string GetPackageNameFromFolder(string folderName)
         {
-            return folderName.StartsWith('+') ? folderName.Substring(1, folderName.Length - 1) : null;
+            return folderName[0] == '+' ? folderName.Substring(1, folderName.Length - 1) : null;
         }
         
         private string GetClassNameFromFolder(string folderName)
         {
-            return folderName.StartsWith('@') ? folderName.Substring(1, folderName.Length - 1) : null;
+            return folderName[0] == '@' ? folderName.Substring(1, folderName.Length - 1) : null;
         }
 
         private void ScanPrivateDirectory(ClassContext currentContext, string directory)
