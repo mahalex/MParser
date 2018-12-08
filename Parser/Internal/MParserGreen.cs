@@ -1070,8 +1070,6 @@ namespace Parser.Internal
                     case "elseif":
                     case "end":
                         return null;
-                    default:
-                        return ParseExpressionStatement();
                 }
             }
 
@@ -1084,7 +1082,7 @@ namespace Parser.Internal
             {
                 return Factory.EmptyStatementSyntax(EatToken());
             }
-            throw new ParsingException($"Unexpected token \"{CurrentToken}\" at {CurrentPosition}.");
+            return ParseExpressionStatement();
         }
         
         private SyntaxList ParseStatementList()

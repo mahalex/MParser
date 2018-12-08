@@ -23,6 +23,17 @@ namespace Parser.Tests
         }
 
         [Fact]
+        public void ParseExpressionStatement()
+        {
+            var text = "2 + 3";
+            var sut = GetSut(text);
+            var actual = sut.Parse();
+            var statement = actual.Root.StatementList[0].AsNode();
+            Assert.IsType<ExpressionStatementSyntaxNode>(statement);
+            Assert.IsType<BinaryOperationExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)statement).Expression);
+        }
+
+        [Fact]
         public void ParseAssignmentExpression_Incomplete()
         {
             var text = "a = ";
