@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Parser\Parser.csproj" />
+    <ProjectReference Include="..\Repl\Repl.csproj" />
     <ProjectReference Include="..\Semantics\Semantics.csproj" />
   </ItemGroup>
 </Project>
