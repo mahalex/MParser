@@ -14,6 +14,13 @@ namespace Repl
                 var window = new TextWindowWithNull(line);
                 var parser = new MParser(window);
                 var tree = parser.Parse();
+                if (tree.Diagnostics.Diagnostics.Count > 0)
+                {
+                    foreach (var diagnostic in tree.Diagnostics.Diagnostics)
+                    {
+                        Console.WriteLine($"{diagnostic.Span}: {diagnostic.Message}");
+                    }
+                }
                 TreeRenderer.RenderTree(tree);
             }
         }

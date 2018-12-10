@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.Internal
 {
@@ -8,6 +9,11 @@ namespace Parser.Internal
         internal DiagnosticsBag()
         {
             _diagnostics = new List<Diagnostic>();
+        }
+
+        public DiagnosticsBag(IEnumerable<Diagnostic> diagnostics)
+        {
+            _diagnostics = diagnostics.ToList();
         }
 
         private readonly List<Diagnostic> _diagnostics;
@@ -38,6 +44,11 @@ namespace Parser.Internal
         internal void ReportUnknownSymbol(TextSpan span, char c)
         {
             Report(span, $"Unknown symbol '{c}'.");
+        }
+
+        internal void ReportUnexpectedToken(TextSpan span, TokenKind expected, TokenKind actual)
+        {
+            Report(span, $"Unexpected token '{actual}', expected '{expected}'.");
         }
 
         public IEnumerator<Diagnostic> GetEnumerator()

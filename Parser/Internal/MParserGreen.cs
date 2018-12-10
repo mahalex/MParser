@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.Internal
@@ -11,13 +12,13 @@ namespace Parser.Internal
         private Position CurrentPosition => Pairs[_index].position;
         private SyntaxToken PeekToken(int n) => Pairs[_index + n].token;
         private SyntaxFactory Factory { get; }
-        private List<string> Errors { get; }
+        public DiagnosticsBag Diagnostics { get; }
 
         public MParserGreen(List<(SyntaxToken, Position)> pairs, SyntaxFactory factory)
         {
             Pairs = pairs;
             Factory = factory;
-            Errors = new List<string>();
+            Diagnostics = new DiagnosticsBag();
         }
 
         private SyntaxToken EatToken()
@@ -32,7 +33,7 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != kind)
             {
-                Errors.Add($"Unexpected token \"{token.Text}\" instead of {kind} at {CurrentPosition}.");
+                Diagnostics.ReportUnexpectedToken(token.Span, kind, token.Kind);
                 return TokenFactory.CreateMissing(kind, null, null);
             }
             _index++;
@@ -54,13 +55,13 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != TokenKind.IdentifierToken)
             {
-                Errors.Add($"Unexpected token \"{token.Text}\" instead of {TokenKind.IdentifierToken} at {CurrentPosition}.");
+                Diagnostics.ReportUnexpectedToken(token.Span, TokenKind.IdentifierToken, token.Kind);
                 return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
             if (token.Text != s)
             {
-                Errors.Add($"Unexpected token \"{token.Text}\" instead of identifier {s} at {CurrentPosition}.");
+                Diagnostics.ReportUnexpectedToken(token.Span, TokenKind.IdentifierToken, token.Kind);
                 return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
@@ -116,19 +117,7 @@ namespace Parser.Internal
             SyntaxToken assignmentSign;
             var builder = new SyntaxListBuilder();
             
-            if (CurrentToken.Kind == TokenKind.IdentifierToken)
-            {
-                if (PeekToken(1).Kind == TokenKind.EqualsToken)
-                {
-                    builder.Add(Factory.IdentifierNameSyntax(EatToken()));
-                    assignmentSign = EatToken(TokenKind.EqualsToken);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken)
+            if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken)
             {
                 builder.Add(EatToken());
                 var outputs = ParseFunctionOutputList();
@@ -140,10 +129,21 @@ namespace Parser.Internal
                 builder.Add(EatToken(TokenKind.CloseSquareBracketToken));
                 assignmentSign = EatToken(TokenKind.EqualsToken);
             }
+            else if (CurrentToken.Kind == TokenKind.IdentifierToken)
+            {
+                if (PeekToken(1).Kind == TokenKind.EqualsToken)
+                {
+                    var identifierToken = EatIdentifier();
+                    builder.Add(Factory.IdentifierNameSyntax(identifierToken));
+                    assignmentSign = EatToken(TokenKind.EqualsToken);
+                }
+                else
+                {
+                    return null;
+                }
+            }
             else
             {
-                Errors.Add(
-                    $"Unexpected token {CurrentToken} during parsing function output description at {CurrentPosition}.");
                 return null;
             }
 
@@ -292,9 +292,6 @@ namespace Parser.Internal
             ExpressionSyntaxNode expression = null;
             switch (token.Kind)
             {
-                case TokenKind.IdentifierToken:
-                    expression = Factory.IdentifierNameSyntax(EatToken());
-                    break;
                 case TokenKind.NumberLiteralToken:
                     expression = Factory.NumberLiteralSyntax(EatToken());
                     break;
@@ -315,6 +312,10 @@ namespace Parser.Internal
                     break;
                 case TokenKind.OpenParenthesisToken:
                     expression = ParseParenthesizedExpression();
+                    break;
+                default:
+                    var id = EatToken(TokenKind.IdentifierToken);
+                    expression = Factory.IdentifierNameSyntax(id);
                     break;
             }
 
@@ -570,9 +571,16 @@ namespace Parser.Internal
 
                     EatToken();
                     var rhs = ParseSubExpression(options, newPrecedence);
-                    if (rhs == null && token.Kind == TokenKind.ColonToken) // for parsing things like a{:}
+                    if (rhs == null)
                     {
-                        rhs = Factory.EmptyExpressionSyntax();
+                        if (token.Kind == TokenKind.ColonToken) // for parsing things like a{:}
+                        {
+                            rhs = Factory.EmptyExpressionSyntax();
+                        }
+                        else
+                        {
+                            rhs = null;
+                        }
                     }
                     if (token.Kind == TokenKind.EqualsToken)
                     {

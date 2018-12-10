@@ -43,5 +43,14 @@ namespace Parser.Tests
             Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
             Assert.IsType<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
+
+        [Theory]
+        [InlineData("2 + ;")]
+        public void ParseStatement(string text)
+        {
+            var sut = GetSut(text);
+            var actual = sut.Parse();
+            Assert.Collection(actual.Diagnostics, item => Assert.Equal("Unexpected token 'SemicolonToken', expected 'IdentifierToken'.", item.Message));
+        }
     }
 }

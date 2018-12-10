@@ -6,6 +6,8 @@ namespace Parser.Internal
 {
     internal abstract class SyntaxToken : GreenNode
     {
+        public TextSpan Span { get; }
+
         internal class SyntaxTokenWithTrivia : SyntaxToken
         {
             private readonly string _text;

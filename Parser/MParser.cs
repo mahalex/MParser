@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Parser.Internal;
+using System.Linq;
 
 namespace Parser
 {
@@ -16,12 +17,14 @@ namespace Parser
         public SyntaxTree Parse()
         {
             var lexer = new Internal.MLexerGreen(_window);
-            var diagnostics = lexer.Diagnostics;
+            var lexerDiagnostics = lexer.Diagnostics;
             var tokens = lexer.ParseAll();
             var parser = new Internal.MParserGreen(tokens, new Internal.SyntaxFactory());
             var green = parser.ParseFile();
+            var parserDiagnostics = parser.Diagnostics;
+            var totalDiagnostics = new DiagnosticsBag(lexerDiagnostics.Concat(parserDiagnostics));
             var root = new FileSyntaxNode(null, green);
-            return new SyntaxTree(root, diagnostics);
+            return new SyntaxTree(root, totalDiagnostics);
         }
     }
 
