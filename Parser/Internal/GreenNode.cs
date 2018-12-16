@@ -9,18 +9,12 @@ namespace Parser.Internal
     internal abstract class GreenNode
     {
         public TokenKind Kind { get; }
-        public int Slots { get; }
+        public int Slots { get; protected set; }
         public abstract GreenNode GetSlot(int i);
 
         public GreenNode(TokenKind kind)
         {
             Kind = kind;
-        }
-        
-        public GreenNode(TokenKind kind, int slots)
-        {
-            Kind = kind;
-            Slots = slots;
         }
                 
         internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent);

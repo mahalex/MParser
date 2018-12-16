@@ -7,8 +7,10 @@ namespace Parser.Internal
 
         internal FileSyntaxNode(
             SyntaxList statementList,
-            SyntaxToken endOfFile) : base(TokenKind.File, 2)
+            SyntaxToken endOfFile) : base(TokenKind.File)
         {
+
+            Slots = 2;
             _statementList = statementList;
             _endOfFile = endOfFile;
         }
@@ -46,8 +48,10 @@ namespace Parser.Internal
             FunctionInputDescriptionSyntaxNode inputDescription,
             SyntaxList<SyntaxToken> commas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.FunctionDeclaration, 7)
+            SyntaxToken endKeyword) : base(TokenKind.FunctionDeclaration)
         {
+
+            Slots = 7;
             _functionKeyword = functionKeyword;
             _outputDescription = outputDescription;
             _name = name;
@@ -85,8 +89,10 @@ namespace Parser.Internal
 
         internal FunctionOutputDescriptionSyntaxNode(
             SyntaxList outputList,
-            SyntaxToken assignmentSign) : base(TokenKind.FunctionOutputDescription, 2)
+            SyntaxToken assignmentSign) : base(TokenKind.FunctionOutputDescription)
         {
+
+            Slots = 2;
             _outputList = outputList;
             _assignmentSign = assignmentSign;
         }
@@ -116,8 +122,10 @@ namespace Parser.Internal
         internal FunctionInputDescriptionSyntaxNode(
             SyntaxToken openingBracket,
             SyntaxList parameterList,
-            SyntaxToken closingBracket) : base(TokenKind.FunctionInputDescription, 3)
+            SyntaxToken closingBracket) : base(TokenKind.FunctionInputDescription)
         {
+
+            Slots = 3;
             _openingBracket = openingBracket;
             _parameterList = parameterList;
             _closingBracket = closingBracket;
@@ -153,8 +161,10 @@ namespace Parser.Internal
             ExpressionSyntaxNode switchExpression,
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList<SwitchCaseSyntaxNode> cases,
-            SyntaxToken endKeyword) : base(TokenKind.SwitchStatement, 5)
+            SyntaxToken endKeyword) : base(TokenKind.SwitchStatement)
         {
+
+            Slots = 5;
             _switchKeyword = switchKeyword;
             _switchExpression = switchExpression;
             _optionalCommas = optionalCommas;
@@ -192,8 +202,10 @@ namespace Parser.Internal
             SyntaxToken caseKeyword,
             ExpressionSyntaxNode caseIdentifier,
             SyntaxList<SyntaxToken> optionalCommas,
-            SyntaxList body) : base(TokenKind.SwitchCase, 4)
+            SyntaxList body) : base(TokenKind.SwitchCase)
         {
+
+            Slots = 4;
             _caseKeyword = caseKeyword;
             _caseIdentifier = caseIdentifier;
             _optionalCommas = optionalCommas;
@@ -231,8 +243,10 @@ namespace Parser.Internal
             ExpressionSyntaxNode condition,
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.WhileStatement, 5)
+            SyntaxToken endKeyword) : base(TokenKind.WhileStatement)
         {
+
+            Slots = 5;
             _whileKeyword = whileKeyword;
             _condition = condition;
             _optionalCommas = optionalCommas;
@@ -270,8 +284,10 @@ namespace Parser.Internal
             SyntaxToken elseifKeyword,
             ExpressionSyntaxNode condition,
             SyntaxList<SyntaxToken> optionalCommas,
-            SyntaxList body) : base(TokenKind.ElseifClause, 4)
+            SyntaxList body) : base(TokenKind.ElseifClause)
         {
+
+            Slots = 4;
             _elseifKeyword = elseifKeyword;
             _condition = condition;
             _optionalCommas = optionalCommas;
@@ -303,8 +319,10 @@ namespace Parser.Internal
 
         internal ElseClause(
             SyntaxToken elseKeyword,
-            SyntaxList body) : base(TokenKind.ElseClause, 2)
+            SyntaxList body) : base(TokenKind.ElseClause)
         {
+
+            Slots = 2;
             _elseKeyword = elseKeyword;
             _body = body;
         }
@@ -342,8 +360,10 @@ namespace Parser.Internal
             SyntaxList body,
             SyntaxList<ElseifClause> elseifClauses,
             ElseClause elseClause,
-            SyntaxToken endKeyword) : base(TokenKind.IfStatement, 7)
+            SyntaxToken endKeyword) : base(TokenKind.IfStatement)
         {
+
+            Slots = 7;
             _ifKeyword = ifKeyword;
             _condition = condition;
             _optionalCommas = optionalCommas;
@@ -387,8 +407,10 @@ namespace Parser.Internal
             AssignmentExpressionSyntaxNode assignment,
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.ForStatement, 5)
+            SyntaxToken endKeyword) : base(TokenKind.ForStatement)
         {
+
+            Slots = 5;
             _forKeyword = forKeyword;
             _assignment = assignment;
             _optionalCommas = optionalCommas;
@@ -424,8 +446,10 @@ namespace Parser.Internal
         internal AssignmentExpressionSyntaxNode(
             ExpressionSyntaxNode lhs,
             SyntaxToken assignmentSign,
-            ExpressionSyntaxNode rhs) : base(TokenKind.AssignmentExpression, 3)
+            ExpressionSyntaxNode rhs) : base(TokenKind.AssignmentExpression)
         {
+
+            Slots = 3;
             _lhs = lhs;
             _assignmentSign = assignmentSign;
             _rhs = rhs;
@@ -455,8 +479,10 @@ namespace Parser.Internal
 
         internal CatchClauseSyntaxNode(
             SyntaxToken catchKeyword,
-            SyntaxList catchBody) : base(TokenKind.CatchClause, 2)
+            SyntaxList catchBody) : base(TokenKind.CatchClause)
         {
+
+            Slots = 2;
             _catchKeyword = catchKeyword;
             _catchBody = catchBody;
         }
@@ -488,8 +514,10 @@ namespace Parser.Internal
             SyntaxToken tryKeyword,
             SyntaxList tryBody,
             CatchClauseSyntaxNode catchClause,
-            SyntaxToken endKeyword) : base(TokenKind.TryCatchStatement, 4)
+            SyntaxToken endKeyword) : base(TokenKind.TryCatchStatement)
         {
+
+            Slots = 4;
             _tryKeyword = tryKeyword;
             _tryBody = tryBody;
             _catchClause = catchClause;
@@ -519,8 +547,10 @@ namespace Parser.Internal
         internal readonly ExpressionSyntaxNode _expression;
 
         internal ExpressionStatementSyntaxNode(
-            ExpressionSyntaxNode expression) : base(TokenKind.ExpressionStatement, 1)
+            ExpressionSyntaxNode expression) : base(TokenKind.ExpressionStatement)
         {
+
+            Slots = 1;
             _expression = expression;
         }
 
@@ -544,8 +574,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _semicolon;
 
         internal EmptyStatementSyntaxNode(
-            SyntaxToken semicolon) : base(TokenKind.EmptyStatement, 1)
+            SyntaxToken semicolon) : base(TokenKind.EmptyStatement)
         {
+
+            Slots = 1;
             _semicolon = semicolon;
         }
 
@@ -567,8 +599,10 @@ namespace Parser.Internal
     internal class EmptyExpressionSyntaxNode : ExpressionSyntaxNode
     {
 
-        internal EmptyExpressionSyntaxNode() : base(TokenKind.EmptyExpression, 0)
+        internal EmptyExpressionSyntaxNode() : base(TokenKind.EmptyExpression)
         {
+
+            Slots = 0;
         }
 
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
@@ -592,8 +626,10 @@ namespace Parser.Internal
 
         internal UnaryPrefixOperationExpressionSyntaxNode(
             SyntaxToken operation,
-            ExpressionSyntaxNode operand) : base(TokenKind.UnaryPrefixOperationExpression, 2)
+            ExpressionSyntaxNode operand) : base(TokenKind.UnaryPrefixOperationExpression)
         {
+
+            Slots = 2;
             _operation = operation;
             _operand = operand;
         }
@@ -619,8 +655,10 @@ namespace Parser.Internal
         internal readonly SyntaxList _nodes;
 
         internal CompoundNameSyntaxNode(
-            SyntaxList nodes) : base(TokenKind.CompoundName, 1)
+            SyntaxList nodes) : base(TokenKind.CompoundName)
         {
+
+            Slots = 1;
             _nodes = nodes;
         }
 
@@ -646,8 +684,10 @@ namespace Parser.Internal
 
         internal NamedFunctionHandleSyntaxNode(
             SyntaxToken atSign,
-            CompoundNameSyntaxNode functionName) : base(TokenKind.NamedFunctionHandle, 2)
+            CompoundNameSyntaxNode functionName) : base(TokenKind.NamedFunctionHandle)
         {
+
+            Slots = 2;
             _atSign = atSign;
             _functionName = functionName;
         }
@@ -677,8 +717,10 @@ namespace Parser.Internal
         internal LambdaSyntaxNode(
             SyntaxToken atSign,
             FunctionInputDescriptionSyntaxNode input,
-            ExpressionSyntaxNode body) : base(TokenKind.Lambda, 3)
+            ExpressionSyntaxNode body) : base(TokenKind.Lambda)
         {
+
+            Slots = 3;
             _atSign = atSign;
             _input = input;
             _body = body;
@@ -710,8 +752,10 @@ namespace Parser.Internal
         internal BinaryOperationExpressionSyntaxNode(
             ExpressionSyntaxNode lhs,
             SyntaxToken operation,
-            ExpressionSyntaxNode rhs) : base(TokenKind.BinaryOperation, 3)
+            ExpressionSyntaxNode rhs) : base(TokenKind.BinaryOperation)
         {
+
+            Slots = 3;
             _lhs = lhs;
             _operation = operation;
             _rhs = rhs;
@@ -739,8 +783,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _name;
 
         internal IdentifierNameSyntaxNode(
-            SyntaxToken name) : base(TokenKind.IdentifierName, 1)
+            SyntaxToken name) : base(TokenKind.IdentifierName)
         {
+
+            Slots = 1;
             _name = name;
         }
 
@@ -764,8 +810,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _number;
 
         internal NumberLiteralSyntaxNode(
-            SyntaxToken number) : base(TokenKind.NumberLiteralExpression, 1)
+            SyntaxToken number) : base(TokenKind.NumberLiteralExpression)
         {
+
+            Slots = 1;
             _number = number;
         }
 
@@ -789,8 +837,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _stringToken;
 
         internal StringLiteralSyntaxNode(
-            SyntaxToken stringToken) : base(TokenKind.StringLiteralExpression, 1)
+            SyntaxToken stringToken) : base(TokenKind.StringLiteralExpression)
         {
+
+            Slots = 1;
             _stringToken = stringToken;
         }
 
@@ -814,8 +864,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _stringToken;
 
         internal DoubleQuotedStringLiteralSyntaxNode(
-            SyntaxToken stringToken) : base(TokenKind.DoubleQuotedStringLiteralExpression, 1)
+            SyntaxToken stringToken) : base(TokenKind.DoubleQuotedStringLiteralExpression)
         {
+
+            Slots = 1;
             _stringToken = stringToken;
         }
 
@@ -839,8 +891,10 @@ namespace Parser.Internal
         internal readonly SyntaxToken _stringToken;
 
         internal UnquotedStringLiteralSyntaxNode(
-            SyntaxToken stringToken) : base(TokenKind.UnquotedStringLiteralExpression, 1)
+            SyntaxToken stringToken) : base(TokenKind.UnquotedStringLiteralExpression)
         {
+
+            Slots = 1;
             _stringToken = stringToken;
         }
 
@@ -868,8 +922,10 @@ namespace Parser.Internal
         internal ArrayLiteralExpressionSyntaxNode(
             SyntaxToken openingSquareBracket,
             SyntaxList nodes,
-            SyntaxToken closingSquareBracket) : base(TokenKind.ArrayLiteralExpression, 3)
+            SyntaxToken closingSquareBracket) : base(TokenKind.ArrayLiteralExpression)
         {
+
+            Slots = 3;
             _openingSquareBracket = openingSquareBracket;
             _nodes = nodes;
             _closingSquareBracket = closingSquareBracket;
@@ -901,8 +957,10 @@ namespace Parser.Internal
         internal CellArrayLiteralExpressionSyntaxNode(
             SyntaxToken openingBrace,
             SyntaxList nodes,
-            SyntaxToken closingBrace) : base(TokenKind.CellArrayLiteralExpression, 3)
+            SyntaxToken closingBrace) : base(TokenKind.CellArrayLiteralExpression)
         {
+
+            Slots = 3;
             _openingBrace = openingBrace;
             _nodes = nodes;
             _closingBrace = closingBrace;
@@ -934,8 +992,10 @@ namespace Parser.Internal
         internal ParenthesizedExpressionSyntaxNode(
             SyntaxToken openingBracket,
             ExpressionSyntaxNode expression,
-            SyntaxToken closingBracket) : base(TokenKind.ParenthesizedExpression, 3)
+            SyntaxToken closingBracket) : base(TokenKind.ParenthesizedExpression)
         {
+
+            Slots = 3;
             _openingBracket = openingBracket;
             _expression = expression;
             _closingBracket = closingBracket;
@@ -969,8 +1029,10 @@ namespace Parser.Internal
             ExpressionSyntaxNode expression,
             SyntaxToken openingBrace,
             SyntaxList nodes,
-            SyntaxToken closingBrace) : base(TokenKind.CellArrayElementAccess, 4)
+            SyntaxToken closingBrace) : base(TokenKind.CellArrayElementAccess)
         {
+
+            Slots = 4;
             _expression = expression;
             _openingBrace = openingBrace;
             _nodes = nodes;
@@ -1006,8 +1068,10 @@ namespace Parser.Internal
             ExpressionSyntaxNode functionName,
             SyntaxToken openingBracket,
             SyntaxList nodes,
-            SyntaxToken closingBracket) : base(TokenKind.FunctionCall, 4)
+            SyntaxToken closingBracket) : base(TokenKind.FunctionCall)
         {
+
+            Slots = 4;
             _functionName = functionName;
             _openingBracket = openingBracket;
             _nodes = nodes;
@@ -1041,8 +1105,10 @@ namespace Parser.Internal
         internal MemberAccessSyntaxNode(
             SyntaxNode leftOperand,
             SyntaxToken dot,
-            SyntaxNode rightOperand) : base(TokenKind.MemberAccess, 3)
+            SyntaxNode rightOperand) : base(TokenKind.MemberAccess)
         {
+
+            Slots = 3;
             _leftOperand = leftOperand;
             _dot = dot;
             _rightOperand = rightOperand;
@@ -1072,8 +1138,10 @@ namespace Parser.Internal
 
         internal UnaryPostixOperationExpressionSyntaxNode(
             ExpressionSyntaxNode operand,
-            SyntaxToken operation) : base(TokenKind.UnaryPostfixOperationExpression, 2)
+            SyntaxToken operation) : base(TokenKind.UnaryPostfixOperationExpression)
         {
+
+            Slots = 2;
             _operand = operand;
             _operation = operation;
         }
@@ -1103,8 +1171,10 @@ namespace Parser.Internal
         internal IndirectMemberAccessSyntaxNode(
             SyntaxToken openingBracket,
             ExpressionSyntaxNode expression,
-            SyntaxToken closingBracket) : base(TokenKind.IndirectMemberAccess, 3)
+            SyntaxToken closingBracket) : base(TokenKind.IndirectMemberAccess)
         {
+
+            Slots = 3;
             _openingBracket = openingBracket;
             _expression = expression;
             _closingBracket = closingBracket;
@@ -1134,8 +1204,10 @@ namespace Parser.Internal
 
         internal CommandExpressionSyntaxNode(
             IdentifierNameSyntaxNode commandName,
-            SyntaxList<UnquotedStringLiteralSyntaxNode> arguments) : base(TokenKind.Command, 2)
+            SyntaxList<UnquotedStringLiteralSyntaxNode> arguments) : base(TokenKind.Command)
         {
+
+            Slots = 2;
             _commandName = commandName;
             _arguments = arguments;
         }
@@ -1165,8 +1237,10 @@ namespace Parser.Internal
         internal BaseClassInvokationSyntaxNode(
             ExpressionSyntaxNode methodName,
             SyntaxToken atSign,
-            ExpressionSyntaxNode baseClassNameAndArguments) : base(TokenKind.ClassInvokation, 3)
+            ExpressionSyntaxNode baseClassNameAndArguments) : base(TokenKind.ClassInvokation)
         {
+
+            Slots = 3;
             _methodName = methodName;
             _atSign = atSign;
             _baseClassNameAndArguments = baseClassNameAndArguments;
@@ -1196,8 +1270,10 @@ namespace Parser.Internal
 
         internal AttributeAssignmentSyntaxNode(
             SyntaxToken assignmentSign,
-            ExpressionSyntaxNode value) : base(TokenKind.AttributeAssignment, 2)
+            ExpressionSyntaxNode value) : base(TokenKind.AttributeAssignment)
         {
+
+            Slots = 2;
             _assignmentSign = assignmentSign;
             _value = value;
         }
@@ -1225,8 +1301,10 @@ namespace Parser.Internal
 
         internal AttributeSyntaxNode(
             IdentifierNameSyntaxNode name,
-            AttributeAssignmentSyntaxNode assignment) : base(TokenKind.Attribute, 2)
+            AttributeAssignmentSyntaxNode assignment) : base(TokenKind.Attribute)
         {
+
+            Slots = 2;
             _name = name;
             _assignment = assignment;
         }
@@ -1256,8 +1334,10 @@ namespace Parser.Internal
         internal AttributeListSyntaxNode(
             SyntaxToken openingBracket,
             SyntaxList nodes,
-            SyntaxToken closingBracket) : base(TokenKind.AttributeList, 3)
+            SyntaxToken closingBracket) : base(TokenKind.AttributeList)
         {
+
+            Slots = 3;
             _openingBracket = openingBracket;
             _nodes = nodes;
             _closingBracket = closingBracket;
@@ -1297,8 +1377,10 @@ namespace Parser.Internal
             FunctionInputDescriptionSyntaxNode inputDescription,
             SyntaxList<SyntaxToken> commas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.MethodDefinition, 7)
+            SyntaxToken endKeyword) : base(TokenKind.MethodDefinition)
         {
+
+            Slots = 7;
             _functionKeyword = functionKeyword;
             _outputDescription = outputDescription;
             _name = name;
@@ -1338,8 +1420,10 @@ namespace Parser.Internal
         internal AbstractMethodDeclarationSyntaxNode(
             FunctionOutputDescriptionSyntaxNode outputDescription,
             CompoundNameSyntaxNode name,
-            FunctionInputDescriptionSyntaxNode inputDescription) : base(TokenKind.AbstractMethodDeclaration, 3)
+            FunctionInputDescriptionSyntaxNode inputDescription) : base(TokenKind.AbstractMethodDeclaration)
         {
+
+            Slots = 3;
             _outputDescription = outputDescription;
             _name = name;
             _inputDescription = inputDescription;
@@ -1373,8 +1457,10 @@ namespace Parser.Internal
             SyntaxToken methodsKeyword,
             AttributeListSyntaxNode attributes,
             SyntaxList methods,
-            SyntaxToken endKeyword) : base(TokenKind.MethodsList, 4)
+            SyntaxToken endKeyword) : base(TokenKind.MethodsList)
         {
+
+            Slots = 4;
             _methodsKeyword = methodsKeyword;
             _attributes = attributes;
             _methods = methods;
@@ -1410,8 +1496,10 @@ namespace Parser.Internal
             SyntaxToken propertiesKeyword,
             AttributeListSyntaxNode attributes,
             SyntaxList properties,
-            SyntaxToken endKeyword) : base(TokenKind.PropertiesList, 4)
+            SyntaxToken endKeyword) : base(TokenKind.PropertiesList)
         {
+
+            Slots = 4;
             _propertiesKeyword = propertiesKeyword;
             _attributes = attributes;
             _properties = properties;
@@ -1443,8 +1531,10 @@ namespace Parser.Internal
 
         internal BaseClassListSyntaxNode(
             SyntaxToken lessSign,
-            SyntaxList baseClasses) : base(TokenKind.BaseClassList, 2)
+            SyntaxList baseClasses) : base(TokenKind.BaseClassList)
         {
+
+            Slots = 2;
             _lessSign = lessSign;
             _baseClasses = baseClasses;
         }
@@ -1480,8 +1570,10 @@ namespace Parser.Internal
             IdentifierNameSyntaxNode className,
             BaseClassListSyntaxNode baseClassList,
             SyntaxList nodes,
-            SyntaxToken endKeyword) : base(TokenKind.ClassDeclaration, 6)
+            SyntaxToken endKeyword) : base(TokenKind.ClassDeclaration)
         {
+
+            Slots = 6;
             _classdefKeyword = classdefKeyword;
             _attributes = attributes;
             _className = className;
@@ -1519,8 +1611,10 @@ namespace Parser.Internal
         internal EnumerationItemValueSyntaxNode(
             SyntaxToken openingBracket,
             SyntaxList values,
-            SyntaxToken closingBracket) : base(TokenKind.EnumerationItemValue, 3)
+            SyntaxToken closingBracket) : base(TokenKind.EnumerationItemValue)
         {
+
+            Slots = 3;
             _openingBracket = openingBracket;
             _values = values;
             _closingBracket = closingBracket;
@@ -1552,8 +1646,10 @@ namespace Parser.Internal
         internal EnumerationItemSyntaxNode(
             IdentifierNameSyntaxNode name,
             EnumerationItemValueSyntaxNode values,
-            SyntaxList<SyntaxToken> commas) : base(TokenKind.EnumerationItem, 3)
+            SyntaxList<SyntaxToken> commas) : base(TokenKind.EnumerationItem)
         {
+
+            Slots = 3;
             _name = name;
             _values = values;
             _commas = commas;
@@ -1587,8 +1683,10 @@ namespace Parser.Internal
             SyntaxToken enumerationKeyword,
             AttributeListSyntaxNode attributes,
             SyntaxList<EnumerationItemSyntaxNode> items,
-            SyntaxToken endKeyword) : base(TokenKind.EnumerationList, 4)
+            SyntaxToken endKeyword) : base(TokenKind.EnumerationList)
         {
+
+            Slots = 4;
             _enumerationKeyword = enumerationKeyword;
             _attributes = attributes;
             _items = items;
@@ -1624,8 +1722,10 @@ namespace Parser.Internal
             SyntaxToken eventsKeyword,
             AttributeListSyntaxNode attributes,
             SyntaxList events,
-            SyntaxToken endKeyword) : base(TokenKind.EventsList, 4)
+            SyntaxToken endKeyword) : base(TokenKind.EventsList)
         {
+
+            Slots = 4;
             _eventsKeyword = eventsKeyword;
             _attributes = attributes;
             _events = events;

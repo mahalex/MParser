@@ -82,11 +82,12 @@ namespace SyntaxGenerator
                 node.Fields.Select(field => $"\n            {field.FieldType} {field.FieldName}"));
 
             var header =
-                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName}, {node.Fields.Length})\n";
+                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName})\n";
+            var slotsAssignment = $"\n            Slots = {node.Fields.Length};\n";
             var assignments = string.Join(
                 "",
                 node.Fields.Select(GenerateFieldAssignmentInsideConstructor));
-            return header + "        {\n" + assignments + "        }\n";
+            return header + "        {\n" + slotsAssignment + assignments + "        }\n";
         }
 
         private static string GenerateConstructor(SyntaxNodeDescription node)

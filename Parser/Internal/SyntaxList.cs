@@ -7,8 +7,9 @@ namespace Parser.Internal
     {
         private readonly GreenNode[] _elements;
         
-        protected SyntaxList(GreenNode[] elements) : base(TokenKind.List, elements.Length)
+        protected SyntaxList(GreenNode[] elements) : base(TokenKind.List)
         {
+            Slots = elements.Length;
             _elements = elements;
         }
 

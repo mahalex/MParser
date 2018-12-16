@@ -6,7 +6,7 @@ namespace Parser.Internal
 {
     internal abstract class SyntaxNode : GreenNode
     {
-        protected SyntaxNode(TokenKind kind, int slots) : base(kind, slots)
+        protected SyntaxNode(TokenKind kind) : base(kind)
         {
         }
 
@@ -54,28 +54,28 @@ namespace Parser.Internal
 
     internal abstract class StatementSyntaxNode : SyntaxNode
     {
-        protected StatementSyntaxNode(TokenKind kind, int slots) : base(kind, slots + 1)
-        {
+        protected StatementSyntaxNode(TokenKind kind) : base(kind)
+        { 
         }
     }
     
     internal abstract class ExpressionSyntaxNode : SyntaxNode
     {
-        protected ExpressionSyntaxNode(TokenKind kind, int slots) : base(kind, slots)
+        protected ExpressionSyntaxNode(TokenKind kind) : base(kind)
         {
         }
     }
 
     internal abstract class FunctionHandleSyntaxNode : ExpressionSyntaxNode
     {
-        protected FunctionHandleSyntaxNode(TokenKind kind, int slots) : base(kind, slots)
+        protected FunctionHandleSyntaxNode(TokenKind kind) : base(kind)
         {
         }
     }
 
     internal abstract class MethodDeclarationSyntaxNode : StatementSyntaxNode
     {
-        protected MethodDeclarationSyntaxNode(TokenKind kind, int slots) : base(kind, slots)
+        protected MethodDeclarationSyntaxNode(TokenKind kind) : base(kind)
         {
         }
     }

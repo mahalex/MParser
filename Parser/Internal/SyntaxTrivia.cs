@@ -9,7 +9,7 @@ namespace Parser.Internal
     {
         private readonly string _text;
         
-        public SyntaxTrivia(TokenKind kind, string text) : base(kind, 0)
+        public SyntaxTrivia(TokenKind kind, string text) : base(kind)
         {
             _text = text;
         }

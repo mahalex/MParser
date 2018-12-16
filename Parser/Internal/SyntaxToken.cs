@@ -187,7 +187,7 @@ namespace Parser.Internal
             public override string Text => "";
         }
 
-        protected SyntaxToken(TokenKind kind) : base(kind, 0)
+        protected SyntaxToken(TokenKind kind) : base(kind)
         {
         }
         

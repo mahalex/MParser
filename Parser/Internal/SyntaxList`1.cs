@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Parser.Internal
+﻿namespace Parser.Internal
 {
     internal class SyntaxList<T> : SyntaxNode where T : GreenNode
     {
         private readonly SyntaxList _list;
         
-        protected SyntaxList(T[] list) : base(TokenKind.List, list.Length)
+        protected SyntaxList(T[] list) : base(TokenKind.List)
         {
+            Slots = list.Length;
             _list = SyntaxList.List(list);
         }
 
