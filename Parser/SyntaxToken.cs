@@ -57,6 +57,7 @@ namespace Parser
 
         public string Text => _token.Text;
         public string FullText => _token.FullText;
+        public int FullWidth => _token.FullWidth;
         public bool IsMissing => _token.IsMissing;
 
         public IReadOnlyList<SyntaxTrivia> LeadingTrivia

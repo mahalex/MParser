@@ -16,8 +16,26 @@ namespace Parser.Internal
         {
             Kind = kind;
         }
-                
+
+        public GreenNode(TokenKind kind, int fullWidth)
+        {
+            Kind = kind;
+            _fullWidth = fullWidth;
+        }
+
         internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent);
+
+        protected int _fullWidth;
+
+        public int FullWidth => _fullWidth;
+
+        protected void AdjustWidth(GreenNode node)
+        {
+            if (!(node is null))
+            {
+                _fullWidth += node.FullWidth;
+            }
+        }
 
         public virtual string Text
         {

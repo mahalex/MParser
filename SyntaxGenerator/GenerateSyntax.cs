@@ -72,7 +72,9 @@ namespace SyntaxGenerator
 
         private static string GenerateFieldAssignmentInsideConstructor(FieldDescription field)
         {
-            return $"            _{field.FieldName} = {field.FieldName};\n";
+            var widthAdjustment = $"            this.AdjustWidth({field.FieldName});\n";
+            var fieldAssignment = $"            _{field.FieldName} = {field.FieldName};\n";
+            return widthAdjustment + fieldAssignment;
         }
         
         private static string GenerateInternalConstructor(SyntaxNodeDescription node)

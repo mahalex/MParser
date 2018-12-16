@@ -48,6 +48,8 @@ namespace Parser
 
         public virtual string FullText => _green.FullText;
 
+        public int FullWidth => _green.FullWidth;
+
         public virtual IReadOnlyList<SyntaxTrivia> LeadingTrivia
         {
             get

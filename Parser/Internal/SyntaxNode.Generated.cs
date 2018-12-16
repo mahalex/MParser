@@ -11,7 +11,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(statementList);
             _statementList = statementList;
+            this.AdjustWidth(endOfFile);
             _endOfFile = endOfFile;
         }
 
@@ -52,12 +54,19 @@ namespace Parser.Internal
         {
 
             Slots = 7;
+            this.AdjustWidth(functionKeyword);
             _functionKeyword = functionKeyword;
+            this.AdjustWidth(outputDescription);
             _outputDescription = outputDescription;
+            this.AdjustWidth(name);
             _name = name;
+            this.AdjustWidth(inputDescription);
             _inputDescription = inputDescription;
+            this.AdjustWidth(commas);
             _commas = commas;
+            this.AdjustWidth(body);
             _body = body;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -93,7 +102,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(outputList);
             _outputList = outputList;
+            this.AdjustWidth(assignmentSign);
             _assignmentSign = assignmentSign;
         }
 
@@ -126,8 +137,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(parameterList);
             _parameterList = parameterList;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -165,10 +179,15 @@ namespace Parser.Internal
         {
 
             Slots = 5;
+            this.AdjustWidth(switchKeyword);
             _switchKeyword = switchKeyword;
+            this.AdjustWidth(switchExpression);
             _switchExpression = switchExpression;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(cases);
             _cases = cases;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -206,9 +225,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(caseKeyword);
             _caseKeyword = caseKeyword;
+            this.AdjustWidth(caseIdentifier);
             _caseIdentifier = caseIdentifier;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
             _body = body;
         }
 
@@ -247,10 +270,15 @@ namespace Parser.Internal
         {
 
             Slots = 5;
+            this.AdjustWidth(whileKeyword);
             _whileKeyword = whileKeyword;
+            this.AdjustWidth(condition);
             _condition = condition;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
             _body = body;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -288,9 +316,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(elseifKeyword);
             _elseifKeyword = elseifKeyword;
+            this.AdjustWidth(condition);
             _condition = condition;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
             _body = body;
         }
 
@@ -323,7 +355,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(elseKeyword);
             _elseKeyword = elseKeyword;
+            this.AdjustWidth(body);
             _body = body;
         }
 
@@ -364,12 +398,19 @@ namespace Parser.Internal
         {
 
             Slots = 7;
+            this.AdjustWidth(ifKeyword);
             _ifKeyword = ifKeyword;
+            this.AdjustWidth(condition);
             _condition = condition;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
             _body = body;
+            this.AdjustWidth(elseifClauses);
             _elseifClauses = elseifClauses;
+            this.AdjustWidth(elseClause);
             _elseClause = elseClause;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -411,10 +452,15 @@ namespace Parser.Internal
         {
 
             Slots = 5;
+            this.AdjustWidth(forKeyword);
             _forKeyword = forKeyword;
+            this.AdjustWidth(assignment);
             _assignment = assignment;
+            this.AdjustWidth(optionalCommas);
             _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
             _body = body;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -450,8 +496,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(lhs);
             _lhs = lhs;
+            this.AdjustWidth(assignmentSign);
             _assignmentSign = assignmentSign;
+            this.AdjustWidth(rhs);
             _rhs = rhs;
         }
 
@@ -483,7 +532,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(catchKeyword);
             _catchKeyword = catchKeyword;
+            this.AdjustWidth(catchBody);
             _catchBody = catchBody;
         }
 
@@ -518,9 +569,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(tryKeyword);
             _tryKeyword = tryKeyword;
+            this.AdjustWidth(tryBody);
             _tryBody = tryBody;
+            this.AdjustWidth(catchClause);
             _catchClause = catchClause;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -551,6 +606,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(expression);
             _expression = expression;
         }
 
@@ -578,6 +634,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(semicolon);
             _semicolon = semicolon;
         }
 
@@ -630,7 +687,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(operation);
             _operation = operation;
+            this.AdjustWidth(operand);
             _operand = operand;
         }
 
@@ -659,6 +718,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
         }
 
@@ -688,7 +748,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(atSign);
             _atSign = atSign;
+            this.AdjustWidth(functionName);
             _functionName = functionName;
         }
 
@@ -721,8 +783,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(atSign);
             _atSign = atSign;
+            this.AdjustWidth(input);
             _input = input;
+            this.AdjustWidth(body);
             _body = body;
         }
 
@@ -756,8 +821,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(lhs);
             _lhs = lhs;
+            this.AdjustWidth(operation);
             _operation = operation;
+            this.AdjustWidth(rhs);
             _rhs = rhs;
         }
 
@@ -787,6 +855,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(name);
             _name = name;
         }
 
@@ -814,6 +883,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(number);
             _number = number;
         }
 
@@ -841,6 +911,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(stringToken);
             _stringToken = stringToken;
         }
 
@@ -868,6 +939,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(stringToken);
             _stringToken = stringToken;
         }
 
@@ -895,6 +967,7 @@ namespace Parser.Internal
         {
 
             Slots = 1;
+            this.AdjustWidth(stringToken);
             _stringToken = stringToken;
         }
 
@@ -926,8 +999,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingSquareBracket);
             _openingSquareBracket = openingSquareBracket;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(closingSquareBracket);
             _closingSquareBracket = closingSquareBracket;
         }
 
@@ -961,8 +1037,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBrace);
             _openingBrace = openingBrace;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(closingBrace);
             _closingBrace = closingBrace;
         }
 
@@ -996,8 +1075,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(expression);
             _expression = expression;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -1033,9 +1115,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(expression);
             _expression = expression;
+            this.AdjustWidth(openingBrace);
             _openingBrace = openingBrace;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(closingBrace);
             _closingBrace = closingBrace;
         }
 
@@ -1072,9 +1158,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(functionName);
             _functionName = functionName;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -1109,8 +1199,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(leftOperand);
             _leftOperand = leftOperand;
+            this.AdjustWidth(dot);
             _dot = dot;
+            this.AdjustWidth(rightOperand);
             _rightOperand = rightOperand;
         }
 
@@ -1142,7 +1235,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(operand);
             _operand = operand;
+            this.AdjustWidth(operation);
             _operation = operation;
         }
 
@@ -1175,8 +1270,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(expression);
             _expression = expression;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -1208,7 +1306,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(commandName);
             _commandName = commandName;
+            this.AdjustWidth(arguments);
             _arguments = arguments;
         }
 
@@ -1241,8 +1341,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(methodName);
             _methodName = methodName;
+            this.AdjustWidth(atSign);
             _atSign = atSign;
+            this.AdjustWidth(baseClassNameAndArguments);
             _baseClassNameAndArguments = baseClassNameAndArguments;
         }
 
@@ -1274,7 +1377,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(assignmentSign);
             _assignmentSign = assignmentSign;
+            this.AdjustWidth(value);
             _value = value;
         }
 
@@ -1305,7 +1410,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(name);
             _name = name;
+            this.AdjustWidth(assignment);
             _assignment = assignment;
         }
 
@@ -1338,8 +1445,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -1381,12 +1491,19 @@ namespace Parser.Internal
         {
 
             Slots = 7;
+            this.AdjustWidth(functionKeyword);
             _functionKeyword = functionKeyword;
+            this.AdjustWidth(outputDescription);
             _outputDescription = outputDescription;
+            this.AdjustWidth(name);
             _name = name;
+            this.AdjustWidth(inputDescription);
             _inputDescription = inputDescription;
+            this.AdjustWidth(commas);
             _commas = commas;
+            this.AdjustWidth(body);
             _body = body;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -1424,8 +1541,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(outputDescription);
             _outputDescription = outputDescription;
+            this.AdjustWidth(name);
             _name = name;
+            this.AdjustWidth(inputDescription);
             _inputDescription = inputDescription;
         }
 
@@ -1461,9 +1581,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(methodsKeyword);
             _methodsKeyword = methodsKeyword;
+            this.AdjustWidth(attributes);
             _attributes = attributes;
+            this.AdjustWidth(methods);
             _methods = methods;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -1500,9 +1624,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(propertiesKeyword);
             _propertiesKeyword = propertiesKeyword;
+            this.AdjustWidth(attributes);
             _attributes = attributes;
+            this.AdjustWidth(properties);
             _properties = properties;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -1535,7 +1663,9 @@ namespace Parser.Internal
         {
 
             Slots = 2;
+            this.AdjustWidth(lessSign);
             _lessSign = lessSign;
+            this.AdjustWidth(baseClasses);
             _baseClasses = baseClasses;
         }
 
@@ -1574,11 +1704,17 @@ namespace Parser.Internal
         {
 
             Slots = 6;
+            this.AdjustWidth(classdefKeyword);
             _classdefKeyword = classdefKeyword;
+            this.AdjustWidth(attributes);
             _attributes = attributes;
+            this.AdjustWidth(className);
             _className = className;
+            this.AdjustWidth(baseClassList);
             _baseClassList = baseClassList;
+            this.AdjustWidth(nodes);
             _nodes = nodes;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -1615,8 +1751,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
+            this.AdjustWidth(values);
             _values = values;
+            this.AdjustWidth(closingBracket);
             _closingBracket = closingBracket;
         }
 
@@ -1650,8 +1789,11 @@ namespace Parser.Internal
         {
 
             Slots = 3;
+            this.AdjustWidth(name);
             _name = name;
+            this.AdjustWidth(values);
             _values = values;
+            this.AdjustWidth(commas);
             _commas = commas;
         }
 
@@ -1687,9 +1829,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(enumerationKeyword);
             _enumerationKeyword = enumerationKeyword;
+            this.AdjustWidth(attributes);
             _attributes = attributes;
+            this.AdjustWidth(items);
             _items = items;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 
@@ -1726,9 +1872,13 @@ namespace Parser.Internal
         {
 
             Slots = 4;
+            this.AdjustWidth(eventsKeyword);
             _eventsKeyword = eventsKeyword;
+            this.AdjustWidth(attributes);
             _attributes = attributes;
+            this.AdjustWidth(events);
             _events = events;
+            this.AdjustWidth(endKeyword);
             _endKeyword = endKeyword;
         }
 

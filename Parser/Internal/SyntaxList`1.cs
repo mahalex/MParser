@@ -8,6 +8,10 @@
         {
             Slots = list.Length;
             _list = SyntaxList.List(list);
+            foreach (var element in list)
+            {
+                this.AdjustWidth(element);
+            }
         }
 
         public override GreenNode GetSlot(int i)

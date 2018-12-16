@@ -51,8 +51,10 @@ namespace Parser.Tests
             var window = new TextWindowWithNull(text, fileName);
             var parser = CreateParser(window);
             var tree = parser.Parse();
-            var actual = tree.Root.FullText;
-            Assert.Equal(text, actual);
+            var actualText = tree.Root.FullText;
+            var actualWidth = tree.Root.FullWidth;
+            Assert.Equal(text, actualText);
+            Assert.Equal(text.Length, actualWidth);
         }
         
         public static IEnumerable<object[]> FilesData()

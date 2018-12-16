@@ -11,6 +11,10 @@ namespace Parser.Internal
         {
             Slots = elements.Length;
             _elements = elements;
+            foreach (var element in elements)
+            {
+                this.AdjustWidth(element);
+            }
         }
 
         public override GreenNode GetSlot(int i)

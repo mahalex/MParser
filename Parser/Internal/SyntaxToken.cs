@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Parser.Internal
 {
@@ -21,6 +22,7 @@ namespace Parser.Internal
                 _text = text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
+                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
             }
 
             public SyntaxTokenWithTrivia(
@@ -31,6 +33,7 @@ namespace Parser.Internal
                 _text = base.Text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
+                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
             }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
@@ -69,6 +72,7 @@ namespace Parser.Internal
             {
                 _text = text;
                 _value = value;
+                _fullWidth = text?.Length ?? 0;
             }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
@@ -89,6 +93,7 @@ namespace Parser.Internal
             {
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
+                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
             }
 
             public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore { get; }
@@ -129,6 +134,7 @@ namespace Parser.Internal
                 ) : base(TokenKind.IdentifierToken)
             {
                 _text = text;
+                _fullWidth = text?.Length ?? 0;
             }
         }
 
@@ -148,6 +154,7 @@ namespace Parser.Internal
             {
                 _leadingTrivia = leadingTrivia;
                 _trailingTrivia = trailingTrivia;
+                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
             }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
