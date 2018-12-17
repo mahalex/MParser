@@ -26,9 +26,9 @@
 
         public override bool IsList => true;
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.SyntaxNodeOrTokenList(parent, this);
+            return new Parser.SyntaxNodeOrTokenList(parent, this, position);
         }
     }
 }

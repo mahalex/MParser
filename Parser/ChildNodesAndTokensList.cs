@@ -90,7 +90,7 @@ namespace Parser
                             return red;
                         }
                         // this is a token
-                        return new SyntaxToken(listSlot, listSlot._green.GetSlot(index));
+                        return new SyntaxToken(listSlot, listSlot._green.GetSlot(index), _node.GetChildPosition(index));
                     }
                     else
                     {
@@ -100,7 +100,7 @@ namespace Parser
                             return red;
                         }
                         // this is a token
-                        return new SyntaxToken(_node, _node._green.GetSlot(currentSlotIndex));
+                        return new SyntaxToken(_node, _node._green.GetSlot(currentSlotIndex), _node.GetChildPosition(currentSlotIndex));
                     }
                 }
 

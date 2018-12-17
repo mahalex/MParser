@@ -23,7 +23,7 @@ namespace Parser
             var green = parser.ParseFile();
             var parserDiagnostics = parser.Diagnostics;
             var totalDiagnostics = new DiagnosticsBag(lexerDiagnostics.Concat(parserDiagnostics));
-            var root = new FileSyntaxNode(null, green);
+            var root = new FileSyntaxNode(null, green, 0);
             return new SyntaxTree(root, totalDiagnostics);
         }
     }

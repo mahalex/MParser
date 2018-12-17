@@ -11,17 +11,21 @@
             _token = null;
             _nodeOrParent = node;
             _isToken = false;
+            Position = node.Position;
         }
 
-        internal SyntaxNodeOrToken(SyntaxNode parent, Internal.GreenNode token)
+        internal SyntaxNodeOrToken(SyntaxNode parent, Internal.GreenNode token, int position)
         {
             _token = token;
             _nodeOrParent = parent;
             _isToken = true;
+            Position = position;
         }
 
         public bool IsToken => _isToken;
         public bool IsNode => !IsToken;
+
+        public int Position { get; }
 
         public SyntaxNode AsNode()
         {
@@ -39,12 +43,12 @@
             {
                 return default(SyntaxToken);
             }
-            return new SyntaxToken(_nodeOrParent, _token);
+            return new SyntaxToken(_nodeOrParent, _token, Position);
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken token)
         {
-            return new SyntaxNodeOrToken(token.Parent, token.Token);
+            return new SyntaxNodeOrToken(token.Parent, token.Token, token.Position);
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxNode node)

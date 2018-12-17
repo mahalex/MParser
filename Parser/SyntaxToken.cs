@@ -17,14 +17,17 @@ namespace Parser
             return _token.ToString();
         }
 
-        internal SyntaxToken(SyntaxNode parent, Internal.GreenNode token)
+        internal SyntaxToken(SyntaxNode parent, Internal.GreenNode token, int position)
         {
             _parent = parent;
             _token = token ?? throw new ArgumentNullException(nameof(token));
+            Position = position;
         }
 
         public SyntaxNode Parent => _parent;
         internal Internal.GreenNode Token => _token;
+
+        public int Position { get; }
 
         public bool Equals(SyntaxToken other)
         {

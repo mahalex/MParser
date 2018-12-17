@@ -23,7 +23,7 @@ namespace Parser.Internal
             _fullWidth = fullWidth;
         }
 
-        internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent);
+        internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position);
 
         protected int _fullWidth;
 

@@ -7,7 +7,7 @@ namespace Parser
 {
     public class SyntaxNodeOrTokenList : SyntaxNode, IReadOnlyCollection<SyntaxNodeOrToken>
     {
-        internal SyntaxNodeOrTokenList(SyntaxNode parent, GreenNode green) : base(parent, green)
+        internal SyntaxNodeOrTokenList(SyntaxNode parent, GreenNode green, int position) : base(parent, green, position)
         {
         }
 
@@ -20,11 +20,11 @@ namespace Parser
                     var green = _green.GetSlot(index);
                     if (green is Internal.SyntaxToken)
                     {
-                        return new SyntaxToken(this, green);
+                        return new SyntaxToken(this, green, this.GetChildPosition(index));
                     }
                     else
                     {
-                        return green.CreateRed(this);
+                        return green.CreateRed(this, this.GetChildPosition(index));
                     }
                 }
                 throw new ArgumentOutOfRangeException();

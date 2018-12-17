@@ -94,9 +94,9 @@ namespace SyntaxGenerator
 
         private static string GenerateConstructor(SyntaxNodeDescription node)
         {
-            var arguments = "SyntaxNode parent, Internal.GreenNode green";
+            var arguments = "SyntaxNode parent, Internal.GreenNode green, int position";
             var header =
-                $"        internal {node.ClassName}({arguments}) : base(parent, green)\n";
+                $"        internal {node.ClassName}({arguments}) : base(parent, green, position)\n";
             return header + "        {\n        }\n";
         }
 
@@ -132,8 +132,8 @@ namespace SyntaxGenerator
 
         private static string GenerateCreateRed(SyntaxNodeDescription node)
         {
-            var header = $"        internal override {OuterNamespace}.SyntaxNode CreateRed({OuterNamespace}.SyntaxNode parent)\n";
-            var text = $"            return new {OuterNamespace}.{node.ClassName}(parent, this);\n";
+            var header = $"        internal override {OuterNamespace}.SyntaxNode CreateRed({OuterNamespace}.SyntaxNode parent, int position)\n";
+            var text = $"            return new {OuterNamespace}.{node.ClassName}(parent, this, position);\n";
             return header + "        {\n" + text + "        }\n";
         }
 
@@ -165,11 +165,11 @@ namespace SyntaxGenerator
             return s[0].ToString().ToUpper() + s.Substring(1, s.Length - 1);
         }
 
-        private static string GenerateTokenAccessor(SyntaxNodeDescription node, FieldDescription field)
+        private static string GenerateTokenAccessor(SyntaxNodeDescription node, FieldDescription field, int index)
         {
             var header = $"        public SyntaxToken {Capitalize(field.FieldName)}\n";
             var text =
-                $"            get {{ return new SyntaxToken(this, (({InternalNamespace}.{node.ClassName})_green)._{field.FieldName}); }}";
+                $"            get {{ return new SyntaxToken(this, (({InternalNamespace}.{node.ClassName})_green)._{field.FieldName}, this.GetChildPosition({index})); }}";
             return header + "        {\n" + text + "\n        }\n";
         }
 
@@ -236,7 +236,7 @@ namespace SyntaxGenerator
             var tokenAccessors =
                 string.Join(
                     "\n",
-                    tokenSlots.Select(pair => GenerateTokenAccessor(node, pair.field)));
+                    tokenSlots.Select(pair => GenerateTokenAccessor(node, pair.field, pair.index)));
             var nodeAccessors =
                 string.Join(
                     "\n",

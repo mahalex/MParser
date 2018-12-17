@@ -8,21 +8,41 @@ namespace Parser
     {
         private readonly SyntaxNode _parent;
         internal readonly Internal.GreenNode _green; 
-        internal SyntaxNode(SyntaxNode parent, Internal.GreenNode green)
+        internal SyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position)
         {
             _parent = parent;
             _green = green;
+            Position = position;
         }
 
         public TokenKind Kind => _green.Kind;
 
         public SyntaxNode Parent => _parent;
 
+        public int Slots => _green.Slots;
+
         public ChildNodesAndTokensList GetChildNodesAndTokens()
         {
             return new ChildNodesAndTokensList(this);
         }
         
+        public int Position { get; }
+
+        internal int GetChildPosition(int slot)
+        {
+            var result = Position;
+            while (slot > 0)
+            {
+                slot--;
+                var greenChild = _green.GetSlot(slot);
+                if (greenChild != null)
+                {
+                    result += greenChild.FullWidth;
+                }
+            }
+            return result;
+        }
+
         internal abstract SyntaxNode GetNode(int index);
 
         internal SyntaxNode GetRed(ref SyntaxNode field, int slot)
@@ -32,7 +52,7 @@ namespace Parser
                 var green = _green.GetSlot(slot);
                 if (green != null)
                 {
-                    field = green.CreateRed(this);
+                    field = green.CreateRed(this, this.GetChildPosition(slot));
                 }
             }
 
@@ -73,28 +93,28 @@ namespace Parser
     
     public abstract class StatementSyntaxNode : SyntaxNode
     {
-        internal StatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green) : base(parent, green)
+        internal StatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
     }
     
     public abstract class ExpressionSyntaxNode : SyntaxNode
     {
-        internal ExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green) : base(parent, green)
+        internal ExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
     }
 
     public abstract class FunctionHandleSyntaxNode : ExpressionSyntaxNode
     {
-        internal FunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green) : base(parent, green)
+        internal FunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
     }
 
     public abstract class MethodDeclarationSyntaxNode : StatementSyntaxNode
     {
-        internal MethodDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green) : base(parent, green)
+        internal MethodDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
     }

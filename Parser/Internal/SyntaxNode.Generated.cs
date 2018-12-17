@@ -17,9 +17,9 @@ namespace Parser.Internal
             _endOfFile = endOfFile;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.FileSyntaxNode(parent, this);
+            return new Parser.FileSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -70,9 +70,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.FunctionDeclarationSyntaxNode(parent, this);
+            return new Parser.FunctionDeclarationSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -108,9 +108,9 @@ namespace Parser.Internal
             _assignmentSign = assignmentSign;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.FunctionOutputDescriptionSyntaxNode(parent, this);
+            return new Parser.FunctionOutputDescriptionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -145,9 +145,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.FunctionInputDescriptionSyntaxNode(parent, this);
+            return new Parser.FunctionInputDescriptionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -191,9 +191,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.SwitchStatementSyntaxNode(parent, this);
+            return new Parser.SwitchStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -235,9 +235,9 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.SwitchCaseSyntaxNode(parent, this);
+            return new Parser.SwitchCaseSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -282,9 +282,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.WhileStatementSyntaxNode(parent, this);
+            return new Parser.WhileStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -326,9 +326,9 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ElseifClause(parent, this);
+            return new Parser.ElseifClause(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -361,9 +361,9 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ElseClause(parent, this);
+            return new Parser.ElseClause(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -414,9 +414,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.IfStatementSyntaxNode(parent, this);
+            return new Parser.IfStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -464,9 +464,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ForStatementSyntaxNode(parent, this);
+            return new Parser.ForStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -504,9 +504,9 @@ namespace Parser.Internal
             _rhs = rhs;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.AssignmentExpressionSyntaxNode(parent, this);
+            return new Parser.AssignmentExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -538,9 +538,9 @@ namespace Parser.Internal
             _catchBody = catchBody;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.CatchClauseSyntaxNode(parent, this);
+            return new Parser.CatchClauseSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -579,9 +579,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.TryCatchStatementSyntaxNode(parent, this);
+            return new Parser.TryCatchStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -610,9 +610,9 @@ namespace Parser.Internal
             _expression = expression;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ExpressionStatementSyntaxNode(parent, this);
+            return new Parser.ExpressionStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -638,9 +638,9 @@ namespace Parser.Internal
             _semicolon = semicolon;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EmptyStatementSyntaxNode(parent, this);
+            return new Parser.EmptyStatementSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -662,9 +662,9 @@ namespace Parser.Internal
             Slots = 0;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EmptyExpressionSyntaxNode(parent, this);
+            return new Parser.EmptyExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -693,9 +693,9 @@ namespace Parser.Internal
             _operand = operand;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.UnaryPrefixOperationExpressionSyntaxNode(parent, this);
+            return new Parser.UnaryPrefixOperationExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -722,9 +722,9 @@ namespace Parser.Internal
             _nodes = nodes;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.CompoundNameSyntaxNode(parent, this);
+            return new Parser.CompoundNameSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -754,9 +754,9 @@ namespace Parser.Internal
             _functionName = functionName;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.NamedFunctionHandleSyntaxNode(parent, this);
+            return new Parser.NamedFunctionHandleSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -791,9 +791,9 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.LambdaSyntaxNode(parent, this);
+            return new Parser.LambdaSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -829,9 +829,9 @@ namespace Parser.Internal
             _rhs = rhs;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.BinaryOperationExpressionSyntaxNode(parent, this);
+            return new Parser.BinaryOperationExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -859,9 +859,9 @@ namespace Parser.Internal
             _name = name;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.IdentifierNameSyntaxNode(parent, this);
+            return new Parser.IdentifierNameSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -887,9 +887,9 @@ namespace Parser.Internal
             _number = number;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.NumberLiteralSyntaxNode(parent, this);
+            return new Parser.NumberLiteralSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -915,9 +915,9 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.StringLiteralSyntaxNode(parent, this);
+            return new Parser.StringLiteralSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -943,9 +943,9 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.DoubleQuotedStringLiteralSyntaxNode(parent, this);
+            return new Parser.DoubleQuotedStringLiteralSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -971,9 +971,9 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.UnquotedStringLiteralSyntaxNode(parent, this);
+            return new Parser.UnquotedStringLiteralSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1007,9 +1007,9 @@ namespace Parser.Internal
             _closingSquareBracket = closingSquareBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ArrayLiteralExpressionSyntaxNode(parent, this);
+            return new Parser.ArrayLiteralExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1045,9 +1045,9 @@ namespace Parser.Internal
             _closingBrace = closingBrace;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.CellArrayLiteralExpressionSyntaxNode(parent, this);
+            return new Parser.CellArrayLiteralExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1083,9 +1083,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ParenthesizedExpressionSyntaxNode(parent, this);
+            return new Parser.ParenthesizedExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1125,9 +1125,9 @@ namespace Parser.Internal
             _closingBrace = closingBrace;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.CellArrayElementAccessExpressionSyntaxNode(parent, this);
+            return new Parser.CellArrayElementAccessExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1168,9 +1168,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.FunctionCallExpressionSyntaxNode(parent, this);
+            return new Parser.FunctionCallExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1207,9 +1207,9 @@ namespace Parser.Internal
             _rightOperand = rightOperand;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.MemberAccessSyntaxNode(parent, this);
+            return new Parser.MemberAccessSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1241,9 +1241,9 @@ namespace Parser.Internal
             _operation = operation;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.UnaryPostixOperationExpressionSyntaxNode(parent, this);
+            return new Parser.UnaryPostixOperationExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1278,9 +1278,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.IndirectMemberAccessSyntaxNode(parent, this);
+            return new Parser.IndirectMemberAccessSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1312,9 +1312,9 @@ namespace Parser.Internal
             _arguments = arguments;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.CommandExpressionSyntaxNode(parent, this);
+            return new Parser.CommandExpressionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1349,9 +1349,9 @@ namespace Parser.Internal
             _baseClassNameAndArguments = baseClassNameAndArguments;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.BaseClassInvokationSyntaxNode(parent, this);
+            return new Parser.BaseClassInvokationSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1383,9 +1383,9 @@ namespace Parser.Internal
             _value = value;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.AttributeAssignmentSyntaxNode(parent, this);
+            return new Parser.AttributeAssignmentSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1416,9 +1416,9 @@ namespace Parser.Internal
             _assignment = assignment;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.AttributeSyntaxNode(parent, this);
+            return new Parser.AttributeSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1453,9 +1453,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.AttributeListSyntaxNode(parent, this);
+            return new Parser.AttributeListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1507,9 +1507,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.MethodDefinitionSyntaxNode(parent, this);
+            return new Parser.MethodDefinitionSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1549,9 +1549,9 @@ namespace Parser.Internal
             _inputDescription = inputDescription;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.AbstractMethodDeclarationSyntaxNode(parent, this);
+            return new Parser.AbstractMethodDeclarationSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1591,9 +1591,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.MethodsListSyntaxNode(parent, this);
+            return new Parser.MethodsListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1634,9 +1634,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.PropertiesListSyntaxNode(parent, this);
+            return new Parser.PropertiesListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1669,9 +1669,9 @@ namespace Parser.Internal
             _baseClasses = baseClasses;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.BaseClassListSyntaxNode(parent, this);
+            return new Parser.BaseClassListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1718,9 +1718,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.ClassDeclarationSyntaxNode(parent, this);
+            return new Parser.ClassDeclarationSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1759,9 +1759,9 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EnumerationItemValueSyntaxNode(parent, this);
+            return new Parser.EnumerationItemValueSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1797,9 +1797,9 @@ namespace Parser.Internal
             _commas = commas;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EnumerationItemSyntaxNode(parent, this);
+            return new Parser.EnumerationItemSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1839,9 +1839,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EnumerationListSyntaxNode(parent, this);
+            return new Parser.EnumerationListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)
@@ -1882,9 +1882,9 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
-            return new Parser.EventsListSyntaxNode(parent, this);
+            return new Parser.EventsListSyntaxNode(parent, this, position);
         }
 
         public override GreenNode GetSlot(int i)

@@ -52,5 +52,21 @@ namespace Parser.Tests
             var actual = sut.Parse();
             Assert.Collection(actual.Diagnostics, item => Assert.Equal("Unexpected token 'SemicolonToken', expected 'IdentifierToken'.", item.Message));
         }
+
+        [Fact]
+        public void ProvidePosition()
+        {
+            var text = "2 + 3";
+            var sut = GetSut(text);
+            var actual = sut.Parse();
+            var statement = actual.Root.StatementList[0].AsNode() as ExpressionStatementSyntaxNode;
+            var expression = statement.Expression as BinaryOperationExpressionSyntaxNode;
+            var lhs = expression.Lhs;
+            var operation = expression.Operation;
+            var rhs = expression.Rhs;
+            Assert.Equal(0, lhs.Position);
+            Assert.Equal(2, operation.Position);
+            Assert.Equal(4, rhs.Position);
+        }
     }
 }

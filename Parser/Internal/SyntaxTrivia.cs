@@ -22,7 +22,7 @@ namespace Parser.Internal
             throw new System.NotImplementedException();
         }
 
-        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent)
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             throw new InvalidOperationException();
         }
