@@ -9,7 +9,6 @@ namespace Parser.Internal
             SyntaxList statementList,
             SyntaxToken endOfFile) : base(TokenKind.File)
         {
-
             Slots = 2;
             this.AdjustWidth(statementList);
             _statementList = statementList;
@@ -22,7 +21,7 @@ namespace Parser.Internal
             return new Parser.FileSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -36,23 +35,22 @@ namespace Parser.Internal
     internal class FunctionDeclarationSyntaxNode : StatementSyntaxNode
     {
         internal readonly SyntaxToken _functionKeyword;
-        internal readonly FunctionOutputDescriptionSyntaxNode _outputDescription;
+        internal readonly FunctionOutputDescriptionSyntaxNode? _outputDescription;
         internal readonly SyntaxToken _name;
-        internal readonly FunctionInputDescriptionSyntaxNode _inputDescription;
+        internal readonly FunctionInputDescriptionSyntaxNode? _inputDescription;
         internal readonly SyntaxList<SyntaxToken> _commas;
         internal readonly SyntaxList _body;
-        internal readonly SyntaxToken _endKeyword;
+        internal readonly EndKeywordSyntaxNode? _endKeyword;
 
         internal FunctionDeclarationSyntaxNode(
             SyntaxToken functionKeyword,
-            FunctionOutputDescriptionSyntaxNode outputDescription,
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
             SyntaxToken name,
-            FunctionInputDescriptionSyntaxNode inputDescription,
+            FunctionInputDescriptionSyntaxNode? inputDescription,
             SyntaxList<SyntaxToken> commas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.FunctionDeclaration)
+            EndKeywordSyntaxNode? endKeyword) : base(TokenKind.FunctionDeclaration)
         {
-
             Slots = 7;
             this.AdjustWidth(functionKeyword);
             _functionKeyword = functionKeyword;
@@ -75,7 +73,7 @@ namespace Parser.Internal
             return new Parser.FunctionDeclarationSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -100,7 +98,6 @@ namespace Parser.Internal
             SyntaxList outputList,
             SyntaxToken assignmentSign) : base(TokenKind.FunctionOutputDescription)
         {
-
             Slots = 2;
             this.AdjustWidth(outputList);
             _outputList = outputList;
@@ -113,7 +110,7 @@ namespace Parser.Internal
             return new Parser.FunctionOutputDescriptionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -135,7 +132,6 @@ namespace Parser.Internal
             SyntaxList parameterList,
             SyntaxToken closingBracket) : base(TokenKind.FunctionInputDescription)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
@@ -150,7 +146,7 @@ namespace Parser.Internal
             return new Parser.FunctionInputDescriptionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -177,7 +173,6 @@ namespace Parser.Internal
             SyntaxList<SwitchCaseSyntaxNode> cases,
             SyntaxToken endKeyword) : base(TokenKind.SwitchStatement)
         {
-
             Slots = 5;
             this.AdjustWidth(switchKeyword);
             _switchKeyword = switchKeyword;
@@ -196,7 +191,7 @@ namespace Parser.Internal
             return new Parser.SwitchStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -223,7 +218,6 @@ namespace Parser.Internal
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList body) : base(TokenKind.SwitchCase)
         {
-
             Slots = 4;
             this.AdjustWidth(caseKeyword);
             _caseKeyword = caseKeyword;
@@ -240,7 +234,7 @@ namespace Parser.Internal
             return new Parser.SwitchCaseSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -268,7 +262,6 @@ namespace Parser.Internal
             SyntaxList body,
             SyntaxToken endKeyword) : base(TokenKind.WhileStatement)
         {
-
             Slots = 5;
             this.AdjustWidth(whileKeyword);
             _whileKeyword = whileKeyword;
@@ -287,7 +280,7 @@ namespace Parser.Internal
             return new Parser.WhileStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -314,7 +307,6 @@ namespace Parser.Internal
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList body) : base(TokenKind.ElseifClause)
         {
-
             Slots = 4;
             this.AdjustWidth(elseifKeyword);
             _elseifKeyword = elseifKeyword;
@@ -331,7 +323,7 @@ namespace Parser.Internal
             return new Parser.ElseifClause(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -353,7 +345,6 @@ namespace Parser.Internal
             SyntaxToken elseKeyword,
             SyntaxList body) : base(TokenKind.ElseClause)
         {
-
             Slots = 2;
             this.AdjustWidth(elseKeyword);
             _elseKeyword = elseKeyword;
@@ -366,7 +357,7 @@ namespace Parser.Internal
             return new Parser.ElseClause(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -384,7 +375,7 @@ namespace Parser.Internal
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
         internal readonly SyntaxList _body;
         internal readonly SyntaxList<ElseifClause> _elseifClauses;
-        internal readonly ElseClause _elseClause;
+        internal readonly ElseClause? _elseClause;
         internal readonly SyntaxToken _endKeyword;
 
         internal IfStatementSyntaxNode(
@@ -393,10 +384,9 @@ namespace Parser.Internal
             SyntaxList<SyntaxToken> optionalCommas,
             SyntaxList body,
             SyntaxList<ElseifClause> elseifClauses,
-            ElseClause elseClause,
+            ElseClause? elseClause,
             SyntaxToken endKeyword) : base(TokenKind.IfStatement)
         {
-
             Slots = 7;
             this.AdjustWidth(ifKeyword);
             _ifKeyword = ifKeyword;
@@ -419,7 +409,7 @@ namespace Parser.Internal
             return new Parser.IfStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -450,7 +440,6 @@ namespace Parser.Internal
             SyntaxList body,
             SyntaxToken endKeyword) : base(TokenKind.ForStatement)
         {
-
             Slots = 5;
             this.AdjustWidth(forKeyword);
             _forKeyword = forKeyword;
@@ -469,7 +458,7 @@ namespace Parser.Internal
             return new Parser.ForStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -494,7 +483,6 @@ namespace Parser.Internal
             SyntaxToken assignmentSign,
             ExpressionSyntaxNode rhs) : base(TokenKind.AssignmentExpression)
         {
-
             Slots = 3;
             this.AdjustWidth(lhs);
             _lhs = lhs;
@@ -509,7 +497,7 @@ namespace Parser.Internal
             return new Parser.AssignmentExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -530,7 +518,6 @@ namespace Parser.Internal
             SyntaxToken catchKeyword,
             SyntaxList catchBody) : base(TokenKind.CatchClause)
         {
-
             Slots = 2;
             this.AdjustWidth(catchKeyword);
             _catchKeyword = catchKeyword;
@@ -543,7 +530,7 @@ namespace Parser.Internal
             return new Parser.CatchClauseSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -558,16 +545,15 @@ namespace Parser.Internal
     {
         internal readonly SyntaxToken _tryKeyword;
         internal readonly SyntaxList _tryBody;
-        internal readonly CatchClauseSyntaxNode _catchClause;
+        internal readonly CatchClauseSyntaxNode? _catchClause;
         internal readonly SyntaxToken _endKeyword;
 
         internal TryCatchStatementSyntaxNode(
             SyntaxToken tryKeyword,
             SyntaxList tryBody,
-            CatchClauseSyntaxNode catchClause,
+            CatchClauseSyntaxNode? catchClause,
             SyntaxToken endKeyword) : base(TokenKind.TryCatchStatement)
         {
-
             Slots = 4;
             this.AdjustWidth(tryKeyword);
             _tryKeyword = tryKeyword;
@@ -584,7 +570,7 @@ namespace Parser.Internal
             return new Parser.TryCatchStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -604,7 +590,6 @@ namespace Parser.Internal
         internal ExpressionStatementSyntaxNode(
             ExpressionSyntaxNode expression) : base(TokenKind.ExpressionStatement)
         {
-
             Slots = 1;
             this.AdjustWidth(expression);
             _expression = expression;
@@ -615,7 +600,7 @@ namespace Parser.Internal
             return new Parser.ExpressionStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -632,7 +617,6 @@ namespace Parser.Internal
         internal EmptyStatementSyntaxNode(
             SyntaxToken semicolon) : base(TokenKind.EmptyStatement)
         {
-
             Slots = 1;
             this.AdjustWidth(semicolon);
             _semicolon = semicolon;
@@ -643,7 +627,7 @@ namespace Parser.Internal
             return new Parser.EmptyStatementSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -658,7 +642,6 @@ namespace Parser.Internal
 
         internal EmptyExpressionSyntaxNode() : base(TokenKind.EmptyExpression)
         {
-
             Slots = 0;
         }
 
@@ -667,7 +650,7 @@ namespace Parser.Internal
             return new Parser.EmptyExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -685,7 +668,6 @@ namespace Parser.Internal
             SyntaxToken operation,
             ExpressionSyntaxNode operand) : base(TokenKind.UnaryPrefixOperationExpression)
         {
-
             Slots = 2;
             this.AdjustWidth(operation);
             _operation = operation;
@@ -698,7 +680,7 @@ namespace Parser.Internal
             return new Parser.UnaryPrefixOperationExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -716,7 +698,6 @@ namespace Parser.Internal
         internal CompoundNameSyntaxNode(
             SyntaxList nodes) : base(TokenKind.CompoundName)
         {
-
             Slots = 1;
             this.AdjustWidth(nodes);
             _nodes = nodes;
@@ -727,7 +708,7 @@ namespace Parser.Internal
             return new Parser.CompoundNameSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -746,7 +727,6 @@ namespace Parser.Internal
             SyntaxToken atSign,
             CompoundNameSyntaxNode functionName) : base(TokenKind.NamedFunctionHandle)
         {
-
             Slots = 2;
             this.AdjustWidth(atSign);
             _atSign = atSign;
@@ -759,7 +739,7 @@ namespace Parser.Internal
             return new Parser.NamedFunctionHandleSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -781,7 +761,6 @@ namespace Parser.Internal
             FunctionInputDescriptionSyntaxNode input,
             ExpressionSyntaxNode body) : base(TokenKind.Lambda)
         {
-
             Slots = 3;
             this.AdjustWidth(atSign);
             _atSign = atSign;
@@ -796,7 +775,7 @@ namespace Parser.Internal
             return new Parser.LambdaSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -819,7 +798,6 @@ namespace Parser.Internal
             SyntaxToken operation,
             ExpressionSyntaxNode rhs) : base(TokenKind.BinaryOperation)
         {
-
             Slots = 3;
             this.AdjustWidth(lhs);
             _lhs = lhs;
@@ -834,7 +812,7 @@ namespace Parser.Internal
             return new Parser.BinaryOperationExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -853,7 +831,6 @@ namespace Parser.Internal
         internal IdentifierNameSyntaxNode(
             SyntaxToken name) : base(TokenKind.IdentifierName)
         {
-
             Slots = 1;
             this.AdjustWidth(name);
             _name = name;
@@ -864,7 +841,7 @@ namespace Parser.Internal
             return new Parser.IdentifierNameSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -881,7 +858,6 @@ namespace Parser.Internal
         internal NumberLiteralSyntaxNode(
             SyntaxToken number) : base(TokenKind.NumberLiteralExpression)
         {
-
             Slots = 1;
             this.AdjustWidth(number);
             _number = number;
@@ -892,7 +868,7 @@ namespace Parser.Internal
             return new Parser.NumberLiteralSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -909,7 +885,6 @@ namespace Parser.Internal
         internal StringLiteralSyntaxNode(
             SyntaxToken stringToken) : base(TokenKind.StringLiteralExpression)
         {
-
             Slots = 1;
             this.AdjustWidth(stringToken);
             _stringToken = stringToken;
@@ -920,7 +895,7 @@ namespace Parser.Internal
             return new Parser.StringLiteralSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -937,7 +912,6 @@ namespace Parser.Internal
         internal DoubleQuotedStringLiteralSyntaxNode(
             SyntaxToken stringToken) : base(TokenKind.DoubleQuotedStringLiteralExpression)
         {
-
             Slots = 1;
             this.AdjustWidth(stringToken);
             _stringToken = stringToken;
@@ -948,7 +922,7 @@ namespace Parser.Internal
             return new Parser.DoubleQuotedStringLiteralSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -965,7 +939,6 @@ namespace Parser.Internal
         internal UnquotedStringLiteralSyntaxNode(
             SyntaxToken stringToken) : base(TokenKind.UnquotedStringLiteralExpression)
         {
-
             Slots = 1;
             this.AdjustWidth(stringToken);
             _stringToken = stringToken;
@@ -976,7 +949,7 @@ namespace Parser.Internal
             return new Parser.UnquotedStringLiteralSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -997,7 +970,6 @@ namespace Parser.Internal
             SyntaxList nodes,
             SyntaxToken closingSquareBracket) : base(TokenKind.ArrayLiteralExpression)
         {
-
             Slots = 3;
             this.AdjustWidth(openingSquareBracket);
             _openingSquareBracket = openingSquareBracket;
@@ -1012,7 +984,7 @@ namespace Parser.Internal
             return new Parser.ArrayLiteralExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1035,7 +1007,6 @@ namespace Parser.Internal
             SyntaxList nodes,
             SyntaxToken closingBrace) : base(TokenKind.CellArrayLiteralExpression)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBrace);
             _openingBrace = openingBrace;
@@ -1050,7 +1021,7 @@ namespace Parser.Internal
             return new Parser.CellArrayLiteralExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1073,7 +1044,6 @@ namespace Parser.Internal
             ExpressionSyntaxNode expression,
             SyntaxToken closingBracket) : base(TokenKind.ParenthesizedExpression)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
@@ -1088,7 +1058,7 @@ namespace Parser.Internal
             return new Parser.ParenthesizedExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1113,7 +1083,6 @@ namespace Parser.Internal
             SyntaxList nodes,
             SyntaxToken closingBrace) : base(TokenKind.CellArrayElementAccess)
         {
-
             Slots = 4;
             this.AdjustWidth(expression);
             _expression = expression;
@@ -1130,7 +1099,7 @@ namespace Parser.Internal
             return new Parser.CellArrayElementAccessExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1156,7 +1125,6 @@ namespace Parser.Internal
             SyntaxList nodes,
             SyntaxToken closingBracket) : base(TokenKind.FunctionCall)
         {
-
             Slots = 4;
             this.AdjustWidth(functionName);
             _functionName = functionName;
@@ -1173,7 +1141,7 @@ namespace Parser.Internal
             return new Parser.FunctionCallExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1197,7 +1165,6 @@ namespace Parser.Internal
             SyntaxToken dot,
             SyntaxNode rightOperand) : base(TokenKind.MemberAccess)
         {
-
             Slots = 3;
             this.AdjustWidth(leftOperand);
             _leftOperand = leftOperand;
@@ -1212,7 +1179,7 @@ namespace Parser.Internal
             return new Parser.MemberAccessSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1233,7 +1200,6 @@ namespace Parser.Internal
             ExpressionSyntaxNode operand,
             SyntaxToken operation) : base(TokenKind.UnaryPostfixOperationExpression)
         {
-
             Slots = 2;
             this.AdjustWidth(operand);
             _operand = operand;
@@ -1246,7 +1212,7 @@ namespace Parser.Internal
             return new Parser.UnaryPostixOperationExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1268,7 +1234,6 @@ namespace Parser.Internal
             ExpressionSyntaxNode expression,
             SyntaxToken closingBracket) : base(TokenKind.IndirectMemberAccess)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
@@ -1283,7 +1248,7 @@ namespace Parser.Internal
             return new Parser.IndirectMemberAccessSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1304,7 +1269,6 @@ namespace Parser.Internal
             IdentifierNameSyntaxNode commandName,
             SyntaxList<UnquotedStringLiteralSyntaxNode> arguments) : base(TokenKind.Command)
         {
-
             Slots = 2;
             this.AdjustWidth(commandName);
             _commandName = commandName;
@@ -1317,7 +1281,7 @@ namespace Parser.Internal
             return new Parser.CommandExpressionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1339,7 +1303,6 @@ namespace Parser.Internal
             SyntaxToken atSign,
             ExpressionSyntaxNode baseClassNameAndArguments) : base(TokenKind.ClassInvokation)
         {
-
             Slots = 3;
             this.AdjustWidth(methodName);
             _methodName = methodName;
@@ -1354,7 +1317,7 @@ namespace Parser.Internal
             return new Parser.BaseClassInvokationSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1375,7 +1338,6 @@ namespace Parser.Internal
             SyntaxToken assignmentSign,
             ExpressionSyntaxNode value) : base(TokenKind.AttributeAssignment)
         {
-
             Slots = 2;
             this.AdjustWidth(assignmentSign);
             _assignmentSign = assignmentSign;
@@ -1388,7 +1350,7 @@ namespace Parser.Internal
             return new Parser.AttributeAssignmentSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1402,13 +1364,12 @@ namespace Parser.Internal
     internal class AttributeSyntaxNode : SyntaxNode
     {
         internal readonly IdentifierNameSyntaxNode _name;
-        internal readonly AttributeAssignmentSyntaxNode _assignment;
+        internal readonly AttributeAssignmentSyntaxNode? _assignment;
 
         internal AttributeSyntaxNode(
             IdentifierNameSyntaxNode name,
-            AttributeAssignmentSyntaxNode assignment) : base(TokenKind.Attribute)
+            AttributeAssignmentSyntaxNode? assignment) : base(TokenKind.Attribute)
         {
-
             Slots = 2;
             this.AdjustWidth(name);
             _name = name;
@@ -1421,7 +1382,7 @@ namespace Parser.Internal
             return new Parser.AttributeSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1443,7 +1404,6 @@ namespace Parser.Internal
             SyntaxList nodes,
             SyntaxToken closingBracket) : base(TokenKind.AttributeList)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
@@ -1458,7 +1418,7 @@ namespace Parser.Internal
             return new Parser.AttributeListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1473,23 +1433,22 @@ namespace Parser.Internal
     internal class MethodDefinitionSyntaxNode : MethodDeclarationSyntaxNode
     {
         internal readonly SyntaxToken _functionKeyword;
-        internal readonly FunctionOutputDescriptionSyntaxNode _outputDescription;
+        internal readonly FunctionOutputDescriptionSyntaxNode? _outputDescription;
         internal readonly CompoundNameSyntaxNode _name;
-        internal readonly FunctionInputDescriptionSyntaxNode _inputDescription;
+        internal readonly FunctionInputDescriptionSyntaxNode? _inputDescription;
         internal readonly SyntaxList<SyntaxToken> _commas;
         internal readonly SyntaxList _body;
-        internal readonly SyntaxToken _endKeyword;
+        internal readonly EndKeywordSyntaxNode? _endKeyword;
 
         internal MethodDefinitionSyntaxNode(
             SyntaxToken functionKeyword,
-            FunctionOutputDescriptionSyntaxNode outputDescription,
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
             CompoundNameSyntaxNode name,
-            FunctionInputDescriptionSyntaxNode inputDescription,
+            FunctionInputDescriptionSyntaxNode? inputDescription,
             SyntaxList<SyntaxToken> commas,
             SyntaxList body,
-            SyntaxToken endKeyword) : base(TokenKind.MethodDefinition)
+            EndKeywordSyntaxNode? endKeyword) : base(TokenKind.MethodDefinition)
         {
-
             Slots = 7;
             this.AdjustWidth(functionKeyword);
             _functionKeyword = functionKeyword;
@@ -1512,7 +1471,7 @@ namespace Parser.Internal
             return new Parser.MethodDefinitionSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1530,16 +1489,15 @@ namespace Parser.Internal
 
     internal class AbstractMethodDeclarationSyntaxNode : MethodDeclarationSyntaxNode
     {
-        internal readonly FunctionOutputDescriptionSyntaxNode _outputDescription;
+        internal readonly FunctionOutputDescriptionSyntaxNode? _outputDescription;
         internal readonly CompoundNameSyntaxNode _name;
-        internal readonly FunctionInputDescriptionSyntaxNode _inputDescription;
+        internal readonly FunctionInputDescriptionSyntaxNode? _inputDescription;
 
         internal AbstractMethodDeclarationSyntaxNode(
-            FunctionOutputDescriptionSyntaxNode outputDescription,
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
             CompoundNameSyntaxNode name,
-            FunctionInputDescriptionSyntaxNode inputDescription) : base(TokenKind.AbstractMethodDeclaration)
+            FunctionInputDescriptionSyntaxNode? inputDescription) : base(TokenKind.AbstractMethodDeclaration)
         {
-
             Slots = 3;
             this.AdjustWidth(outputDescription);
             _outputDescription = outputDescription;
@@ -1554,7 +1512,7 @@ namespace Parser.Internal
             return new Parser.AbstractMethodDeclarationSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1569,17 +1527,16 @@ namespace Parser.Internal
     internal class MethodsListSyntaxNode : SyntaxNode
     {
         internal readonly SyntaxToken _methodsKeyword;
-        internal readonly AttributeListSyntaxNode _attributes;
+        internal readonly AttributeListSyntaxNode? _attributes;
         internal readonly SyntaxList _methods;
         internal readonly SyntaxToken _endKeyword;
 
         internal MethodsListSyntaxNode(
             SyntaxToken methodsKeyword,
-            AttributeListSyntaxNode attributes,
+            AttributeListSyntaxNode? attributes,
             SyntaxList methods,
             SyntaxToken endKeyword) : base(TokenKind.MethodsList)
         {
-
             Slots = 4;
             this.AdjustWidth(methodsKeyword);
             _methodsKeyword = methodsKeyword;
@@ -1596,7 +1553,7 @@ namespace Parser.Internal
             return new Parser.MethodsListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1612,17 +1569,16 @@ namespace Parser.Internal
     internal class PropertiesListSyntaxNode : SyntaxNode
     {
         internal readonly SyntaxToken _propertiesKeyword;
-        internal readonly AttributeListSyntaxNode _attributes;
+        internal readonly AttributeListSyntaxNode? _attributes;
         internal readonly SyntaxList _properties;
         internal readonly SyntaxToken _endKeyword;
 
         internal PropertiesListSyntaxNode(
             SyntaxToken propertiesKeyword,
-            AttributeListSyntaxNode attributes,
+            AttributeListSyntaxNode? attributes,
             SyntaxList properties,
             SyntaxToken endKeyword) : base(TokenKind.PropertiesList)
         {
-
             Slots = 4;
             this.AdjustWidth(propertiesKeyword);
             _propertiesKeyword = propertiesKeyword;
@@ -1639,7 +1595,7 @@ namespace Parser.Internal
             return new Parser.PropertiesListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1661,7 +1617,6 @@ namespace Parser.Internal
             SyntaxToken lessSign,
             SyntaxList baseClasses) : base(TokenKind.BaseClassList)
         {
-
             Slots = 2;
             this.AdjustWidth(lessSign);
             _lessSign = lessSign;
@@ -1674,7 +1629,7 @@ namespace Parser.Internal
             return new Parser.BaseClassListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1688,21 +1643,20 @@ namespace Parser.Internal
     internal class ClassDeclarationSyntaxNode : StatementSyntaxNode
     {
         internal readonly SyntaxToken _classdefKeyword;
-        internal readonly AttributeListSyntaxNode _attributes;
+        internal readonly AttributeListSyntaxNode? _attributes;
         internal readonly IdentifierNameSyntaxNode _className;
-        internal readonly BaseClassListSyntaxNode _baseClassList;
+        internal readonly BaseClassListSyntaxNode? _baseClassList;
         internal readonly SyntaxList _nodes;
         internal readonly SyntaxToken _endKeyword;
 
         internal ClassDeclarationSyntaxNode(
             SyntaxToken classdefKeyword,
-            AttributeListSyntaxNode attributes,
+            AttributeListSyntaxNode? attributes,
             IdentifierNameSyntaxNode className,
-            BaseClassListSyntaxNode baseClassList,
+            BaseClassListSyntaxNode? baseClassList,
             SyntaxList nodes,
             SyntaxToken endKeyword) : base(TokenKind.ClassDeclaration)
         {
-
             Slots = 6;
             this.AdjustWidth(classdefKeyword);
             _classdefKeyword = classdefKeyword;
@@ -1723,7 +1677,7 @@ namespace Parser.Internal
             return new Parser.ClassDeclarationSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1749,7 +1703,6 @@ namespace Parser.Internal
             SyntaxList values,
             SyntaxToken closingBracket) : base(TokenKind.EnumerationItemValue)
         {
-
             Slots = 3;
             this.AdjustWidth(openingBracket);
             _openingBracket = openingBracket;
@@ -1764,7 +1717,7 @@ namespace Parser.Internal
             return new Parser.EnumerationItemValueSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1779,15 +1732,14 @@ namespace Parser.Internal
     internal class EnumerationItemSyntaxNode : SyntaxNode
     {
         internal readonly IdentifierNameSyntaxNode _name;
-        internal readonly EnumerationItemValueSyntaxNode _values;
+        internal readonly EnumerationItemValueSyntaxNode? _values;
         internal readonly SyntaxList<SyntaxToken> _commas;
 
         internal EnumerationItemSyntaxNode(
             IdentifierNameSyntaxNode name,
-            EnumerationItemValueSyntaxNode values,
+            EnumerationItemValueSyntaxNode? values,
             SyntaxList<SyntaxToken> commas) : base(TokenKind.EnumerationItem)
         {
-
             Slots = 3;
             this.AdjustWidth(name);
             _name = name;
@@ -1802,7 +1754,7 @@ namespace Parser.Internal
             return new Parser.EnumerationItemSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1817,17 +1769,16 @@ namespace Parser.Internal
     internal class EnumerationListSyntaxNode : SyntaxNode
     {
         internal readonly SyntaxToken _enumerationKeyword;
-        internal readonly AttributeListSyntaxNode _attributes;
+        internal readonly AttributeListSyntaxNode? _attributes;
         internal readonly SyntaxList<EnumerationItemSyntaxNode> _items;
         internal readonly SyntaxToken _endKeyword;
 
         internal EnumerationListSyntaxNode(
             SyntaxToken enumerationKeyword,
-            AttributeListSyntaxNode attributes,
+            AttributeListSyntaxNode? attributes,
             SyntaxList<EnumerationItemSyntaxNode> items,
             SyntaxToken endKeyword) : base(TokenKind.EnumerationList)
         {
-
             Slots = 4;
             this.AdjustWidth(enumerationKeyword);
             _enumerationKeyword = enumerationKeyword;
@@ -1844,7 +1795,7 @@ namespace Parser.Internal
             return new Parser.EnumerationListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1860,17 +1811,16 @@ namespace Parser.Internal
     internal class EventsListSyntaxNode : SyntaxNode
     {
         internal readonly SyntaxToken _eventsKeyword;
-        internal readonly AttributeListSyntaxNode _attributes;
+        internal readonly AttributeListSyntaxNode? _attributes;
         internal readonly SyntaxList _events;
         internal readonly SyntaxToken _endKeyword;
 
         internal EventsListSyntaxNode(
             SyntaxToken eventsKeyword,
-            AttributeListSyntaxNode attributes,
+            AttributeListSyntaxNode? attributes,
             SyntaxList events,
             SyntaxToken endKeyword) : base(TokenKind.EventsList)
         {
-
             Slots = 4;
             this.AdjustWidth(eventsKeyword);
             _eventsKeyword = eventsKeyword;
@@ -1887,7 +1837,7 @@ namespace Parser.Internal
             return new Parser.EventsListSyntaxNode(parent, this, position);
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             switch (i)
             {
@@ -1895,6 +1845,33 @@ namespace Parser.Internal
                 case 1: return _attributes;
                 case 2: return _events;
                 case 3: return _endKeyword;
+                default: return null;
+            }
+        }
+    }
+
+    internal class EndKeywordSyntaxNode : SyntaxNode
+    {
+        internal readonly SyntaxToken _endKeyword;
+
+        internal EndKeywordSyntaxNode(
+            SyntaxToken endKeyword) : base(TokenKind.EndKeyword)
+        {
+            Slots = 1;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
+        {
+            return new Parser.EndKeywordSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            switch (i)
+            {
+                case 0: return _endKeyword;
                 default: return null;
             }
         }

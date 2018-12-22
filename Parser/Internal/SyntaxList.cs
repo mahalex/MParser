@@ -17,15 +17,22 @@ namespace Parser.Internal
             }
         }
 
-        public override GreenNode GetSlot(int i)
+        public GreenNode GetListSlot(int i)
         {
             return _elements[i];
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            return GetListSlot(i);
         }
 
         public static SyntaxList List(GreenNode[] elements)
         {
             return new SyntaxList(elements);
         }
+
+        public static SyntaxList EmptyList { get; } = new SyntaxList(new GreenNode[] { });
 
         public override bool IsList => true;
 

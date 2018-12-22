@@ -68,7 +68,7 @@ namespace Parser
         internal SyntaxNodeOrToken ThisInternal(int index)
         {
             var currentSlotIndex = 0;
-            GreenNode currentSlot = null;
+            GreenNode? currentSlot = null;
             while (true)
             {
                 currentSlot = _node._green.GetSlot(currentSlotIndex);
@@ -84,13 +84,17 @@ namespace Parser
                     if (currentSlot.IsList)
                     {
                         var listSlot = _node.GetNode(currentSlotIndex);
+                        if (listSlot is null)
+                        {
+                            throw new Exception($"Unexpected null in list slot.");
+                        }
                         var red = listSlot.GetNode(index);
-                        if (red != null)
+                        if (!(red is null))
                         {
                             return red;
                         }
                         // this is a token
-                        return new SyntaxToken(listSlot, listSlot._green.GetSlot(index), _node.GetChildPosition(index));
+                        return new SyntaxToken(listSlot, listSlot._green.GetSlot(index)!, _node.GetChildPosition(index));
                     }
                     else
                     {
@@ -100,7 +104,7 @@ namespace Parser
                             return red;
                         }
                         // this is a token
-                        return new SyntaxToken(_node, _node._green.GetSlot(currentSlotIndex), _node.GetChildPosition(currentSlotIndex));
+                        return new SyntaxToken(_node, _node._green.GetSlot(currentSlotIndex)!, _node.GetChildPosition(currentSlotIndex));
                     }
                 }
 

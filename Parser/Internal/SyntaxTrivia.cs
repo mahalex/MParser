@@ -17,7 +17,7 @@ namespace Parser.Internal
         public override string Text => _text;
         public int Width => _text.Length;
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             throw new System.NotImplementedException();
         }

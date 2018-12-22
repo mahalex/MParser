@@ -9,9 +9,9 @@ namespace Parser.Internal
     {
         private class TokenInfo
         {
-            public TokenKind Kind { get; set; }
-            public string Text { get; set; }
-            public string StringValue { get; set; }
+            public TokenKind Kind { get; set; } = TokenKind.None;
+            public string Text { get; set; } = "";
+            public string StringValue { get; set; } = "";
             public double DoubleValue { get; set; }
         }
 
@@ -25,6 +25,7 @@ namespace Parser.Internal
         public MLexerGreen(ITextWindow window)
         {
             Window = window;
+            LastToken = SyntaxToken.NoneToken;
             TokenStack = new Stack<TokenKind>();
         }
 

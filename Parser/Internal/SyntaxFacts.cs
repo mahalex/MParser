@@ -155,7 +155,7 @@ namespace Parser.Internal
             }
         }
 
-        private static readonly string[] StringFromKind =
+        private static readonly string?[] StringFromKind =
         {
             null, // None = 0,
             null, // BadToken = 1,
@@ -210,7 +210,7 @@ namespace Parser.Internal
             "?", // UnaryQuestionMark = 60,
         };
         
-        public static string GetText(TokenKind kind)
+        public static string? GetText(TokenKind kind)
         {
             if ((int) kind < (int) TokenKind.File)
             {

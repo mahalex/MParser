@@ -26,6 +26,12 @@ namespace Parser.Internal
             _diagnostics.Add(diagnostic);
         }
 
+        private void Report(string message)
+        {
+            var diagnostic = new Diagnostic(message);
+            _diagnostics.Add(diagnostic);
+        }
+
         internal void ReportUnexpectedEndOfFile(TextSpan span)
         {
             Report(span, "Unexpected end of file.");
@@ -46,9 +52,9 @@ namespace Parser.Internal
             Report(span, $"Unknown symbol '{c}'.");
         }
 
-        internal void ReportUnexpectedToken(TextSpan span, TokenKind expected, TokenKind actual)
+        internal void ReportUnexpectedToken(TokenKind expected, TokenKind actual)
         {
-            Report(span, $"Unexpected token '{actual}', expected '{expected}'.");
+            Report($"Unexpected token '{actual}', expected '{expected}'.");
         }
 
         public IEnumerator<Diagnostic> GetEnumerator()

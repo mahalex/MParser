@@ -14,15 +14,17 @@
             }
         }
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
-            return (T)_list.GetSlot(i);
+            return (T)_list.GetListSlot(i);
         }
 
         public static SyntaxList<T> List(T[] elements)
         {
             return new SyntaxList<T>(elements);
         }
+
+        public static SyntaxList<T> Empty => new SyntaxList<T>(new T[] { });
 
         public override bool IsList => true;
 

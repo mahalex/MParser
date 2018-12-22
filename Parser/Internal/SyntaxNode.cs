@@ -79,4 +79,30 @@ namespace Parser.Internal
         {
         }
     }
+
+    internal class RootSyntaxNode : SyntaxNode
+    {
+        internal readonly FileSyntaxNode _file;
+
+        public RootSyntaxNode(FileSyntaxNode file) : base(TokenKind.Root)
+        {
+            Slots = 1;
+            this.AdjustWidth(file);
+            _file = file;
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            switch (i)
+            {
+                case 0: return _file;
+                default: return null;
+            }
+        }
+
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
+        {
+            return new Parser.RootSyntaxNode(this, position);
+        }
+    }
 }

@@ -2,7 +2,7 @@ namespace Parser
 {
     public class FileSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _statementList;
+        private SyntaxNode? _statementList;
 
         internal FileSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -17,19 +17,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._statementList, 0);
+                var red = this.GetRed(ref this._statementList!, 0);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("statementList cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _statementList, 0);
+                case 0: return GetRed(ref _statementList!, 0);
                 default: return null;
             }
         }
@@ -43,10 +43,11 @@ namespace Parser
 
     public class FunctionDeclarationSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _outputDescription;
-        private SyntaxNode _inputDescription;
-        private SyntaxNode _commas;
-        private SyntaxNode _body;
+        private SyntaxNode? _outputDescription;
+        private SyntaxNode? _inputDescription;
+        private SyntaxNode? _commas;
+        private SyntaxNode? _body;
+        private SyntaxNode? _endKeyword;
 
         internal FunctionDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -62,12 +63,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.FunctionDeclarationSyntaxNode)_green)._name, this.GetChildPosition(2)); }
         }
 
-        public SyntaxToken EndKeyword
-        {
-            get { return new SyntaxToken(this, ((Parser.Internal.FunctionDeclarationSyntaxNode)_green)._endKeyword, this.GetChildPosition(6)); }
-        }
-
-        public FunctionOutputDescriptionSyntaxNode OutputDescription
+        public FunctionOutputDescriptionSyntaxNode? OutputDescription
         {
             get
             {
@@ -79,7 +75,7 @@ namespace Parser
             }
         }
 
-        public FunctionInputDescriptionSyntaxNode InputDescription
+        public FunctionInputDescriptionSyntaxNode? InputDescription
         {
             get
             {
@@ -95,11 +91,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._commas, 4);
+                var red = this.GetRed(ref this._commas!, 4);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("commas cannot be null");
             }
         }
 
@@ -107,22 +103,35 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 5);
+                var red = this.GetRed(ref this._body!, 5);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        public EndKeywordSyntaxNode? EndKeyword
+        {
+            get
+            {
+                var red = this.GetRed(ref this._endKeyword, 6);
+                if (red != null)
+                    return (EndKeywordSyntaxNode)red;
+
+                return default(EndKeywordSyntaxNode);
+            }
+        }
+
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _outputDescription, 1);
                 case 3: return GetRed(ref _inputDescription, 3);
-                case 4: return GetRed(ref _commas, 4);
-                case 5: return GetRed(ref _body, 5);
+                case 4: return GetRed(ref _commas!, 4);
+                case 5: return GetRed(ref _body!, 5);
+                case 6: return GetRed(ref _endKeyword, 6);
                 default: return null;
             }
         }
@@ -136,7 +145,7 @@ namespace Parser
 
     public class FunctionOutputDescriptionSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _outputList;
+        private SyntaxNode? _outputList;
 
         internal FunctionOutputDescriptionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -151,19 +160,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._outputList, 0);
+                var red = this.GetRed(ref this._outputList!, 0);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("outputList cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _outputList, 0);
+                case 0: return GetRed(ref _outputList!, 0);
                 default: return null;
             }
         }
@@ -177,7 +186,7 @@ namespace Parser
 
     public class FunctionInputDescriptionSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _parameterList;
+        private SyntaxNode? _parameterList;
 
         internal FunctionInputDescriptionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -197,19 +206,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._parameterList, 1);
+                var red = this.GetRed(ref this._parameterList!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("parameterList cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _parameterList, 1);
+                case 1: return GetRed(ref _parameterList!, 1);
                 default: return null;
             }
         }
@@ -223,9 +232,9 @@ namespace Parser
 
     public class SwitchStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _switchExpression;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _cases;
+        private SyntaxNode? _switchExpression;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _cases;
 
         internal SwitchStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -245,11 +254,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._switchExpression, 1);
+                var red = this.GetRed(ref this._switchExpression!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("switchExpression cannot be null");
             }
         }
 
@@ -257,11 +266,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -269,21 +278,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._cases, 3);
+                var red = this.GetRed(ref this._cases!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("cases cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _switchExpression, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _cases, 3);
+                case 1: return GetRed(ref _switchExpression!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _cases!, 3);
                 default: return null;
             }
         }
@@ -297,9 +306,9 @@ namespace Parser
 
     public class SwitchCaseSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _caseIdentifier;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _body;
+        private SyntaxNode? _caseIdentifier;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _body;
 
         internal SwitchCaseSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -314,11 +323,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._caseIdentifier, 1);
+                var red = this.GetRed(ref this._caseIdentifier!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("caseIdentifier cannot be null");
             }
         }
 
@@ -326,11 +335,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -338,21 +347,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 3);
+                var red = this.GetRed(ref this._body!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _caseIdentifier, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _body, 3);
+                case 1: return GetRed(ref _caseIdentifier!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _body!, 3);
                 default: return null;
             }
         }
@@ -366,9 +375,9 @@ namespace Parser
 
     public class WhileStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _condition;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _body;
+        private SyntaxNode? _condition;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _body;
 
         internal WhileStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -388,11 +397,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._condition, 1);
+                var red = this.GetRed(ref this._condition!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("condition cannot be null");
             }
         }
 
@@ -400,11 +409,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -412,21 +421,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 3);
+                var red = this.GetRed(ref this._body!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _condition, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _body, 3);
+                case 1: return GetRed(ref _condition!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _body!, 3);
                 default: return null;
             }
         }
@@ -440,9 +449,9 @@ namespace Parser
 
     public class ElseifClause : SyntaxNode
     {
-        private SyntaxNode _condition;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _body;
+        private SyntaxNode? _condition;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _body;
 
         internal ElseifClause(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -457,11 +466,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._condition, 1);
+                var red = this.GetRed(ref this._condition!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("condition cannot be null");
             }
         }
 
@@ -469,11 +478,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -481,21 +490,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 3);
+                var red = this.GetRed(ref this._body!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _condition, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _body, 3);
+                case 1: return GetRed(ref _condition!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _body!, 3);
                 default: return null;
             }
         }
@@ -509,7 +518,7 @@ namespace Parser
 
     public class ElseClause : SyntaxNode
     {
-        private SyntaxNode _body;
+        private SyntaxNode? _body;
 
         internal ElseClause(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -524,19 +533,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 1);
+                var red = this.GetRed(ref this._body!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _body, 1);
+                case 1: return GetRed(ref _body!, 1);
                 default: return null;
             }
         }
@@ -550,11 +559,11 @@ namespace Parser
 
     public class IfStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _condition;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _body;
-        private SyntaxNode _elseifClauses;
-        private SyntaxNode _elseClause;
+        private SyntaxNode? _condition;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _body;
+        private SyntaxNode? _elseifClauses;
+        private SyntaxNode? _elseClause;
 
         internal IfStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -574,11 +583,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._condition, 1);
+                var red = this.GetRed(ref this._condition!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("condition cannot be null");
             }
         }
 
@@ -586,11 +595,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -598,11 +607,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 3);
+                var red = this.GetRed(ref this._body!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
@@ -610,15 +619,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._elseifClauses, 4);
+                var red = this.GetRed(ref this._elseifClauses!, 4);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("elseifClauses cannot be null");
             }
         }
 
-        public ElseClause ElseClause
+        public ElseClause? ElseClause
         {
             get
             {
@@ -630,14 +639,14 @@ namespace Parser
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _condition, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _body, 3);
-                case 4: return GetRed(ref _elseifClauses, 4);
+                case 1: return GetRed(ref _condition!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _body!, 3);
+                case 4: return GetRed(ref _elseifClauses!, 4);
                 case 5: return GetRed(ref _elseClause, 5);
                 default: return null;
             }
@@ -652,9 +661,9 @@ namespace Parser
 
     public class ForStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _assignment;
-        private SyntaxNode _optionalCommas;
-        private SyntaxNode _body;
+        private SyntaxNode? _assignment;
+        private SyntaxNode? _optionalCommas;
+        private SyntaxNode? _body;
 
         internal ForStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -674,11 +683,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._assignment, 1);
+                var red = this.GetRed(ref this._assignment!, 1);
                 if (red != null)
                     return (AssignmentExpressionSyntaxNode)red;
 
-                return default(AssignmentExpressionSyntaxNode);
+                throw new System.Exception("assignment cannot be null");
             }
         }
 
@@ -686,11 +695,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._optionalCommas, 2);
+                var red = this.GetRed(ref this._optionalCommas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("optionalCommas cannot be null");
             }
         }
 
@@ -698,21 +707,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 3);
+                var red = this.GetRed(ref this._body!, 3);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _assignment, 1);
-                case 2: return GetRed(ref _optionalCommas, 2);
-                case 3: return GetRed(ref _body, 3);
+                case 1: return GetRed(ref _assignment!, 1);
+                case 2: return GetRed(ref _optionalCommas!, 2);
+                case 3: return GetRed(ref _body!, 3);
                 default: return null;
             }
         }
@@ -726,8 +735,8 @@ namespace Parser
 
     public class AssignmentExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _lhs;
-        private SyntaxNode _rhs;
+        private SyntaxNode? _lhs;
+        private SyntaxNode? _rhs;
 
         internal AssignmentExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -742,11 +751,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._lhs, 0);
+                var red = this.GetRed(ref this._lhs!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("lhs cannot be null");
             }
         }
 
@@ -754,20 +763,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._rhs, 2);
+                var red = this.GetRed(ref this._rhs!, 2);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("rhs cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _lhs, 0);
-                case 2: return GetRed(ref _rhs, 2);
+                case 0: return GetRed(ref _lhs!, 0);
+                case 2: return GetRed(ref _rhs!, 2);
                 default: return null;
             }
         }
@@ -781,7 +790,7 @@ namespace Parser
 
     public class CatchClauseSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _catchBody;
+        private SyntaxNode? _catchBody;
 
         internal CatchClauseSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -796,19 +805,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._catchBody, 1);
+                var red = this.GetRed(ref this._catchBody!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("catchBody cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _catchBody, 1);
+                case 1: return GetRed(ref _catchBody!, 1);
                 default: return null;
             }
         }
@@ -822,8 +831,8 @@ namespace Parser
 
     public class TryCatchStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _tryBody;
-        private SyntaxNode _catchClause;
+        private SyntaxNode? _tryBody;
+        private SyntaxNode? _catchClause;
 
         internal TryCatchStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -843,15 +852,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._tryBody, 1);
+                var red = this.GetRed(ref this._tryBody!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("tryBody cannot be null");
             }
         }
 
-        public CatchClauseSyntaxNode CatchClause
+        public CatchClauseSyntaxNode? CatchClause
         {
             get
             {
@@ -863,11 +872,11 @@ namespace Parser
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _tryBody, 1);
+                case 1: return GetRed(ref _tryBody!, 1);
                 case 2: return GetRed(ref _catchClause, 2);
                 default: return null;
             }
@@ -882,7 +891,7 @@ namespace Parser
 
     public class ExpressionStatementSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _expression;
+        private SyntaxNode? _expression;
 
         internal ExpressionStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -893,19 +902,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._expression, 0);
+                var red = this.GetRed(ref this._expression!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("expression cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _expression, 0);
+                case 0: return GetRed(ref _expression!, 0);
                 default: return null;
             }
         }
@@ -930,7 +939,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -954,7 +963,7 @@ namespace Parser
 
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -971,7 +980,7 @@ namespace Parser
 
     public class UnaryPrefixOperationExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _operand;
+        private SyntaxNode? _operand;
 
         internal UnaryPrefixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -986,19 +995,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._operand, 1);
+                var red = this.GetRed(ref this._operand!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("operand cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _operand, 1);
+                case 1: return GetRed(ref _operand!, 1);
                 default: return null;
             }
         }
@@ -1012,7 +1021,7 @@ namespace Parser
 
     public class CompoundNameSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _nodes;
+        private SyntaxNode? _nodes;
 
         internal CompoundNameSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1023,19 +1032,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 0);
+                var red = this.GetRed(ref this._nodes!, 0);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _nodes, 0);
+                case 0: return GetRed(ref _nodes!, 0);
                 default: return null;
             }
         }
@@ -1049,7 +1058,7 @@ namespace Parser
 
     public class NamedFunctionHandleSyntaxNode : FunctionHandleSyntaxNode
     {
-        private SyntaxNode _functionName;
+        private SyntaxNode? _functionName;
 
         internal NamedFunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1064,19 +1073,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._functionName, 1);
+                var red = this.GetRed(ref this._functionName!, 1);
                 if (red != null)
                     return (CompoundNameSyntaxNode)red;
 
-                return default(CompoundNameSyntaxNode);
+                throw new System.Exception("functionName cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _functionName, 1);
+                case 1: return GetRed(ref _functionName!, 1);
                 default: return null;
             }
         }
@@ -1090,8 +1099,8 @@ namespace Parser
 
     public class LambdaSyntaxNode : FunctionHandleSyntaxNode
     {
-        private SyntaxNode _input;
-        private SyntaxNode _body;
+        private SyntaxNode? _input;
+        private SyntaxNode? _body;
 
         internal LambdaSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1106,11 +1115,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._input, 1);
+                var red = this.GetRed(ref this._input!, 1);
                 if (red != null)
                     return (FunctionInputDescriptionSyntaxNode)red;
 
-                return default(FunctionInputDescriptionSyntaxNode);
+                throw new System.Exception("input cannot be null");
             }
         }
 
@@ -1118,20 +1127,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 2);
+                var red = this.GetRed(ref this._body!, 2);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _input, 1);
-                case 2: return GetRed(ref _body, 2);
+                case 1: return GetRed(ref _input!, 1);
+                case 2: return GetRed(ref _body!, 2);
                 default: return null;
             }
         }
@@ -1145,8 +1154,8 @@ namespace Parser
 
     public class BinaryOperationExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _lhs;
-        private SyntaxNode _rhs;
+        private SyntaxNode? _lhs;
+        private SyntaxNode? _rhs;
 
         internal BinaryOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1161,11 +1170,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._lhs, 0);
+                var red = this.GetRed(ref this._lhs!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("lhs cannot be null");
             }
         }
 
@@ -1173,20 +1182,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._rhs, 2);
+                var red = this.GetRed(ref this._rhs!, 2);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("rhs cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _lhs, 0);
-                case 2: return GetRed(ref _rhs, 2);
+                case 0: return GetRed(ref _lhs!, 0);
+                case 2: return GetRed(ref _rhs!, 2);
                 default: return null;
             }
         }
@@ -1211,7 +1220,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -1239,7 +1248,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -1267,7 +1276,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -1295,7 +1304,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -1323,7 +1332,7 @@ namespace Parser
         }
 
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
@@ -1340,7 +1349,7 @@ namespace Parser
 
     public class ArrayLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _nodes;
+        private SyntaxNode? _nodes;
 
         internal ArrayLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1360,19 +1369,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 1);
+                var red = this.GetRed(ref this._nodes!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _nodes, 1);
+                case 1: return GetRed(ref _nodes!, 1);
                 default: return null;
             }
         }
@@ -1386,7 +1395,7 @@ namespace Parser
 
     public class CellArrayLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _nodes;
+        private SyntaxNode? _nodes;
 
         internal CellArrayLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1406,19 +1415,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 1);
+                var red = this.GetRed(ref this._nodes!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _nodes, 1);
+                case 1: return GetRed(ref _nodes!, 1);
                 default: return null;
             }
         }
@@ -1432,7 +1441,7 @@ namespace Parser
 
     public class ParenthesizedExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _expression;
+        private SyntaxNode? _expression;
 
         internal ParenthesizedExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1452,19 +1461,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._expression, 1);
+                var red = this.GetRed(ref this._expression!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("expression cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _expression, 1);
+                case 1: return GetRed(ref _expression!, 1);
                 default: return null;
             }
         }
@@ -1478,8 +1487,8 @@ namespace Parser
 
     public class CellArrayElementAccessExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _expression;
-        private SyntaxNode _nodes;
+        private SyntaxNode? _expression;
+        private SyntaxNode? _nodes;
 
         internal CellArrayElementAccessExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1499,11 +1508,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._expression, 0);
+                var red = this.GetRed(ref this._expression!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("expression cannot be null");
             }
         }
 
@@ -1511,20 +1520,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 2);
+                var red = this.GetRed(ref this._nodes!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _expression, 0);
-                case 2: return GetRed(ref _nodes, 2);
+                case 0: return GetRed(ref _expression!, 0);
+                case 2: return GetRed(ref _nodes!, 2);
                 default: return null;
             }
         }
@@ -1538,8 +1547,8 @@ namespace Parser
 
     public class FunctionCallExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _functionName;
-        private SyntaxNode _nodes;
+        private SyntaxNode? _functionName;
+        private SyntaxNode? _nodes;
 
         internal FunctionCallExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1559,11 +1568,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._functionName, 0);
+                var red = this.GetRed(ref this._functionName!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("functionName cannot be null");
             }
         }
 
@@ -1571,20 +1580,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 2);
+                var red = this.GetRed(ref this._nodes!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _functionName, 0);
-                case 2: return GetRed(ref _nodes, 2);
+                case 0: return GetRed(ref _functionName!, 0);
+                case 2: return GetRed(ref _nodes!, 2);
                 default: return null;
             }
         }
@@ -1598,8 +1607,8 @@ namespace Parser
 
     public class MemberAccessSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _leftOperand;
-        private SyntaxNode _rightOperand;
+        private SyntaxNode? _leftOperand;
+        private SyntaxNode? _rightOperand;
 
         internal MemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1614,11 +1623,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._leftOperand, 0);
+                var red = this.GetRed(ref this._leftOperand!, 0);
                 if (red != null)
                     return (SyntaxNode)red;
 
-                return default(SyntaxNode);
+                throw new System.Exception("leftOperand cannot be null");
             }
         }
 
@@ -1626,20 +1635,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._rightOperand, 2);
+                var red = this.GetRed(ref this._rightOperand!, 2);
                 if (red != null)
                     return (SyntaxNode)red;
 
-                return default(SyntaxNode);
+                throw new System.Exception("rightOperand cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _leftOperand, 0);
-                case 2: return GetRed(ref _rightOperand, 2);
+                case 0: return GetRed(ref _leftOperand!, 0);
+                case 2: return GetRed(ref _rightOperand!, 2);
                 default: return null;
             }
         }
@@ -1653,7 +1662,7 @@ namespace Parser
 
     public class UnaryPostixOperationExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _operand;
+        private SyntaxNode? _operand;
 
         internal UnaryPostixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1668,19 +1677,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._operand, 0);
+                var red = this.GetRed(ref this._operand!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("operand cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _operand, 0);
+                case 0: return GetRed(ref _operand!, 0);
                 default: return null;
             }
         }
@@ -1694,7 +1703,7 @@ namespace Parser
 
     public class IndirectMemberAccessSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _expression;
+        private SyntaxNode? _expression;
 
         internal IndirectMemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1714,19 +1723,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._expression, 1);
+                var red = this.GetRed(ref this._expression!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("expression cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _expression, 1);
+                case 1: return GetRed(ref _expression!, 1);
                 default: return null;
             }
         }
@@ -1740,8 +1749,8 @@ namespace Parser
 
     public class CommandExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _commandName;
-        private SyntaxNode _arguments;
+        private SyntaxNode? _commandName;
+        private SyntaxNode? _arguments;
 
         internal CommandExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1752,11 +1761,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._commandName, 0);
+                var red = this.GetRed(ref this._commandName!, 0);
                 if (red != null)
                     return (IdentifierNameSyntaxNode)red;
 
-                return default(IdentifierNameSyntaxNode);
+                throw new System.Exception("commandName cannot be null");
             }
         }
 
@@ -1764,20 +1773,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._arguments, 1);
+                var red = this.GetRed(ref this._arguments!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("arguments cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _commandName, 0);
-                case 1: return GetRed(ref _arguments, 1);
+                case 0: return GetRed(ref _commandName!, 0);
+                case 1: return GetRed(ref _arguments!, 1);
                 default: return null;
             }
         }
@@ -1791,8 +1800,8 @@ namespace Parser
 
     public class BaseClassInvokationSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode _methodName;
-        private SyntaxNode _baseClassNameAndArguments;
+        private SyntaxNode? _methodName;
+        private SyntaxNode? _baseClassNameAndArguments;
 
         internal BaseClassInvokationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1807,11 +1816,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._methodName, 0);
+                var red = this.GetRed(ref this._methodName!, 0);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("methodName cannot be null");
             }
         }
 
@@ -1819,20 +1828,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._baseClassNameAndArguments, 2);
+                var red = this.GetRed(ref this._baseClassNameAndArguments!, 2);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("baseClassNameAndArguments cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _methodName, 0);
-                case 2: return GetRed(ref _baseClassNameAndArguments, 2);
+                case 0: return GetRed(ref _methodName!, 0);
+                case 2: return GetRed(ref _baseClassNameAndArguments!, 2);
                 default: return null;
             }
         }
@@ -1846,7 +1855,7 @@ namespace Parser
 
     public class AttributeAssignmentSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _value;
+        private SyntaxNode? _value;
 
         internal AttributeAssignmentSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1861,19 +1870,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._value, 1);
+                var red = this.GetRed(ref this._value!, 1);
                 if (red != null)
                     return (ExpressionSyntaxNode)red;
 
-                return default(ExpressionSyntaxNode);
+                throw new System.Exception("value cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _value, 1);
+                case 1: return GetRed(ref _value!, 1);
                 default: return null;
             }
         }
@@ -1887,8 +1896,8 @@ namespace Parser
 
     public class AttributeSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _name;
-        private SyntaxNode _assignment;
+        private SyntaxNode? _name;
+        private SyntaxNode? _assignment;
 
         internal AttributeSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1899,15 +1908,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._name, 0);
+                var red = this.GetRed(ref this._name!, 0);
                 if (red != null)
                     return (IdentifierNameSyntaxNode)red;
 
-                return default(IdentifierNameSyntaxNode);
+                throw new System.Exception("name cannot be null");
             }
         }
 
-        public AttributeAssignmentSyntaxNode Assignment
+        public AttributeAssignmentSyntaxNode? Assignment
         {
             get
             {
@@ -1919,11 +1928,11 @@ namespace Parser
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _name, 0);
+                case 0: return GetRed(ref _name!, 0);
                 case 1: return GetRed(ref _assignment, 1);
                 default: return null;
             }
@@ -1938,7 +1947,7 @@ namespace Parser
 
     public class AttributeListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _nodes;
+        private SyntaxNode? _nodes;
 
         internal AttributeListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1958,19 +1967,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 1);
+                var red = this.GetRed(ref this._nodes!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _nodes, 1);
+                case 1: return GetRed(ref _nodes!, 1);
                 default: return null;
             }
         }
@@ -1984,11 +1993,12 @@ namespace Parser
 
     public class MethodDefinitionSyntaxNode : MethodDeclarationSyntaxNode
     {
-        private SyntaxNode _outputDescription;
-        private SyntaxNode _name;
-        private SyntaxNode _inputDescription;
-        private SyntaxNode _commas;
-        private SyntaxNode _body;
+        private SyntaxNode? _outputDescription;
+        private SyntaxNode? _name;
+        private SyntaxNode? _inputDescription;
+        private SyntaxNode? _commas;
+        private SyntaxNode? _body;
+        private SyntaxNode? _endKeyword;
 
         internal MethodDefinitionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -1999,12 +2009,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.MethodDefinitionSyntaxNode)_green)._functionKeyword, this.GetChildPosition(0)); }
         }
 
-        public SyntaxToken EndKeyword
-        {
-            get { return new SyntaxToken(this, ((Parser.Internal.MethodDefinitionSyntaxNode)_green)._endKeyword, this.GetChildPosition(6)); }
-        }
-
-        public FunctionOutputDescriptionSyntaxNode OutputDescription
+        public FunctionOutputDescriptionSyntaxNode? OutputDescription
         {
             get
             {
@@ -2020,15 +2025,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._name, 2);
+                var red = this.GetRed(ref this._name!, 2);
                 if (red != null)
                     return (CompoundNameSyntaxNode)red;
 
-                return default(CompoundNameSyntaxNode);
+                throw new System.Exception("name cannot be null");
             }
         }
 
-        public FunctionInputDescriptionSyntaxNode InputDescription
+        public FunctionInputDescriptionSyntaxNode? InputDescription
         {
             get
             {
@@ -2044,11 +2049,11 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._commas, 4);
+                var red = this.GetRed(ref this._commas!, 4);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("commas cannot be null");
             }
         }
 
@@ -2056,23 +2061,36 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._body, 5);
+                var red = this.GetRed(ref this._body!, 5);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("body cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        public EndKeywordSyntaxNode? EndKeyword
+        {
+            get
+            {
+                var red = this.GetRed(ref this._endKeyword, 6);
+                if (red != null)
+                    return (EndKeywordSyntaxNode)red;
+
+                return default(EndKeywordSyntaxNode);
+            }
+        }
+
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _outputDescription, 1);
-                case 2: return GetRed(ref _name, 2);
+                case 2: return GetRed(ref _name!, 2);
                 case 3: return GetRed(ref _inputDescription, 3);
-                case 4: return GetRed(ref _commas, 4);
-                case 5: return GetRed(ref _body, 5);
+                case 4: return GetRed(ref _commas!, 4);
+                case 5: return GetRed(ref _body!, 5);
+                case 6: return GetRed(ref _endKeyword, 6);
                 default: return null;
             }
         }
@@ -2086,16 +2104,16 @@ namespace Parser
 
     public class AbstractMethodDeclarationSyntaxNode : MethodDeclarationSyntaxNode
     {
-        private SyntaxNode _outputDescription;
-        private SyntaxNode _name;
-        private SyntaxNode _inputDescription;
+        private SyntaxNode? _outputDescription;
+        private SyntaxNode? _name;
+        private SyntaxNode? _inputDescription;
 
         internal AbstractMethodDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
 
 
-        public FunctionOutputDescriptionSyntaxNode OutputDescription
+        public FunctionOutputDescriptionSyntaxNode? OutputDescription
         {
             get
             {
@@ -2111,15 +2129,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._name, 1);
+                var red = this.GetRed(ref this._name!, 1);
                 if (red != null)
                     return (CompoundNameSyntaxNode)red;
 
-                return default(CompoundNameSyntaxNode);
+                throw new System.Exception("name cannot be null");
             }
         }
 
-        public FunctionInputDescriptionSyntaxNode InputDescription
+        public FunctionInputDescriptionSyntaxNode? InputDescription
         {
             get
             {
@@ -2131,12 +2149,12 @@ namespace Parser
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 0: return GetRed(ref _outputDescription, 0);
-                case 1: return GetRed(ref _name, 1);
+                case 1: return GetRed(ref _name!, 1);
                 case 2: return GetRed(ref _inputDescription, 2);
                 default: return null;
             }
@@ -2151,8 +2169,8 @@ namespace Parser
 
     public class MethodsListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _attributes;
-        private SyntaxNode _methods;
+        private SyntaxNode? _attributes;
+        private SyntaxNode? _methods;
 
         internal MethodsListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2168,7 +2186,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.MethodsListSyntaxNode)_green)._endKeyword, this.GetChildPosition(3)); }
         }
 
-        public AttributeListSyntaxNode Attributes
+        public AttributeListSyntaxNode? Attributes
         {
             get
             {
@@ -2184,20 +2202,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._methods, 2);
+                var red = this.GetRed(ref this._methods!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("methods cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _attributes, 1);
-                case 2: return GetRed(ref _methods, 2);
+                case 2: return GetRed(ref _methods!, 2);
                 default: return null;
             }
         }
@@ -2211,8 +2229,8 @@ namespace Parser
 
     public class PropertiesListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _attributes;
-        private SyntaxNode _properties;
+        private SyntaxNode? _attributes;
+        private SyntaxNode? _properties;
 
         internal PropertiesListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2228,7 +2246,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.PropertiesListSyntaxNode)_green)._endKeyword, this.GetChildPosition(3)); }
         }
 
-        public AttributeListSyntaxNode Attributes
+        public AttributeListSyntaxNode? Attributes
         {
             get
             {
@@ -2244,20 +2262,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._properties, 2);
+                var red = this.GetRed(ref this._properties!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("properties cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _attributes, 1);
-                case 2: return GetRed(ref _properties, 2);
+                case 2: return GetRed(ref _properties!, 2);
                 default: return null;
             }
         }
@@ -2271,7 +2289,7 @@ namespace Parser
 
     public class BaseClassListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _baseClasses;
+        private SyntaxNode? _baseClasses;
 
         internal BaseClassListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2286,19 +2304,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._baseClasses, 1);
+                var red = this.GetRed(ref this._baseClasses!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("baseClasses cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _baseClasses, 1);
+                case 1: return GetRed(ref _baseClasses!, 1);
                 default: return null;
             }
         }
@@ -2312,10 +2330,10 @@ namespace Parser
 
     public class ClassDeclarationSyntaxNode : StatementSyntaxNode
     {
-        private SyntaxNode _attributes;
-        private SyntaxNode _className;
-        private SyntaxNode _baseClassList;
-        private SyntaxNode _nodes;
+        private SyntaxNode? _attributes;
+        private SyntaxNode? _className;
+        private SyntaxNode? _baseClassList;
+        private SyntaxNode? _nodes;
 
         internal ClassDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2331,7 +2349,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.ClassDeclarationSyntaxNode)_green)._endKeyword, this.GetChildPosition(5)); }
         }
 
-        public AttributeListSyntaxNode Attributes
+        public AttributeListSyntaxNode? Attributes
         {
             get
             {
@@ -2347,15 +2365,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._className, 2);
+                var red = this.GetRed(ref this._className!, 2);
                 if (red != null)
                     return (IdentifierNameSyntaxNode)red;
 
-                return default(IdentifierNameSyntaxNode);
+                throw new System.Exception("className cannot be null");
             }
         }
 
-        public BaseClassListSyntaxNode BaseClassList
+        public BaseClassListSyntaxNode? BaseClassList
         {
             get
             {
@@ -2371,22 +2389,22 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._nodes, 4);
+                var red = this.GetRed(ref this._nodes!, 4);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("nodes cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _attributes, 1);
-                case 2: return GetRed(ref _className, 2);
+                case 2: return GetRed(ref _className!, 2);
                 case 3: return GetRed(ref _baseClassList, 3);
-                case 4: return GetRed(ref _nodes, 4);
+                case 4: return GetRed(ref _nodes!, 4);
                 default: return null;
             }
         }
@@ -2400,7 +2418,7 @@ namespace Parser
 
     public class EnumerationItemValueSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _values;
+        private SyntaxNode? _values;
 
         internal EnumerationItemValueSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2420,19 +2438,19 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._values, 1);
+                var red = this.GetRed(ref this._values!, 1);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("values cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 1: return GetRed(ref _values, 1);
+                case 1: return GetRed(ref _values!, 1);
                 default: return null;
             }
         }
@@ -2446,9 +2464,9 @@ namespace Parser
 
     public class EnumerationItemSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _name;
-        private SyntaxNode _values;
-        private SyntaxNode _commas;
+        private SyntaxNode? _name;
+        private SyntaxNode? _values;
+        private SyntaxNode? _commas;
 
         internal EnumerationItemSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2459,15 +2477,15 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._name, 0);
+                var red = this.GetRed(ref this._name!, 0);
                 if (red != null)
                     return (IdentifierNameSyntaxNode)red;
 
-                return default(IdentifierNameSyntaxNode);
+                throw new System.Exception("name cannot be null");
             }
         }
 
-        public EnumerationItemValueSyntaxNode Values
+        public EnumerationItemValueSyntaxNode? Values
         {
             get
             {
@@ -2483,21 +2501,21 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._commas, 2);
+                var red = this.GetRed(ref this._commas!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("commas cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
-                case 0: return GetRed(ref _name, 0);
+                case 0: return GetRed(ref _name!, 0);
                 case 1: return GetRed(ref _values, 1);
-                case 2: return GetRed(ref _commas, 2);
+                case 2: return GetRed(ref _commas!, 2);
                 default: return null;
             }
         }
@@ -2511,8 +2529,8 @@ namespace Parser
 
     public class EnumerationListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _attributes;
-        private SyntaxNode _items;
+        private SyntaxNode? _attributes;
+        private SyntaxNode? _items;
 
         internal EnumerationListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2528,7 +2546,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.EnumerationListSyntaxNode)_green)._endKeyword, this.GetChildPosition(3)); }
         }
 
-        public AttributeListSyntaxNode Attributes
+        public AttributeListSyntaxNode? Attributes
         {
             get
             {
@@ -2544,20 +2562,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._items, 2);
+                var red = this.GetRed(ref this._items!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("items cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _attributes, 1);
-                case 2: return GetRed(ref _items, 2);
+                case 2: return GetRed(ref _items!, 2);
                 default: return null;
             }
         }
@@ -2571,8 +2589,8 @@ namespace Parser
 
     public class EventsListSyntaxNode : SyntaxNode
     {
-        private SyntaxNode _attributes;
-        private SyntaxNode _events;
+        private SyntaxNode? _attributes;
+        private SyntaxNode? _events;
 
         internal EventsListSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
@@ -2588,7 +2606,7 @@ namespace Parser
             get { return new SyntaxToken(this, ((Parser.Internal.EventsListSyntaxNode)_green)._endKeyword, this.GetChildPosition(3)); }
         }
 
-        public AttributeListSyntaxNode Attributes
+        public AttributeListSyntaxNode? Attributes
         {
             get
             {
@@ -2604,20 +2622,20 @@ namespace Parser
         {
             get
             {
-                var red = this.GetRed(ref this._events, 2);
+                var red = this.GetRed(ref this._events!, 2);
                 if (red != null)
                     return (SyntaxNodeOrTokenList)red;
 
-                return default(SyntaxNodeOrTokenList);
+                throw new System.Exception("events cannot be null");
             }
         }
 
-        internal override SyntaxNode GetNode(int i)
+        internal override SyntaxNode? GetNode(int i)
         {
             switch (i)
             {
                 case 1: return GetRed(ref _attributes, 1);
-                case 2: return GetRed(ref _events, 2);
+                case 2: return GetRed(ref _events!, 2);
                 default: return null;
             }
         }
@@ -2625,6 +2643,34 @@ namespace Parser
         public override void Accept(SyntaxVisitor visitor)
         {
             visitor.VisitEventsList(this);
+        }
+
+    }
+
+    public class EndKeywordSyntaxNode : SyntaxNode
+    {
+
+        internal EndKeywordSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
+        {
+        }
+
+        public SyntaxToken EndKeyword
+        {
+            get { return new SyntaxToken(this, ((Parser.Internal.EndKeywordSyntaxNode)_green)._endKeyword, this.GetChildPosition(0)); }
+        }
+
+
+        internal override SyntaxNode? GetNode(int i)
+        {
+            switch (i)
+            {
+                default: return null;
+            }
+        }
+
+        public override void Accept(SyntaxVisitor visitor)
+        {
+            visitor.VisitEndKeyword(this);
         }
 
     }

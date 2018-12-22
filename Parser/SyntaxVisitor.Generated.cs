@@ -251,5 +251,10 @@ namespace Parser
         {
             DefaultVisit(node);
         }
+
+        public virtual void VisitEndKeyword(EndKeywordSyntaxNode node)
+        {
+            DefaultVisit(node);
+        }
     }
 };

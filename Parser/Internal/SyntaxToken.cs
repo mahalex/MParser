@@ -7,7 +7,7 @@ namespace Parser.Internal
 {
     internal abstract class SyntaxToken : GreenNode
     {
-        public TextSpan Span { get; }
+        internal static IReadOnlyList<SyntaxTrivia> s_EmptySyntaxTriviaList = new List<SyntaxTrivia>();
 
         internal class SyntaxTokenWithTrivia : SyntaxToken
         {
@@ -197,13 +197,15 @@ namespace Parser.Internal
         protected SyntaxToken(TokenKind kind) : base(kind)
         {
         }
+
+        internal static SyntaxToken NoneToken => new MissingTokenWithTrivia(TokenKind.None, s_EmptySyntaxTriviaList, s_EmptySyntaxTriviaList);
         
         public virtual int Width => Text.Length;
 
-        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => new List<SyntaxTrivia>();
-        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => new List<SyntaxTrivia>();
+        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => s_EmptySyntaxTriviaList;
+        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => s_EmptySyntaxTriviaList;
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             throw new System.InvalidOperationException();
         }

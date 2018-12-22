@@ -51,10 +51,10 @@ namespace Parser.Internal
 
         public static SyntaxToken CreateMissing(
             TokenKind kind,
-            IReadOnlyList<SyntaxTrivia> leadingTrivia,
-            IReadOnlyList<SyntaxTrivia> trailingTrivia)
+            IReadOnlyList<SyntaxTrivia>? leadingTrivia,
+            IReadOnlyList<SyntaxTrivia>? trailingTrivia)
         {
-            return new SyntaxToken.MissingTokenWithTrivia(kind, leadingTrivia, trailingTrivia);
+            return new SyntaxToken.MissingTokenWithTrivia(kind, leadingTrivia ?? SyntaxToken.s_EmptySyntaxTriviaList, trailingTrivia ?? SyntaxToken.s_EmptySyntaxTriviaList);
         }
     }
 }

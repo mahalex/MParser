@@ -10,7 +10,7 @@ namespace Parser.Internal
     {
         public TokenKind Kind { get; }
         public int Slots { get; protected set; }
-        public abstract GreenNode GetSlot(int i);
+        public abstract GreenNode? GetSlot(int i);
 
         public GreenNode(TokenKind kind)
         {
@@ -29,7 +29,7 @@ namespace Parser.Internal
 
         public int FullWidth => _fullWidth;
 
-        protected void AdjustWidth(GreenNode node)
+        protected void AdjustWidth(GreenNode? node)
         {
             if (!(node is null))
             {
@@ -109,12 +109,12 @@ namespace Parser.Internal
             return -1;
         }
 
-        private GreenNode GetFirstTerminal()
+        private GreenNode? GetFirstTerminal()
         {
             var current = this;
             while (true)
             {
-                GreenNode next = null;
+                GreenNode? next = null;
                 if (current.Slots == 0)
                 {
                     return current;
@@ -141,12 +141,12 @@ namespace Parser.Internal
             }
         }
 
-        private GreenNode GetLastTerminal()
+        private GreenNode? GetLastTerminal()
         {
             var current = this;
             while (true)
             {
-                GreenNode next = null;
+                GreenNode? next = null;
                 if (current.Slots == 0)
                 {
                     return current;

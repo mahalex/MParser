@@ -20,14 +20,14 @@ namespace Parser.Internal
         {
             for (var i = 0; i < list.Slots; i++)
             {
-                var element = list.GetSlot(i);
+                var element = list.GetListSlot(i);
                 _list.Add(element);
             }
         }
 
         public SyntaxList ToList()
         {
-            return _list.Count == 0 ? null : SyntaxList.List(_list.ToArray());
+            return _list.Count == 0 ? SyntaxList.EmptyList : SyntaxList.List(_list.ToArray());
         }
     }
 }

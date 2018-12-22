@@ -2,7 +2,7 @@
 {
     public struct SyntaxNodeOrToken
     {
-        private readonly Internal.GreenNode _token;
+        private readonly Internal.GreenNode? _token;
         private readonly SyntaxNode _nodeOrParent;
         private readonly bool _isToken;
 
@@ -27,7 +27,7 @@
 
         public int Position { get; }
 
-        public SyntaxNode AsNode()
+        public SyntaxNode? AsNode()
         {
             if (_isToken)
             {
@@ -43,7 +43,7 @@
             {
                 return default(SyntaxToken);
             }
-            return new SyntaxToken(_nodeOrParent, _token, Position);
+            return new SyntaxToken(_nodeOrParent, _token!, Position);
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken token)

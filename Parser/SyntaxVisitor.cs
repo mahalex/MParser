@@ -2,7 +2,7 @@
 {
     public abstract partial class SyntaxVisitor
     {
-        public virtual void Visit(SyntaxNode node)
+        public virtual void Visit(SyntaxNode? node)
         {
             node?.Accept(this);
         }

@@ -33,7 +33,7 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != kind)
             {
-                Diagnostics.ReportUnexpectedToken(token.Span, kind, token.Kind);
+                Diagnostics.ReportUnexpectedToken(kind, token.Kind);
                 return TokenFactory.CreateMissing(kind, null, null);
             }
             _index++;
@@ -55,13 +55,13 @@ namespace Parser.Internal
             var token = CurrentToken;
             if (token.Kind != TokenKind.IdentifierToken)
             {
-                Diagnostics.ReportUnexpectedToken(token.Span, TokenKind.IdentifierToken, token.Kind);
+                Diagnostics.ReportUnexpectedToken(TokenKind.IdentifierToken, token.Kind);
                 return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
             if (token.Text != s)
             {
-                Diagnostics.ReportUnexpectedToken(token.Span, TokenKind.IdentifierToken, token.Kind);
+                Diagnostics.ReportUnexpectedToken(TokenKind.IdentifierToken, token.Kind);
                 return TokenFactory.CreateMissing(TokenKind.IdentifierToken, null, null);
             }
 
@@ -69,7 +69,7 @@ namespace Parser.Internal
             return token;
         }
 
-        private SyntaxToken PossiblyEatIdentifier(string s)
+        private SyntaxToken? PossiblyEatIdentifier(string s)
         {
             var token = CurrentToken;
             if (token.Kind == TokenKind.IdentifierToken && token.Text == s)
@@ -94,7 +94,7 @@ namespace Parser.Internal
                 new List<SyntaxTrivia>());
         }
 
-        private SyntaxList ParseFunctionOutputList()
+        private SyntaxList? ParseFunctionOutputList()
         {
             var outputs = new SyntaxListBuilder();
             var firstToken = true;
@@ -112,7 +112,7 @@ namespace Parser.Internal
             return outputs.ToList();
         }
 
-        private FunctionOutputDescriptionSyntaxNode ParseFunctionOutputDescription()
+        private FunctionOutputDescriptionSyntaxNode? ParseFunctionOutputDescription()
         {
             SyntaxToken assignmentSign;
             var builder = new SyntaxListBuilder();
@@ -180,7 +180,7 @@ namespace Parser.Internal
             return builder.ToList();
         }
 
-        private FunctionInputDescriptionSyntaxNode ParseFunctionInputDescription()
+        private FunctionInputDescriptionSyntaxNode? ParseFunctionInputDescription()
         {
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
@@ -206,7 +206,8 @@ namespace Parser.Internal
             var inputDescription = ParseFunctionInputDescription();
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
-            var endKeyword = EatPossiblyMissingIdentifier("end");
+            var endKeyword = ParseEndKeyword();
+            //var endKeyword = 
             return Factory.FunctionDeclarationSyntax(
                 functionKeyword,
                 outputDescription,
@@ -216,7 +217,13 @@ namespace Parser.Internal
                 body,
                 endKeyword);
         }
-       
+
+        private EndKeywordSyntaxNode? ParseEndKeyword()
+        {
+            var keyword = EatPossiblyMissingIdentifier("end");
+            return keyword is null ? null : Factory.EndKeywordSyntax(keyword);
+        }
+
         internal struct ParseOptions
         {
             public bool ParsingArrayElements { get; set; }
@@ -224,12 +231,12 @@ namespace Parser.Internal
             public static ParseOptions Default = new ParseOptions { ParsingArrayElements = false };
         }
 
-        private ExpressionSyntaxNode ParseExpression()
+        private ExpressionSyntaxNode? ParseExpression()
         {
             return ParseExpression(ParseOptions.Default);
         }
 
-        private ExpressionSyntaxNode ParseExpression(ParseOptions options)
+        private ExpressionSyntaxNode? ParseExpression(ParseOptions options)
         {
             return ParseSubExpression(options, SyntaxFacts.Precedence.Expression);
         }
@@ -286,10 +293,10 @@ namespace Parser.Internal
             return builder.ToList();
         }
 
-        private ExpressionSyntaxNode ParseTerm(ParseOptions options)
+        private ExpressionSyntaxNode? ParseTerm(ParseOptions options)
         {
             var token = CurrentToken;
-            ExpressionSyntaxNode expression = null;
+            ExpressionSyntaxNode? expression = null;
             switch (token.Kind)
             {
                 case TokenKind.NumberLiteralToken:
@@ -410,6 +417,11 @@ namespace Parser.Internal
 
                 return Factory.CommandExpressionSyntax(idNameNode, builder.ToList());
             }
+
+            if (expression is null)
+            {
+                throw new Exception("Command expression identifier cannot be empty.");
+            }
             throw new ParsingException($"Unexpected token \"{CurrentToken}\" while parsing expression \"{expression.FullText}\" at {CurrentPosition}.");
         }
 
@@ -420,6 +432,10 @@ namespace Parser.Internal
             {
                 var atToken = EatToken();
                 var baseClassNameWithArguments = ParseExpression();
+                if (baseClassNameWithArguments is null)
+                {
+                    throw new Exception($"Base class name cannot be empty.");
+                }
                 return Factory.BaseClassInvokationSyntax(methodName, atToken, baseClassNameWithArguments);
             }
             if (expression is MemberAccessSyntaxNode memberAccess
@@ -427,6 +443,10 @@ namespace Parser.Internal
             {
                 var atToken = EatToken();
                 var baseClassNameWithArguments = ParseExpression();
+                if (baseClassNameWithArguments is null)
+                {
+                    throw new Exception($"Base class name cannot be empty.");
+                }
                 return Factory.BaseClassInvokationSyntax(memberAccess, atToken, baseClassNameWithArguments);
             }
             throw new ParsingException($"Unexpected token \"{CurrentToken}\" at {CurrentPosition}.");
@@ -442,6 +462,10 @@ namespace Parser.Internal
             {
                 var openingBracket = EatToken();
                 var indirectMember = ParseExpression();
+                if (indirectMember is null)
+                {
+                    throw new Exception("Indirect member invokation cannot be empty.");
+                }
                 var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                 return Factory.IndirectMemberAccessSyntax(
                     openingBracket,
@@ -466,7 +490,12 @@ namespace Parser.Internal
                     firstToken = false;
                 }
 
-                builder.Add(ParseExpression());
+                var expression = ParseExpression();
+                if (expression is null)
+                {
+                    throw new Exception("Function call parameter cannot be empty.");
+                }
+                builder.Add(expression);
             }
 
             return builder.ToList();
@@ -476,6 +505,10 @@ namespace Parser.Internal
         {
             var openParen = EatToken(TokenKind.OpenParenthesisToken);
             var expression = ParseExpression();
+            if (expression is null)
+            {
+                throw new Exception("Parenthesized expression cannot be empty.");
+            }
             var closeParen = EatToken(TokenKind.CloseParenthesisToken);
             return Factory.ParenthesizedExpressionSyntax(
                 openParen,
@@ -514,17 +547,25 @@ namespace Parser.Internal
             else if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 var inputs = ParseFunctionInputDescription();
+                if (inputs is null)
+                {
+                    throw new Exception($"Lambda expression inputs cannot be empty.");
+                }
                 var body = ParseExpression();
+                if (body is null)
+                {
+                    throw new Exception($"Lambda expression body cannot be empty.");
+                }
                 return Factory.LambdaSyntax(atSign, inputs, body);
             }
             throw new ParsingException($"Unexpected token {CurrentToken} while parsing function handle at {CurrentPosition}.");
         }
 
-        private ExpressionSyntaxNode ParseSubExpression(
+        private ExpressionSyntaxNode? ParseSubExpression(
             ParseOptions options,
             SyntaxFacts.Precedence precedence)
         {
-            ExpressionSyntaxNode lhs;
+            ExpressionSyntaxNode? lhs;
             if (SyntaxFacts.IsUnaryOperator(CurrentToken.Kind))
             {
                 var operation = EatToken();
@@ -551,6 +592,10 @@ namespace Parser.Internal
             else
             {
                 lhs = ParseTerm(options);
+                if (lhs is null)
+                {
+                    throw new Exception("Left-hand side in subexpression cannot be empty.");
+                }
             }
 
             while (true)
@@ -579,9 +624,10 @@ namespace Parser.Internal
                         }
                         else
                         {
-                            rhs = null;
+                            throw new Exception("Right-hand side in subexpression cannot be empty.");
                         }
                     }
+                    
                     if (token.Kind == TokenKind.EqualsToken)
                     {
                         lhs = Factory.AssignmentExpressionSyntax(lhs, token, rhs);
@@ -627,6 +673,10 @@ namespace Parser.Internal
         {
             var caseKeyword = EatIdentifier("case");
             var caseId = ParseExpression();
+            if (caseId is null)
+            {
+                throw new Exception("Case label cannot be empty.");
+            }
             var commas = ParseOptionalCommas();
             var statementList = ParseStatementList();
             return Factory.SwitchCaseSyntax(caseKeyword, caseId, commas, statementList);
@@ -636,6 +686,10 @@ namespace Parser.Internal
         {
             var switchKeyword = EatIdentifier("switch");
             var expression = ParseExpression();
+            if (expression is null)
+            {
+                throw new Exception("Match expression in switch statement cannot be empty.");
+            }
             var commas = ParseOptionalCommas();
             var builder = new SyntaxListBuilder<SwitchCaseSyntaxNode>();
             while (IsIdentifier(CurrentToken, "case"))
@@ -655,6 +709,11 @@ namespace Parser.Internal
         {
             var whileKeyword = EatIdentifier("while");
             var condition = ParseExpression();
+            if (condition is null)
+            {
+                throw new Exception("Condition in while statement cannot be empty.");
+            }
+
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
             var endKeyword = EatIdentifier("end");
@@ -670,6 +729,10 @@ namespace Parser.Internal
         {
             var elseifKeyword = EatIdentifier("elseif");
             var condition = ParseExpression();
+            if (condition is null)
+            {
+                throw new Exception("Condition in elseif clause cannot be empty.");
+            }
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
             return Factory.ElseifClause(elseifKeyword, condition, commas, body);
@@ -686,10 +749,14 @@ namespace Parser.Internal
         {
             var ifKeyword = EatIdentifier();
             var condition = ParseExpression();
+            if (condition is null)
+            {
+                throw new Exception("Condition in if statement cannot be empty.");
+            }
             var commas = ParseOptionalSemicolonsOrCommas();
             var body = ParseStatementList();
             var elseifClauses = new SyntaxListBuilder<ElseifClause>();
-            ElseClause elseClause = null;
+            ElseClause? elseClause = null;
             while (true)
             {
                 var token = CurrentToken;
@@ -740,7 +807,7 @@ namespace Parser.Internal
                 endKeyword);
         }
 
-        private CatchClauseSyntaxNode ParseCatchClause()
+        private CatchClauseSyntaxNode? ParseCatchClause()
         {
             if (IsIdentifier(CurrentToken, "catch"))
             {
@@ -766,15 +833,24 @@ namespace Parser.Internal
         private ExpressionStatementSyntaxNode ParseExpressionStatement()
         {
             var expression = ParseExpression();
+            if (expression is null)
+            {
+                throw new Exception("Expression statement cannot be empty.");
+            }
+
             return Factory.ExpressionStatementSyntax(expression);
         }
 
-        private AttributeAssignmentSyntaxNode ParseAttributeAssignment()
+        private AttributeAssignmentSyntaxNode? ParseAttributeAssignment()
         {
             if (CurrentToken.Kind == TokenKind.EqualsToken)
             {
                 var assignmentSign = EatToken();
                 var value = ParseExpression();
+                if (value is null)
+                {
+                    throw new Exception("Right-hand side in attribute assignment cannot be empty.");
+                }
                 return Factory.AttributeAssignmentSyntax(assignmentSign, value);
             }
 
@@ -845,7 +921,7 @@ namespace Parser.Internal
             var inputDescription = ParseFunctionInputDescription();
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
-            var endKeyword = PossiblyEatIdentifier("end");
+            var endKeyword = ParseEndKeyword();
             return Factory.MethodDefinitionSyntax(
                 functionKeyword,
                 outputDescription,
@@ -859,7 +935,7 @@ namespace Parser.Internal
         private MethodsListSyntaxNode ParseMethods()
         {
             var methodsKeyword = EatToken();
-            AttributeListSyntaxNode attributes = null;
+            AttributeListSyntaxNode? attributes = null;
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
@@ -876,7 +952,7 @@ namespace Parser.Internal
             return Factory.MethodsListSyntax(methodsKeyword, attributes, builder.ToList(), endKeyword);
         }
 
-        private GreenNode ParsePropertyDeclaration()
+        private GreenNode? ParsePropertyDeclaration()
         {
             if (CurrentToken.Kind == TokenKind.CommaToken)
             {
@@ -885,7 +961,7 @@ namespace Parser.Internal
             return ParseStatement();
         }
 
-        private SyntaxNode ParseEventDeclaration()
+        private SyntaxNode? ParseEventDeclaration()
         {
             return ParseStatement();
         }
@@ -893,7 +969,7 @@ namespace Parser.Internal
         private PropertiesListSyntaxNode ParseProperties()
         {
             var propertiesKeyword = EatToken();
-            AttributeListSyntaxNode attributes = null;
+            AttributeListSyntaxNode? attributes = null;
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
@@ -902,14 +978,19 @@ namespace Parser.Internal
             var builder = new SyntaxListBuilder();
             while (!IsIdentifier(CurrentToken, "end"))
             {
-                builder.Add(ParsePropertyDeclaration());
+                var declaration = ParsePropertyDeclaration();
+                if (declaration is null)
+                {
+                    throw new Exception("Property declaration cannot be null.");
+                }
+                builder.Add(declaration);
             }
 
             var endKeyword = EatToken();
             return Factory.PropertiesListSyntax(propertiesKeyword, attributes, builder.ToList(), endKeyword);
         }
 
-        private EnumerationItemValueSyntaxNode ParseEnumerationValue()
+        private EnumerationItemValueSyntaxNode? ParseEnumerationValue()
         {
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
@@ -920,7 +1001,12 @@ namespace Parser.Internal
                 while (CurrentToken.Kind == TokenKind.CommaToken)
                 {
                     builder.Add(EatToken());
-                    builder.Add(ParseExpression());
+                    var nextExpression = ParseExpression();
+                    if (nextExpression is null)
+                    {
+                        throw new Exception("Enumeration identifier cannot be empty.");
+                    }
+                    builder.Add(nextExpression);
                 }
                 var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
                 return Factory.EnumerationItemValueSyntax(openingBracket, builder.ToList(), closingBracket);
@@ -940,7 +1026,7 @@ namespace Parser.Internal
         {
             var enumerationKeyword = EatToken();
             var builder = new SyntaxListBuilder<EnumerationItemSyntaxNode>();
-            AttributeListSyntaxNode attributes = null;
+            AttributeListSyntaxNode? attributes = null;
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
@@ -962,7 +1048,7 @@ namespace Parser.Internal
         private SyntaxNode ParseEvents()
         {
             var eventsKeyword = EatToken();
-            AttributeListSyntaxNode attributes = null;
+            AttributeListSyntaxNode? attributes = null;
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
@@ -971,7 +1057,12 @@ namespace Parser.Internal
             var builder = new SyntaxListBuilder();
             while (!IsIdentifier(CurrentToken, "end"))
             {
-                builder.Add(ParseEventDeclaration());
+                var eventDeclaration = ParseEventDeclaration();
+                if (eventDeclaration is null)
+                {
+                    throw new Exception("Event declaration cannot be empty.");
+                }
+                builder.Add(eventDeclaration);
             }
 
             var endKeyword = EatToken();
@@ -1001,13 +1092,13 @@ namespace Parser.Internal
         private StatementSyntaxNode ParseClassDeclaration()
         {
             var classdefKeyword = EatToken();
-            AttributeListSyntaxNode attributes = null;
+            AttributeListSyntaxNode? attributes = null;
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
                 attributes = ParseAttributesList();
             }
             var className = Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken));
-            BaseClassListSyntaxNode baseClassList = null;
+            BaseClassListSyntaxNode? baseClassList = null;
             if (CurrentToken.Kind == TokenKind.LessToken)
             {
                 baseClassList = ParseBaseClassList();
@@ -1052,7 +1143,7 @@ namespace Parser.Internal
                 endKeyword);
         }
 
-        private StatementSyntaxNode ParseStatement()
+        private StatementSyntaxNode? ParseStatement()
         {
             if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
@@ -1119,6 +1210,12 @@ namespace Parser.Internal
             var statementList = ParseStatementList();
             var endOfFileToken = EatToken();
             return Factory.FileSyntax(statementList, endOfFileToken);
+        }
+
+        public RootSyntaxNode ParseRoot()
+        {
+            var file = ParseFile();
+            return Factory.RootSyntax(file);
         }
     }
 }
