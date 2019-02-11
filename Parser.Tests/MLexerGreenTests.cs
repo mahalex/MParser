@@ -78,17 +78,17 @@ namespace Parser.Tests
 
         public static IEnumerable<(TokenKind kind, string text)> GetTokens()
         {
-            var fixedTokens = Enum.GetValues(typeof(TokenKind))
-                .Cast<TokenKind>()
-                .Select(k => (kind: k, text: SyntaxFacts.GetText(k)))
-                .Where(t => !(t.text is null))
-                .Where(t => !(SyntaxFacts.IsUnaryTokenKind(t.kind)
-                              || SyntaxFacts.IsOpeningToken(t.kind)
-                              || SyntaxFacts.IsClosingToken(t.kind)
-                              || t.kind == TokenKind.ApostropheToken));
-            
-            
-            var dynamicTokens = new[]
+            var fixedTokens =
+                from TokenKind kind in Enum.GetValues(typeof(TokenKind))
+                let text = SyntaxFacts.GetText(kind)
+                where !(text is null)
+                where !(SyntaxFacts.IsUnaryTokenKind(kind)
+                        || SyntaxFacts.IsOpeningToken(kind)
+                        || SyntaxFacts.IsClosingToken(kind)
+                        || kind == TokenKind.ApostropheToken)
+                select (kind, text);
+
+        var dynamicTokens = new[]
             {
                 (TokenKind.IdentifierToken, "a"),
                 (TokenKind.IdentifierToken, "abc"),
@@ -105,33 +105,21 @@ namespace Parser.Tests
 
         public static IEnumerable<(TokenKind kind1, string text1, TokenKind kind2, string text2)> GetPairsOfTokens()
         {
-            foreach (var token1 in GetTokens())
-            {
-                foreach (var token2 in GetTokens())
-                {
-                    if (!RequiresSeparator(token1.kind, token2.kind))
-                    {
-                        yield return (token1.kind, token1.text, token2.kind, token2.text);
-                    }
-                }
-            }
+            return
+                from token1 in GetTokens()
+                from token2 in GetTokens()
+                where !RequiresSeparator(token1.kind, token2.kind)
+                select (token1.kind, token1.text, token2.kind, token2.text);
         }
         
         public static IEnumerable<(TokenKind kind1, string text1, string separatorText, TokenKind kind2, string text2)> GetPairsOfTokensWithSeparators()
         {
-            foreach (var token1 in GetTokens())
-            {
-                foreach (var token2 in GetTokens())
-                {
-                    if (RequiresSeparator(token1.kind, token2.kind))
-                    {
-                        foreach (var separatorText in GetSeparators())
-                        {
-                            yield return (token1.kind, token1.text, separatorText, token2.kind, token2.text);
-                        }
-                    }
-                }
-            }
+            return
+                from token1 in GetTokens()
+                from token2 in GetTokens()
+                where RequiresSeparator(token1.kind, token2.kind)
+                from separatorText in GetSeparators()
+                select (token1.kind, token1.text, separatorText, token2.kind, token2.text);
         }
 
         private static bool RequiresSeparator(TokenKind kind1, TokenKind kind2)
