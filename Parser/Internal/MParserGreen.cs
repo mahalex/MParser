@@ -28,13 +28,20 @@ namespace Parser.Internal
             return token;
         }
 
+        private SyntaxToken CreateMissingToken(TokenKind kind)
+        {
+            return TokenFactory
+                .CreateMissing(kind, null, null)
+                .WithDiagnostics(TokenDiagnostic.MissingToken(kind));
+        }
+
         private SyntaxToken EatToken(TokenKind kind)
         {
             var token = CurrentToken;
             if (token.Kind != kind)
             {
                 Diagnostics.ReportUnexpectedToken(kind, token.Kind);
-                return TokenFactory.CreateMissing(kind, null, null);
+                return CreateMissingToken(kind);
             }
             _index++;
             return token;

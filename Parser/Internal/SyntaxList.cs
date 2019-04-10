@@ -5,9 +5,22 @@ namespace Parser.Internal
 {
     internal class SyntaxList : SyntaxNode
     {
-        private readonly GreenNode[] _elements;
+        internal readonly GreenNode[] _elements;
         
         protected SyntaxList(GreenNode[] elements) : base(TokenKind.List)
+        {
+            Slots = elements.Length;
+            _elements = elements;
+            foreach (var element in elements)
+            {
+                this.AdjustWidth(element);
+            }
+        }
+
+        protected SyntaxList(
+            GreenNode[] elements,
+            TokenDiagnostic[] diagnostics)
+            : base(TokenKind.List, diagnostics)
         {
             Slots = elements.Length;
             _elements = elements;
@@ -39,6 +52,11 @@ namespace Parser.Internal
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.SyntaxNodeOrTokenList(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new SyntaxList(_elements, diagnostics);
         }
     }
 }

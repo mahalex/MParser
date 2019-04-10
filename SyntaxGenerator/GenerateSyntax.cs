@@ -78,8 +78,8 @@ namespace SyntaxGenerator
             var fieldAssignment = $"            _{field.FieldName} = {field.FieldName};\n";
             return widthAdjustment + fieldAssignment;
         }
-        
-        private static string GenerateInternalConstructor(SyntaxNodeDescription node)
+
+        private static string GenerateInternalConstructorSimple(SyntaxNodeDescription node)
         {
             var arguments = string.Join(
                 ",",
@@ -94,12 +94,45 @@ namespace SyntaxGenerator
             return header + "\n        {\n" + slotsAssignment + "\n" + assignments + "        }\n";
         }
 
+        private static string GenerateInternalConstructorWithDiagnostics(SyntaxNodeDescription node)
+        {
+            var arguments = string.Join(
+                ",",
+                node.Fields
+                    .Select(field => $"\n            {FullFieldType(field)} {field.FieldName}")
+                    .Concat(new[] { $"\n            TokenDiagnostic[] diagnostics" }));
+            var header =
+                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName}, diagnostics)";
+            var slotsAssignment = $"            Slots = {node.Fields.Length};";
+            var assignments = string.Join(
+                "",
+                node.Fields.Select(GenerateFieldAssignmentInsideConstructor));
+            return header + "\n        {\n" + slotsAssignment + "\n" + assignments + "        }\n";
+        }
+
+        private static string GenerateInternalConstructors(SyntaxNodeDescription node)
+        {
+            return GenerateInternalConstructorSimple(node) + "\n" + GenerateInternalConstructorWithDiagnostics(node);
+        }
+
         private static string GenerateConstructor(SyntaxNodeDescription node)
         {
             var arguments = "SyntaxNode parent, Internal.GreenNode green, int position";
             var header =
                 $"        internal {node.ClassName}({arguments}) : base(parent, green, position)\n";
             return header + "        {\n        }\n";
+        }
+
+        private static string GenerateInternalSetDiagnostics(SyntaxNodeDescription node)
+        {
+            var header = $"        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)";
+            var arguments = string.Join(
+                ", ",
+                node.Fields
+                    .Select(field => "_" + field.FieldName)
+                    .Concat(new[] { "diagnostics" }));
+            var text = $"            return new {node.ClassName}({arguments});";
+            return header + "\n        {\n" + text + "\n        }\n";
         }
 
         private static string GenerateInternalGetSlot(SyntaxNodeDescription node)
@@ -156,15 +189,17 @@ namespace SyntaxGenerator
             var fields = string.Join(
                 "",
                 node.Fields.Select(GenerateInternalFieldDeclaration));
-            var constructor = GenerateInternalConstructor(node);
+            var constructor = GenerateInternalConstructors(node);
             var getSlot = GenerateInternalGetSlot(node);
             var createRed = GenerateCreateRed(node);
+            var setDiagnostics = GenerateInternalSetDiagnostics(node);
             return
                 header
                 + "\n    {\n"
                 + fields + "\n"
                 + constructor + "\n"
                 + createRed + "\n"
+                + setDiagnostics + "\n"
                 + getSlot + "    }\n";
         }
 

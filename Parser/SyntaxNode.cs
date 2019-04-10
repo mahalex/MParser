@@ -96,6 +96,67 @@ namespace Parser
         }
 
         public abstract void Accept(SyntaxVisitor visitor);
+
+        public SyntaxDiagnostic[] GetDiagnostics()
+        {
+            return GetDiagnosticsRecursive(_green, Position).ToArray();
+        }
+
+        private static IEnumerable<SyntaxDiagnostic> GetDiagnosticsRecursive(Internal.GreenNode node, int position)
+        {
+            if (node.HasDiagnostics)
+            {
+                foreach (var diagnostic in node.GetDiagnostics())
+                {
+                    yield return SyntaxDiagnostic.From(diagnostic, position);
+                }
+            }
+
+            for (var i = 0; i < node.Slots; i++)
+            {
+                var maybeChild = node.GetSlot(i);
+                if (maybeChild is Internal.GreenNode child) {
+                    foreach (var diagnostic in GetDiagnosticsRecursive(child, position))
+                    {
+                        yield return diagnostic;
+                    }
+
+                    position += child.FullWidth;
+                }
+            }
+        }
+    }
+
+    public class SyntaxDiagnostic
+    {
+        public int Position { get; }
+
+        public static SyntaxDiagnostic From(Internal.TokenDiagnostic diagnostic, int Position)
+        {
+            switch (diagnostic)
+            {
+                case Internal.MissingTokenDiagnostic missingToken:
+                    return new MissingTokenSyntaxDiagnostic(Position, missingToken.Kind);
+            }
+
+            throw new System.ArgumentOutOfRangeException(nameof(diagnostic));
+        }
+
+        protected SyntaxDiagnostic(int position)
+        {
+            Position = position;
+        }
+    }
+
+    public class MissingTokenSyntaxDiagnostic : SyntaxDiagnostic
+    {
+        public TokenKind Kind { get; }
+
+        internal MissingTokenSyntaxDiagnostic(int position, TokenKind tokenKind)
+            : base(position)
+        {
+            Kind = tokenKind;
+        }
     }
     
     public abstract class StatementSyntaxNode : SyntaxNode

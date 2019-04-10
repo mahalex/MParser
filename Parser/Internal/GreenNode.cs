@@ -11,6 +11,9 @@ namespace Parser.Internal
         public TokenKind Kind { get; }
         public int Slots { get; protected set; }
         public abstract GreenNode? GetSlot(int i);
+        public bool HasDiagnostics { get; }
+        private static Dictionary<GreenNode, TokenDiagnostic[]> diagnosticsTable = new Dictionary<GreenNode, TokenDiagnostic[]>();
+        private static TokenDiagnostic[] emptyDiagnostics = Array.Empty<TokenDiagnostic>();
 
         public GreenNode(TokenKind kind)
         {
@@ -21,6 +24,21 @@ namespace Parser.Internal
         {
             Kind = kind;
             _fullWidth = fullWidth;
+        }
+
+        public GreenNode(TokenKind kind, TokenDiagnostic[] diagnostics)
+        {
+            Kind = kind;
+            HasDiagnostics = true;
+            diagnosticsTable[this] = diagnostics;
+        }
+
+        public GreenNode(TokenKind kind, int fullWidth, TokenDiagnostic[] diagnostics)
+        {
+            Kind = kind;
+            _fullWidth = fullWidth;
+            HasDiagnostics = true;
+            diagnosticsTable[this] = diagnostics;
         }
 
         internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position);
@@ -224,6 +242,18 @@ namespace Parser.Internal
                     }
                 }
             }
+        }
+
+        public abstract GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics);
+
+        internal TokenDiagnostic[] GetDiagnostics()
+        {
+            if (diagnosticsTable.TryGetValue(this, out var diags))
+            {
+                return diags;
+            }
+
+            return emptyDiagnostics;
         }
     }
 }

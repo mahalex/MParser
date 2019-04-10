@@ -15,7 +15,9 @@ namespace Parser.Tests
         }
 
         [Theory]
+#pragma warning disable xUnit1019 // MemberData must reference a member providing a valid data type
         [MemberData(nameof(SingleTokensData))]
+#pragma warning restore xUnit1019 // MemberData must reference a member providing a valid data type
         public void MLexerGreen_Parses_Token(TokenKind kind, string text)
         {
             var tokens = ParseText(text);
@@ -24,7 +26,9 @@ namespace Parser.Tests
         }
 
         [Theory]
+#pragma warning disable xUnit1019 // MemberData must reference a member providing a valid data type
         [MemberData(nameof(PairTokensData))]
+#pragma warning restore xUnit1019 // MemberData must reference a member providing a valid data type
         public void MLexerGreen_Parses_PairOfTokens(TokenKind kind1, string text1, TokenKind kind2, string text2)
         {
             var text = text1 + text2;
@@ -35,7 +39,9 @@ namespace Parser.Tests
         }
 
         [Theory]
+#pragma warning disable xUnit1019 // MemberData must reference a member providing a valid data type
         [MemberData(nameof(PairTokensWithSeparatorData))]
+#pragma warning restore xUnit1019 // MemberData must reference a member providing a valid data type
         public void MLexerGreen_Parses_PairOfTokensWithSeparator(TokenKind kind1, string text1, string separatorText, TokenKind kind2, string text2)
         {
             var text = text1 + separatorText + text2;

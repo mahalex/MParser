@@ -16,9 +16,26 @@ namespace Parser.Internal
             _endOfFile = endOfFile;
         }
 
+        internal FileSyntaxNode(
+            SyntaxList statementList,
+            SyntaxToken endOfFile,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.File, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(statementList);
+            _statementList = statementList;
+            this.AdjustWidth(endOfFile);
+            _endOfFile = endOfFile;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.FileSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new FileSyntaxNode(_statementList, _endOfFile, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -68,9 +85,41 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal FunctionDeclarationSyntaxNode(
+            SyntaxToken functionKeyword,
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
+            SyntaxToken name,
+            FunctionInputDescriptionSyntaxNode? inputDescription,
+            SyntaxList<SyntaxToken> commas,
+            SyntaxList body,
+            EndKeywordSyntaxNode? endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.FunctionDeclaration, diagnostics)
+        {
+            Slots = 7;
+            this.AdjustWidth(functionKeyword);
+            _functionKeyword = functionKeyword;
+            this.AdjustWidth(outputDescription);
+            _outputDescription = outputDescription;
+            this.AdjustWidth(name);
+            _name = name;
+            this.AdjustWidth(inputDescription);
+            _inputDescription = inputDescription;
+            this.AdjustWidth(commas);
+            _commas = commas;
+            this.AdjustWidth(body);
+            _body = body;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.FunctionDeclarationSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new FunctionDeclarationSyntaxNode(_functionKeyword, _outputDescription, _name, _inputDescription, _commas, _body, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -105,9 +154,26 @@ namespace Parser.Internal
             _assignmentSign = assignmentSign;
         }
 
+        internal FunctionOutputDescriptionSyntaxNode(
+            SyntaxList outputList,
+            SyntaxToken assignmentSign,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.FunctionOutputDescription, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(outputList);
+            _outputList = outputList;
+            this.AdjustWidth(assignmentSign);
+            _assignmentSign = assignmentSign;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.FunctionOutputDescriptionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new FunctionOutputDescriptionSyntaxNode(_outputList, _assignmentSign, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -141,9 +207,29 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal FunctionInputDescriptionSyntaxNode(
+            SyntaxToken openingBracket,
+            SyntaxList parameterList,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.FunctionInputDescription, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(parameterList);
+            _parameterList = parameterList;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.FunctionInputDescriptionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new FunctionInputDescriptionSyntaxNode(_openingBracket, _parameterList, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -186,9 +272,35 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal SwitchStatementSyntaxNode(
+            SyntaxToken switchKeyword,
+            ExpressionSyntaxNode switchExpression,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList<SwitchCaseSyntaxNode> cases,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.SwitchStatement, diagnostics)
+        {
+            Slots = 5;
+            this.AdjustWidth(switchKeyword);
+            _switchKeyword = switchKeyword;
+            this.AdjustWidth(switchExpression);
+            _switchExpression = switchExpression;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(cases);
+            _cases = cases;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.SwitchStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new SwitchStatementSyntaxNode(_switchKeyword, _switchExpression, _optionalCommas, _cases, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -229,9 +341,32 @@ namespace Parser.Internal
             _body = body;
         }
 
+        internal SwitchCaseSyntaxNode(
+            SyntaxToken caseKeyword,
+            ExpressionSyntaxNode caseIdentifier,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList body,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.SwitchCase, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(caseKeyword);
+            _caseKeyword = caseKeyword;
+            this.AdjustWidth(caseIdentifier);
+            _caseIdentifier = caseIdentifier;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
+            _body = body;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.SwitchCaseSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new SwitchCaseSyntaxNode(_caseKeyword, _caseIdentifier, _optionalCommas, _body, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -275,9 +410,35 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal WhileStatementSyntaxNode(
+            SyntaxToken whileKeyword,
+            ExpressionSyntaxNode condition,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList body,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.WhileStatement, diagnostics)
+        {
+            Slots = 5;
+            this.AdjustWidth(whileKeyword);
+            _whileKeyword = whileKeyword;
+            this.AdjustWidth(condition);
+            _condition = condition;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
+            _body = body;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.WhileStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new WhileStatementSyntaxNode(_whileKeyword, _condition, _optionalCommas, _body, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -318,9 +479,32 @@ namespace Parser.Internal
             _body = body;
         }
 
+        internal ElseifClause(
+            SyntaxToken elseifKeyword,
+            ExpressionSyntaxNode condition,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList body,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ElseifClause, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(elseifKeyword);
+            _elseifKeyword = elseifKeyword;
+            this.AdjustWidth(condition);
+            _condition = condition;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
+            _body = body;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ElseifClause(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ElseifClause(_elseifKeyword, _condition, _optionalCommas, _body, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -352,9 +536,26 @@ namespace Parser.Internal
             _body = body;
         }
 
+        internal ElseClause(
+            SyntaxToken elseKeyword,
+            SyntaxList body,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ElseClause, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(elseKeyword);
+            _elseKeyword = elseKeyword;
+            this.AdjustWidth(body);
+            _body = body;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ElseClause(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ElseClause(_elseKeyword, _body, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -404,9 +605,41 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal IfStatementSyntaxNode(
+            SyntaxToken ifKeyword,
+            ExpressionSyntaxNode condition,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList body,
+            SyntaxList<ElseifClause> elseifClauses,
+            ElseClause? elseClause,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.IfStatement, diagnostics)
+        {
+            Slots = 7;
+            this.AdjustWidth(ifKeyword);
+            _ifKeyword = ifKeyword;
+            this.AdjustWidth(condition);
+            _condition = condition;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
+            _body = body;
+            this.AdjustWidth(elseifClauses);
+            _elseifClauses = elseifClauses;
+            this.AdjustWidth(elseClause);
+            _elseClause = elseClause;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.IfStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new IfStatementSyntaxNode(_ifKeyword, _condition, _optionalCommas, _body, _elseifClauses, _elseClause, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -453,9 +686,35 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal ForStatementSyntaxNode(
+            SyntaxToken forKeyword,
+            AssignmentExpressionSyntaxNode assignment,
+            SyntaxList<SyntaxToken> optionalCommas,
+            SyntaxList body,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ForStatement, diagnostics)
+        {
+            Slots = 5;
+            this.AdjustWidth(forKeyword);
+            _forKeyword = forKeyword;
+            this.AdjustWidth(assignment);
+            _assignment = assignment;
+            this.AdjustWidth(optionalCommas);
+            _optionalCommas = optionalCommas;
+            this.AdjustWidth(body);
+            _body = body;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ForStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ForStatementSyntaxNode(_forKeyword, _assignment, _optionalCommas, _body, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -492,9 +751,29 @@ namespace Parser.Internal
             _rhs = rhs;
         }
 
+        internal AssignmentExpressionSyntaxNode(
+            ExpressionSyntaxNode lhs,
+            SyntaxToken assignmentSign,
+            ExpressionSyntaxNode rhs,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.AssignmentExpression, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(lhs);
+            _lhs = lhs;
+            this.AdjustWidth(assignmentSign);
+            _assignmentSign = assignmentSign;
+            this.AdjustWidth(rhs);
+            _rhs = rhs;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.AssignmentExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new AssignmentExpressionSyntaxNode(_lhs, _assignmentSign, _rhs, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -525,9 +804,26 @@ namespace Parser.Internal
             _catchBody = catchBody;
         }
 
+        internal CatchClauseSyntaxNode(
+            SyntaxToken catchKeyword,
+            SyntaxList catchBody,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.CatchClause, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(catchKeyword);
+            _catchKeyword = catchKeyword;
+            this.AdjustWidth(catchBody);
+            _catchBody = catchBody;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.CatchClauseSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new CatchClauseSyntaxNode(_catchKeyword, _catchBody, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -565,9 +861,32 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal TryCatchStatementSyntaxNode(
+            SyntaxToken tryKeyword,
+            SyntaxList tryBody,
+            CatchClauseSyntaxNode? catchClause,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.TryCatchStatement, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(tryKeyword);
+            _tryKeyword = tryKeyword;
+            this.AdjustWidth(tryBody);
+            _tryBody = tryBody;
+            this.AdjustWidth(catchClause);
+            _catchClause = catchClause;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.TryCatchStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new TryCatchStatementSyntaxNode(_tryKeyword, _tryBody, _catchClause, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -595,9 +914,23 @@ namespace Parser.Internal
             _expression = expression;
         }
 
+        internal ExpressionStatementSyntaxNode(
+            ExpressionSyntaxNode expression,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ExpressionStatement, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(expression);
+            _expression = expression;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ExpressionStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ExpressionStatementSyntaxNode(_expression, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -622,9 +955,23 @@ namespace Parser.Internal
             _semicolon = semicolon;
         }
 
+        internal EmptyStatementSyntaxNode(
+            SyntaxToken semicolon,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EmptyStatement, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(semicolon);
+            _semicolon = semicolon;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EmptyStatementSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EmptyStatementSyntaxNode(_semicolon, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -645,9 +992,20 @@ namespace Parser.Internal
             Slots = 0;
         }
 
+        internal EmptyExpressionSyntaxNode(
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EmptyExpression, diagnostics)
+        {
+            Slots = 0;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EmptyExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EmptyExpressionSyntaxNode(diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -675,9 +1033,26 @@ namespace Parser.Internal
             _operand = operand;
         }
 
+        internal UnaryPrefixOperationExpressionSyntaxNode(
+            SyntaxToken operation,
+            ExpressionSyntaxNode operand,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.UnaryPrefixOperationExpression, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(operation);
+            _operation = operation;
+            this.AdjustWidth(operand);
+            _operand = operand;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.UnaryPrefixOperationExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new UnaryPrefixOperationExpressionSyntaxNode(_operation, _operand, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -703,9 +1078,23 @@ namespace Parser.Internal
             _nodes = nodes;
         }
 
+        internal CompoundNameSyntaxNode(
+            SyntaxList nodes,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.CompoundName, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.CompoundNameSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new CompoundNameSyntaxNode(_nodes, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -734,9 +1123,26 @@ namespace Parser.Internal
             _functionName = functionName;
         }
 
+        internal NamedFunctionHandleSyntaxNode(
+            SyntaxToken atSign,
+            CompoundNameSyntaxNode functionName,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.NamedFunctionHandle, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(atSign);
+            _atSign = atSign;
+            this.AdjustWidth(functionName);
+            _functionName = functionName;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.NamedFunctionHandleSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new NamedFunctionHandleSyntaxNode(_atSign, _functionName, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -770,9 +1176,29 @@ namespace Parser.Internal
             _body = body;
         }
 
+        internal LambdaSyntaxNode(
+            SyntaxToken atSign,
+            FunctionInputDescriptionSyntaxNode input,
+            ExpressionSyntaxNode body,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.Lambda, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(atSign);
+            _atSign = atSign;
+            this.AdjustWidth(input);
+            _input = input;
+            this.AdjustWidth(body);
+            _body = body;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.LambdaSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new LambdaSyntaxNode(_atSign, _input, _body, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -807,9 +1233,29 @@ namespace Parser.Internal
             _rhs = rhs;
         }
 
+        internal BinaryOperationExpressionSyntaxNode(
+            ExpressionSyntaxNode lhs,
+            SyntaxToken operation,
+            ExpressionSyntaxNode rhs,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.BinaryOperation, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(lhs);
+            _lhs = lhs;
+            this.AdjustWidth(operation);
+            _operation = operation;
+            this.AdjustWidth(rhs);
+            _rhs = rhs;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.BinaryOperationExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new BinaryOperationExpressionSyntaxNode(_lhs, _operation, _rhs, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -836,9 +1282,23 @@ namespace Parser.Internal
             _name = name;
         }
 
+        internal IdentifierNameSyntaxNode(
+            SyntaxToken name,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.IdentifierName, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(name);
+            _name = name;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.IdentifierNameSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new IdentifierNameSyntaxNode(_name, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -863,9 +1323,23 @@ namespace Parser.Internal
             _number = number;
         }
 
+        internal NumberLiteralSyntaxNode(
+            SyntaxToken number,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.NumberLiteralExpression, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(number);
+            _number = number;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.NumberLiteralSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new NumberLiteralSyntaxNode(_number, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -890,9 +1364,23 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
+        internal StringLiteralSyntaxNode(
+            SyntaxToken stringToken,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.StringLiteralExpression, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(stringToken);
+            _stringToken = stringToken;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.StringLiteralSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new StringLiteralSyntaxNode(_stringToken, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -917,9 +1405,23 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
+        internal DoubleQuotedStringLiteralSyntaxNode(
+            SyntaxToken stringToken,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.DoubleQuotedStringLiteralExpression, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(stringToken);
+            _stringToken = stringToken;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.DoubleQuotedStringLiteralSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new DoubleQuotedStringLiteralSyntaxNode(_stringToken, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -944,9 +1446,23 @@ namespace Parser.Internal
             _stringToken = stringToken;
         }
 
+        internal UnquotedStringLiteralSyntaxNode(
+            SyntaxToken stringToken,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.UnquotedStringLiteralExpression, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(stringToken);
+            _stringToken = stringToken;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.UnquotedStringLiteralSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new UnquotedStringLiteralSyntaxNode(_stringToken, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -979,9 +1495,29 @@ namespace Parser.Internal
             _closingSquareBracket = closingSquareBracket;
         }
 
+        internal ArrayLiteralExpressionSyntaxNode(
+            SyntaxToken openingSquareBracket,
+            SyntaxList nodes,
+            SyntaxToken closingSquareBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ArrayLiteralExpression, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingSquareBracket);
+            _openingSquareBracket = openingSquareBracket;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(closingSquareBracket);
+            _closingSquareBracket = closingSquareBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ArrayLiteralExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ArrayLiteralExpressionSyntaxNode(_openingSquareBracket, _nodes, _closingSquareBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1016,9 +1552,29 @@ namespace Parser.Internal
             _closingBrace = closingBrace;
         }
 
+        internal CellArrayLiteralExpressionSyntaxNode(
+            SyntaxToken openingBrace,
+            SyntaxList nodes,
+            SyntaxToken closingBrace,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.CellArrayLiteralExpression, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBrace);
+            _openingBrace = openingBrace;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(closingBrace);
+            _closingBrace = closingBrace;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.CellArrayLiteralExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new CellArrayLiteralExpressionSyntaxNode(_openingBrace, _nodes, _closingBrace, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1053,9 +1609,29 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal ParenthesizedExpressionSyntaxNode(
+            SyntaxToken openingBracket,
+            ExpressionSyntaxNode expression,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ParenthesizedExpression, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(expression);
+            _expression = expression;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ParenthesizedExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ParenthesizedExpressionSyntaxNode(_openingBracket, _expression, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1094,9 +1670,32 @@ namespace Parser.Internal
             _closingBrace = closingBrace;
         }
 
+        internal CellArrayElementAccessExpressionSyntaxNode(
+            ExpressionSyntaxNode expression,
+            SyntaxToken openingBrace,
+            SyntaxList nodes,
+            SyntaxToken closingBrace,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.CellArrayElementAccess, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(expression);
+            _expression = expression;
+            this.AdjustWidth(openingBrace);
+            _openingBrace = openingBrace;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(closingBrace);
+            _closingBrace = closingBrace;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.CellArrayElementAccessExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new CellArrayElementAccessExpressionSyntaxNode(_expression, _openingBrace, _nodes, _closingBrace, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1136,9 +1735,32 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal FunctionCallExpressionSyntaxNode(
+            ExpressionSyntaxNode functionName,
+            SyntaxToken openingBracket,
+            SyntaxList nodes,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.FunctionCall, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(functionName);
+            _functionName = functionName;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.FunctionCallExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new FunctionCallExpressionSyntaxNode(_functionName, _openingBracket, _nodes, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1174,9 +1796,29 @@ namespace Parser.Internal
             _rightOperand = rightOperand;
         }
 
+        internal MemberAccessSyntaxNode(
+            SyntaxNode leftOperand,
+            SyntaxToken dot,
+            SyntaxNode rightOperand,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.MemberAccess, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(leftOperand);
+            _leftOperand = leftOperand;
+            this.AdjustWidth(dot);
+            _dot = dot;
+            this.AdjustWidth(rightOperand);
+            _rightOperand = rightOperand;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.MemberAccessSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new MemberAccessSyntaxNode(_leftOperand, _dot, _rightOperand, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1207,9 +1849,26 @@ namespace Parser.Internal
             _operation = operation;
         }
 
+        internal UnaryPostixOperationExpressionSyntaxNode(
+            ExpressionSyntaxNode operand,
+            SyntaxToken operation,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.UnaryPostfixOperationExpression, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(operand);
+            _operand = operand;
+            this.AdjustWidth(operation);
+            _operation = operation;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.UnaryPostixOperationExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new UnaryPostixOperationExpressionSyntaxNode(_operand, _operation, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1243,9 +1902,29 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal IndirectMemberAccessSyntaxNode(
+            SyntaxToken openingBracket,
+            ExpressionSyntaxNode expression,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.IndirectMemberAccess, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(expression);
+            _expression = expression;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.IndirectMemberAccessSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new IndirectMemberAccessSyntaxNode(_openingBracket, _expression, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1276,9 +1955,26 @@ namespace Parser.Internal
             _arguments = arguments;
         }
 
+        internal CommandExpressionSyntaxNode(
+            IdentifierNameSyntaxNode commandName,
+            SyntaxList<UnquotedStringLiteralSyntaxNode> arguments,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.Command, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(commandName);
+            _commandName = commandName;
+            this.AdjustWidth(arguments);
+            _arguments = arguments;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.CommandExpressionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new CommandExpressionSyntaxNode(_commandName, _arguments, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1312,9 +2008,29 @@ namespace Parser.Internal
             _baseClassNameAndArguments = baseClassNameAndArguments;
         }
 
+        internal BaseClassInvokationSyntaxNode(
+            ExpressionSyntaxNode methodName,
+            SyntaxToken atSign,
+            ExpressionSyntaxNode baseClassNameAndArguments,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ClassInvokation, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(methodName);
+            _methodName = methodName;
+            this.AdjustWidth(atSign);
+            _atSign = atSign;
+            this.AdjustWidth(baseClassNameAndArguments);
+            _baseClassNameAndArguments = baseClassNameAndArguments;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.BaseClassInvokationSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new BaseClassInvokationSyntaxNode(_methodName, _atSign, _baseClassNameAndArguments, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1345,9 +2061,26 @@ namespace Parser.Internal
             _value = value;
         }
 
+        internal AttributeAssignmentSyntaxNode(
+            SyntaxToken assignmentSign,
+            ExpressionSyntaxNode value,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.AttributeAssignment, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(assignmentSign);
+            _assignmentSign = assignmentSign;
+            this.AdjustWidth(value);
+            _value = value;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.AttributeAssignmentSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new AttributeAssignmentSyntaxNode(_assignmentSign, _value, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1377,9 +2110,26 @@ namespace Parser.Internal
             _assignment = assignment;
         }
 
+        internal AttributeSyntaxNode(
+            IdentifierNameSyntaxNode name,
+            AttributeAssignmentSyntaxNode? assignment,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.Attribute, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(name);
+            _name = name;
+            this.AdjustWidth(assignment);
+            _assignment = assignment;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.AttributeSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new AttributeSyntaxNode(_name, _assignment, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1413,9 +2163,29 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal AttributeListSyntaxNode(
+            SyntaxToken openingBracket,
+            SyntaxList nodes,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.AttributeList, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.AttributeListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new AttributeListSyntaxNode(_openingBracket, _nodes, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1466,9 +2236,41 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal MethodDefinitionSyntaxNode(
+            SyntaxToken functionKeyword,
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
+            CompoundNameSyntaxNode name,
+            FunctionInputDescriptionSyntaxNode? inputDescription,
+            SyntaxList<SyntaxToken> commas,
+            SyntaxList body,
+            EndKeywordSyntaxNode? endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.MethodDefinition, diagnostics)
+        {
+            Slots = 7;
+            this.AdjustWidth(functionKeyword);
+            _functionKeyword = functionKeyword;
+            this.AdjustWidth(outputDescription);
+            _outputDescription = outputDescription;
+            this.AdjustWidth(name);
+            _name = name;
+            this.AdjustWidth(inputDescription);
+            _inputDescription = inputDescription;
+            this.AdjustWidth(commas);
+            _commas = commas;
+            this.AdjustWidth(body);
+            _body = body;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.MethodDefinitionSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new MethodDefinitionSyntaxNode(_functionKeyword, _outputDescription, _name, _inputDescription, _commas, _body, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1507,9 +2309,29 @@ namespace Parser.Internal
             _inputDescription = inputDescription;
         }
 
+        internal AbstractMethodDeclarationSyntaxNode(
+            FunctionOutputDescriptionSyntaxNode? outputDescription,
+            CompoundNameSyntaxNode name,
+            FunctionInputDescriptionSyntaxNode? inputDescription,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.AbstractMethodDeclaration, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(outputDescription);
+            _outputDescription = outputDescription;
+            this.AdjustWidth(name);
+            _name = name;
+            this.AdjustWidth(inputDescription);
+            _inputDescription = inputDescription;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.AbstractMethodDeclarationSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new AbstractMethodDeclarationSyntaxNode(_outputDescription, _name, _inputDescription, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1548,9 +2370,32 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal MethodsListSyntaxNode(
+            SyntaxToken methodsKeyword,
+            AttributeListSyntaxNode? attributes,
+            SyntaxList methods,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.MethodsList, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(methodsKeyword);
+            _methodsKeyword = methodsKeyword;
+            this.AdjustWidth(attributes);
+            _attributes = attributes;
+            this.AdjustWidth(methods);
+            _methods = methods;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.MethodsListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new MethodsListSyntaxNode(_methodsKeyword, _attributes, _methods, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1590,9 +2435,32 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal PropertiesListSyntaxNode(
+            SyntaxToken propertiesKeyword,
+            AttributeListSyntaxNode? attributes,
+            SyntaxList properties,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.PropertiesList, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(propertiesKeyword);
+            _propertiesKeyword = propertiesKeyword;
+            this.AdjustWidth(attributes);
+            _attributes = attributes;
+            this.AdjustWidth(properties);
+            _properties = properties;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.PropertiesListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new PropertiesListSyntaxNode(_propertiesKeyword, _attributes, _properties, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1624,9 +2492,26 @@ namespace Parser.Internal
             _baseClasses = baseClasses;
         }
 
+        internal BaseClassListSyntaxNode(
+            SyntaxToken lessSign,
+            SyntaxList baseClasses,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.BaseClassList, diagnostics)
+        {
+            Slots = 2;
+            this.AdjustWidth(lessSign);
+            _lessSign = lessSign;
+            this.AdjustWidth(baseClasses);
+            _baseClasses = baseClasses;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.BaseClassListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new BaseClassListSyntaxNode(_lessSign, _baseClasses, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1672,9 +2557,38 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal ClassDeclarationSyntaxNode(
+            SyntaxToken classdefKeyword,
+            AttributeListSyntaxNode? attributes,
+            IdentifierNameSyntaxNode className,
+            BaseClassListSyntaxNode? baseClassList,
+            SyntaxList nodes,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.ClassDeclaration, diagnostics)
+        {
+            Slots = 6;
+            this.AdjustWidth(classdefKeyword);
+            _classdefKeyword = classdefKeyword;
+            this.AdjustWidth(attributes);
+            _attributes = attributes;
+            this.AdjustWidth(className);
+            _className = className;
+            this.AdjustWidth(baseClassList);
+            _baseClassList = baseClassList;
+            this.AdjustWidth(nodes);
+            _nodes = nodes;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.ClassDeclarationSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new ClassDeclarationSyntaxNode(_classdefKeyword, _attributes, _className, _baseClassList, _nodes, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1712,9 +2626,29 @@ namespace Parser.Internal
             _closingBracket = closingBracket;
         }
 
+        internal EnumerationItemValueSyntaxNode(
+            SyntaxToken openingBracket,
+            SyntaxList values,
+            SyntaxToken closingBracket,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EnumerationItemValue, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(openingBracket);
+            _openingBracket = openingBracket;
+            this.AdjustWidth(values);
+            _values = values;
+            this.AdjustWidth(closingBracket);
+            _closingBracket = closingBracket;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EnumerationItemValueSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EnumerationItemValueSyntaxNode(_openingBracket, _values, _closingBracket, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1749,9 +2683,29 @@ namespace Parser.Internal
             _commas = commas;
         }
 
+        internal EnumerationItemSyntaxNode(
+            IdentifierNameSyntaxNode name,
+            EnumerationItemValueSyntaxNode? values,
+            SyntaxList<SyntaxToken> commas,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EnumerationItem, diagnostics)
+        {
+            Slots = 3;
+            this.AdjustWidth(name);
+            _name = name;
+            this.AdjustWidth(values);
+            _values = values;
+            this.AdjustWidth(commas);
+            _commas = commas;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EnumerationItemSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EnumerationItemSyntaxNode(_name, _values, _commas, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1790,9 +2744,32 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal EnumerationListSyntaxNode(
+            SyntaxToken enumerationKeyword,
+            AttributeListSyntaxNode? attributes,
+            SyntaxList<EnumerationItemSyntaxNode> items,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EnumerationList, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(enumerationKeyword);
+            _enumerationKeyword = enumerationKeyword;
+            this.AdjustWidth(attributes);
+            _attributes = attributes;
+            this.AdjustWidth(items);
+            _items = items;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EnumerationListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EnumerationListSyntaxNode(_enumerationKeyword, _attributes, _items, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1832,9 +2809,32 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal EventsListSyntaxNode(
+            SyntaxToken eventsKeyword,
+            AttributeListSyntaxNode? attributes,
+            SyntaxList events,
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EventsList, diagnostics)
+        {
+            Slots = 4;
+            this.AdjustWidth(eventsKeyword);
+            _eventsKeyword = eventsKeyword;
+            this.AdjustWidth(attributes);
+            _attributes = attributes;
+            this.AdjustWidth(events);
+            _events = events;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EventsListSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EventsListSyntaxNode(_eventsKeyword, _attributes, _events, _endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
@@ -1862,9 +2862,23 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
+        internal EndKeywordSyntaxNode(
+            SyntaxToken endKeyword,
+            TokenDiagnostic[] diagnostics) : base(TokenKind.EndKeyword, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(endKeyword);
+            _endKeyword = endKeyword;
+        }
+
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.EndKeywordSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new EndKeywordSyntaxNode(_endKeyword, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
