@@ -2,6 +2,8 @@
 
 namespace Parser.Tests
 {
+    using static DiagnosticExtensions;
+
     public class MParserShould
     {
         private static MParser GetSut(string text)
@@ -66,7 +68,7 @@ namespace Parser.Tests
             var sut = GetSut(text);
             var actual = sut.Parse();
             var diagnostics = actual.Root.GetDiagnostics();
-            Assert.Collection(actual.Diagnostics, item => Assert.Equal("Unexpected token 'SemicolonToken', expected 'IdentifierToken'.", item.Message));
+            Assert.True(diagnostics.IsEquivalentTo(MissingToken(4, TokenKind.IdentifierToken)));
         }
 
         [Fact]
