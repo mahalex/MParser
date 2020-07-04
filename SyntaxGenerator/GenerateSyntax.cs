@@ -305,7 +305,7 @@ namespace SyntaxGenerator
 
         private static string GenerateInternalSyntaxNodeFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {InternalNamespace}\n";
+            var header = $"#nullable enable\nnamespace {InternalNamespace}\n";
             var classes = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateInternalClass)
@@ -315,7 +315,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxNodeFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {OuterNamespace}\n";
+            var header = $"#nullable enable\nnamespace {OuterNamespace}\n";
             var classes = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateClass)
@@ -358,7 +358,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxFactoryFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {InternalNamespace}\n{{\n    internal partial class SyntaxFactory\n";
+            var header = $"#nullable enable\nnamespace {InternalNamespace}\n{{\n    internal partial class SyntaxFactory\n";
             var methods = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateFactoryMethod)
@@ -375,7 +375,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxVisitorFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {OuterNamespace}\n{{\n    public partial class SyntaxVisitor\n";
+            var header = $"#nullable enable\nnamespace {OuterNamespace}\n{{\n    public partial class SyntaxVisitor\n";
             var methods = string.Join(
                 "\n",
                Visitors.Select(GenerateVisitor));

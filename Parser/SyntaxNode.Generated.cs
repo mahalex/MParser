@@ -1,3 +1,4 @@
+#nullable enable
 namespace Parser
 {
     public class FileSyntaxNode : SyntaxNode

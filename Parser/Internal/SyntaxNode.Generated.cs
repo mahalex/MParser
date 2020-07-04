@@ -1,3 +1,4 @@
+#nullable enable
 namespace Parser.Internal
 {
     internal class FileSyntaxNode : SyntaxNode

@@ -1,3 +1,4 @@
+#nullable enable
 namespace Parser
 {
     public partial class SyntaxVisitor
