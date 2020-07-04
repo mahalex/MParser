@@ -74,11 +74,6 @@ namespace Parser.Internal
 
         internal bool IsMissing => _isMissing;
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
         private void WriteTo(TextWriter writer, bool leading, bool trailing)
         {
             var stack = new Stack<(GreenNode node, bool leading, bool trailing)>();

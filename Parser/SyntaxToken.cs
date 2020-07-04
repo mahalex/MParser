@@ -12,7 +12,7 @@ namespace Parser
 
         public TokenKind Kind => _token.Kind;
 
-        public override string ToString()
+        public override string? ToString()
         {
             return _token.ToString();
         }
@@ -34,7 +34,7 @@ namespace Parser
             return Equals(_parent, other._parent) && Equals(_token, other._token);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is SyntaxToken token && Equals(token);
