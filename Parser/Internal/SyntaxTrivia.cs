@@ -14,10 +14,15 @@ namespace Parser.Internal
             _text = text;
         }
 
+        public SyntaxTrivia(TokenKind kind, string text, TokenDiagnostic[] diagnostics) : base(kind, text.Length, diagnostics)
+        {
+            _text = text;
+        }
+
         public override string Text => _text;
         public int Width => _text.Length;
 
-        public override GreenNode GetSlot(int i)
+        public override GreenNode? GetSlot(int i)
         {
             throw new System.NotImplementedException();
         }
@@ -33,6 +38,11 @@ namespace Parser.Internal
         public override void WriteTriviaTo(TextWriter writer)
         {
             writer.Write(_text);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new SyntaxTrivia(Kind, _text, diagnostics);
         }
 
         public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => new List<SyntaxTrivia>();

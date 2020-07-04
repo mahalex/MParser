@@ -1,3 +1,4 @@
+#nullable enable
 namespace Parser.Internal
 {
     internal partial class SyntaxFactory
@@ -13,12 +14,12 @@ namespace Parser.Internal
 
         public FunctionDeclarationSyntaxNode FunctionDeclarationSyntax(
             SyntaxToken functionKeyword, 
-            FunctionOutputDescriptionSyntaxNode outputDescription, 
+            FunctionOutputDescriptionSyntaxNode? outputDescription, 
             SyntaxToken name, 
-            FunctionInputDescriptionSyntaxNode inputDescription, 
+            FunctionInputDescriptionSyntaxNode? inputDescription, 
             SyntaxList<SyntaxToken> commas, 
             SyntaxList body, 
-            SyntaxToken endKeyword)
+            EndKeywordSyntaxNode? endKeyword)
         {
             return new FunctionDeclarationSyntaxNode(
                 functionKeyword, 
@@ -121,7 +122,7 @@ namespace Parser.Internal
             SyntaxList<SyntaxToken> optionalCommas, 
             SyntaxList body, 
             SyntaxList<ElseifClause> elseifClauses, 
-            ElseClause elseClause, 
+            ElseClause? elseClause, 
             SyntaxToken endKeyword)
         {
             return new IfStatementSyntaxNode(
@@ -172,7 +173,7 @@ namespace Parser.Internal
         public TryCatchStatementSyntaxNode TryCatchStatementSyntax(
             SyntaxToken tryKeyword, 
             SyntaxList tryBody, 
-            CatchClauseSyntaxNode catchClause, 
+            CatchClauseSyntaxNode? catchClause, 
             SyntaxToken endKeyword)
         {
             return new TryCatchStatementSyntaxNode(
@@ -404,7 +405,7 @@ namespace Parser.Internal
 
         public AttributeSyntaxNode AttributeSyntax(
             IdentifierNameSyntaxNode name, 
-            AttributeAssignmentSyntaxNode assignment)
+            AttributeAssignmentSyntaxNode? assignment)
         {
             return new AttributeSyntaxNode(
                 name, 
@@ -424,12 +425,12 @@ namespace Parser.Internal
 
         public MethodDefinitionSyntaxNode MethodDefinitionSyntax(
             SyntaxToken functionKeyword, 
-            FunctionOutputDescriptionSyntaxNode outputDescription, 
+            FunctionOutputDescriptionSyntaxNode? outputDescription, 
             CompoundNameSyntaxNode name, 
-            FunctionInputDescriptionSyntaxNode inputDescription, 
+            FunctionInputDescriptionSyntaxNode? inputDescription, 
             SyntaxList<SyntaxToken> commas, 
             SyntaxList body, 
-            SyntaxToken endKeyword)
+            EndKeywordSyntaxNode? endKeyword)
         {
             return new MethodDefinitionSyntaxNode(
                 functionKeyword, 
@@ -442,9 +443,9 @@ namespace Parser.Internal
         }
 
         public AbstractMethodDeclarationSyntaxNode AbstractMethodDeclarationSyntax(
-            FunctionOutputDescriptionSyntaxNode outputDescription, 
+            FunctionOutputDescriptionSyntaxNode? outputDescription, 
             CompoundNameSyntaxNode name, 
-            FunctionInputDescriptionSyntaxNode inputDescription)
+            FunctionInputDescriptionSyntaxNode? inputDescription)
         {
             return new AbstractMethodDeclarationSyntaxNode(
                 outputDescription, 
@@ -454,7 +455,7 @@ namespace Parser.Internal
 
         public MethodsListSyntaxNode MethodsListSyntax(
             SyntaxToken methodsKeyword, 
-            AttributeListSyntaxNode attributes, 
+            AttributeListSyntaxNode? attributes, 
             SyntaxList methods, 
             SyntaxToken endKeyword)
         {
@@ -467,7 +468,7 @@ namespace Parser.Internal
 
         public PropertiesListSyntaxNode PropertiesListSyntax(
             SyntaxToken propertiesKeyword, 
-            AttributeListSyntaxNode attributes, 
+            AttributeListSyntaxNode? attributes, 
             SyntaxList properties, 
             SyntaxToken endKeyword)
         {
@@ -489,9 +490,9 @@ namespace Parser.Internal
 
         public ClassDeclarationSyntaxNode ClassDeclarationSyntax(
             SyntaxToken classdefKeyword, 
-            AttributeListSyntaxNode attributes, 
+            AttributeListSyntaxNode? attributes, 
             IdentifierNameSyntaxNode className, 
-            BaseClassListSyntaxNode baseClassList, 
+            BaseClassListSyntaxNode? baseClassList, 
             SyntaxList nodes, 
             SyntaxToken endKeyword)
         {
@@ -517,7 +518,7 @@ namespace Parser.Internal
 
         public EnumerationItemSyntaxNode EnumerationItemSyntax(
             IdentifierNameSyntaxNode name, 
-            EnumerationItemValueSyntaxNode values, 
+            EnumerationItemValueSyntaxNode? values, 
             SyntaxList<SyntaxToken> commas)
         {
             return new EnumerationItemSyntaxNode(
@@ -528,7 +529,7 @@ namespace Parser.Internal
 
         public EnumerationListSyntaxNode EnumerationListSyntax(
             SyntaxToken enumerationKeyword, 
-            AttributeListSyntaxNode attributes, 
+            AttributeListSyntaxNode? attributes, 
             SyntaxList<EnumerationItemSyntaxNode> items, 
             SyntaxToken endKeyword)
         {
@@ -541,7 +542,7 @@ namespace Parser.Internal
 
         public EventsListSyntaxNode EventsListSyntax(
             SyntaxToken eventsKeyword, 
-            AttributeListSyntaxNode attributes, 
+            AttributeListSyntaxNode? attributes, 
             SyntaxList events, 
             SyntaxToken endKeyword)
         {
@@ -549,6 +550,13 @@ namespace Parser.Internal
                 eventsKeyword, 
                 attributes, 
                 events, 
+                endKeyword);
+        }
+
+        public EndKeywordSyntaxNode EndKeywordSyntax(
+            SyntaxToken endKeyword)
+        {
+            return new EndKeywordSyntaxNode(
                 endKeyword);
         }
     }

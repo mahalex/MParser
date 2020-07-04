@@ -2,7 +2,7 @@
 {
     public class TextWindowWithNull : TextWindow
     {
-        public TextWindowWithNull(string text, string fileName = null) : base(text, fileName)
+        public TextWindowWithNull(string text, string? fileName = null) : base(text, fileName)
         {
         }
 

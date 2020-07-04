@@ -24,7 +24,7 @@ namespace Parser
                     }
                     else
                     {
-                        return green.CreateRed(this, this.GetChildPosition(index));
+                        return green!.CreateRed(this, this.GetChildPosition(index));
                     }
                 }
                 throw new ArgumentOutOfRangeException();
@@ -81,7 +81,7 @@ namespace Parser
 
         public int Count => _green.Slots;
         
-        internal override SyntaxNode GetNode(int index)
+        internal override SyntaxNode? GetNode(int index)
         {
             if (index < _green.Slots)
             {

@@ -6,12 +6,12 @@
     </Class>
     <Class Name="FunctionDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="FunctionDeclaration">
         <Field Type="SyntaxToken" Name="functionKeyword" />
-        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" Nullable="true" />
         <Field Type="SyntaxToken" Name="name" />
-        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
         <Field Type="SyntaxList" Name="body" />
-        <Field Type="SyntaxToken" Name="endKeyword" />
+        <Field Type="EndKeywordSyntaxNode" Name="endKeyword" Nullable="true"/>
     </Class>
     <Class Name="FunctionOutputDescriptionSyntaxNode" BaseClass="SyntaxNode" Kind="FunctionOutputDescription">
         <Field Type="SyntaxList" Name="outputList" />
@@ -58,7 +58,7 @@
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
         <Field Type="SyntaxList" Name="body" />
         <Field Type="SyntaxList&lt;ElseifClause&gt;" Name="elseifClauses" />
-        <Field Type="ElseClause" Name="elseClause" />
+        <Field Type="ElseClause" Name="elseClause" Nullable="true" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="ForStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ForStatement">
@@ -80,7 +80,7 @@
     <Class Name="TryCatchStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="TryCatchStatement">
         <Field Type="SyntaxToken" Name="tryKeyword" />
         <Field Type="SyntaxList" Name="tryBody" />
-        <Field Type="CatchClauseSyntaxNode" Name="catchClause" />
+        <Field Type="CatchClauseSyntaxNode" Name="catchClause" Nullable="true" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="ExpressionStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ExpressionStatement">
@@ -183,7 +183,7 @@
     </Class>
     <Class Name="AttributeSyntaxNode" BaseClass="SyntaxNode" Kind="Attribute">
         <Field Type="IdentifierNameSyntaxNode" Name="name" />
-        <Field Type="AttributeAssignmentSyntaxNode" Name="assignment" />
+        <Field Type="AttributeAssignmentSyntaxNode" Name="assignment" Nullable="true" />
     </Class>
     <Class Name="AttributeListSyntaxNode" BaseClass="SyntaxNode" Kind="AttributeList">
         <Field Type="SyntaxToken" Name="openingBracket" />
@@ -192,27 +192,27 @@
     </Class>
     <Class Name="MethodDefinitionSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="MethodDefinition">
         <Field Type="SyntaxToken" Name="functionKeyword" />
-        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" Nullable="true" />
         <Field Type="CompoundNameSyntaxNode" Name="name" />
-        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
         <Field Type="SyntaxList" Name="body" />
-        <Field Type="SyntaxToken" Name="endKeyword" />
+        <Field Type="EndKeywordSyntaxNode" Name="endKeyword" Nullable="true" />
     </Class>
     <Class Name="AbstractMethodDeclarationSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="AbstractMethodDeclaration">
-        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" />
+        <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" Nullable="true" />
         <Field Type="CompoundNameSyntaxNode" Name="name" />
-        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" />
+        <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" Nullable="true"/>
     </Class>
     <Class Name="MethodsListSyntaxNode" BaseClass="SyntaxNode" Kind="MethodsList">
         <Field Type="SyntaxToken" Name="methodsKeyword" />
-        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true" />
         <Field Type="SyntaxList" Name="methods" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="PropertiesListSyntaxNode" BaseClass="SyntaxNode" Kind="PropertiesList">
         <Field Type="SyntaxToken" Name="propertiesKeyword" />
-        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true" />
         <Field Type="SyntaxList" Name="properties" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
@@ -222,9 +222,9 @@
     </Class>
     <Class Name="ClassDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ClassDeclaration">
         <Field Type="SyntaxToken" Name="classdefKeyword" />
-        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true" />
         <Field Type="IdentifierNameSyntaxNode" Name="className" />
-        <Field Type="BaseClassListSyntaxNode" Name="baseClassList" />
+        <Field Type="BaseClassListSyntaxNode" Name="baseClassList" Nullable="true" />
         <Field Type="SyntaxList" Name="nodes" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
@@ -235,19 +235,22 @@
     </Class>
     <Class Name="EnumerationItemSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationItem">
         <Field Type="IdentifierNameSyntaxNode" Name="name" />
-        <Field Type="EnumerationItemValueSyntaxNode" Name="values" />
+        <Field Type="EnumerationItemValueSyntaxNode" Name="values" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
     </Class>
     <Class Name="EnumerationListSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationList">
         <Field Type="SyntaxToken" Name="enumerationKeyword" />
-        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true"/>
         <Field Type="SyntaxList&lt;EnumerationItemSyntaxNode&gt;" Name="items" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="EventsListSyntaxNode" BaseClass="SyntaxNode" Kind="EventsList">
         <Field Type="SyntaxToken" Name="eventsKeyword" />
-        <Field Type="AttributeListSyntaxNode" Name="attributes" />
+        <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true" />
         <Field Type="SyntaxList" Name="events" />
+        <Field Type="SyntaxToken" Name="endKeyword" />
+    </Class>
+    <Class Name="EndKeywordSyntaxNode" BaseClass="SyntaxNode" Kind="EndKeyword">
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
 </Syntax>

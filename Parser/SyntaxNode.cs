@@ -7,10 +7,17 @@ namespace Parser
     public abstract class SyntaxNode
     {
         private readonly SyntaxNode _parent;
-        internal readonly Internal.GreenNode _green; 
+        internal readonly Internal.GreenNode _green;
         internal SyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position)
         {
             _parent = parent;
+            _green = green;
+            Position = position;
+        }
+
+        private protected SyntaxNode(Internal.GreenNode green, int position)
+        {
+            _parent = this;
             _green = green;
             Position = position;
         }
@@ -43,9 +50,9 @@ namespace Parser
             return result;
         }
 
-        internal abstract SyntaxNode GetNode(int index);
+        internal abstract SyntaxNode? GetNode(int index);
 
-        internal SyntaxNode GetRed(ref SyntaxNode field, int slot)
+        internal SyntaxNode? GetRed(ref SyntaxNode? field, int slot)
         {
             if (field == null)
             {
@@ -89,6 +96,35 @@ namespace Parser
         }
 
         public abstract void Accept(SyntaxVisitor visitor);
+
+        public SyntaxDiagnostic[] GetDiagnostics()
+        {
+            return GetDiagnosticsRecursive(_green, Position).ToArray();
+        }
+
+        private static IEnumerable<SyntaxDiagnostic> GetDiagnosticsRecursive(Internal.GreenNode node, int position)
+        {
+            if (node.HasDiagnostics)
+            {
+                foreach (var diagnostic in node.GetDiagnostics())
+                {
+                    yield return SyntaxDiagnostic.From(diagnostic, position);
+                }
+            }
+
+            for (var i = 0; i < node.Slots; i++)
+            {
+                var maybeChild = node.GetSlot(i);
+                if (maybeChild is Internal.GreenNode child) {
+                    foreach (var diagnostic in GetDiagnosticsRecursive(child, position))
+                    {
+                        yield return diagnostic;
+                    }
+
+                    position += child.FullWidth;
+                }
+            }
+        }
     }
     
     public abstract class StatementSyntaxNode : SyntaxNode
@@ -119,4 +155,35 @@ namespace Parser
         }
     }
 
+    public class RootSyntaxNode : SyntaxNode
+    {
+        private SyntaxNode? _file;
+
+        internal RootSyntaxNode(Internal.GreenNode green, int position) : base(green, position)
+        {
+        }
+
+        internal override SyntaxNode? GetNode(int index)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Accept(SyntaxVisitor visitor)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+        public FileSyntaxNode File
+        {
+            get
+            {
+                var red = this.GetRed(ref this._file, 0);
+                if (red != null)
+                    return (FileSyntaxNode)red;
+
+                throw new System.Exception("file cannot be null");
+            }
+        }
+    }
 }

@@ -196,7 +196,12 @@ namespace ProjectConsole
             Visit(node.InputDescription);
             Visit(node.Commas);
             Visit(node.Body);
-            OutputKeyword(node.EndKeyword);            
+            Visit(node.EndKeyword);
+        }
+
+        public override void VisitEndKeyword(EndKeywordSyntaxNode node)
+        {
+            OutputKeyword(node.EndKeyword);
         }
 
         public override void VisitFunctionDeclaration(FunctionDeclarationSyntaxNode node)
@@ -207,7 +212,7 @@ namespace ProjectConsole
             Visit(node.InputDescription);
             Visit(node.Commas);
             Visit(node.Body);
-            OutputKeyword(node.EndKeyword);
+            Visit(node.EndKeyword);
         }
 
         public override void VisitIfStatement(IfStatementSyntaxNode node)

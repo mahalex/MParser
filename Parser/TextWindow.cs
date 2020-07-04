@@ -6,7 +6,7 @@
         private Position _position;
         public Position Position => _position;
 
-        public TextWindow(string text, string fileName = null)
+        public TextWindow(string text, string? fileName = null)
         {
             Text = text;
             _position = new Position

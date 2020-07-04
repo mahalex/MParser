@@ -20,23 +20,24 @@ namespace Parser
             var lexerDiagnostics = lexer.Diagnostics;
             var tokens = lexer.ParseAll();
             var parser = new Internal.MParserGreen(tokens, new Internal.SyntaxFactory());
-            var green = parser.ParseFile();
+            var green = parser.ParseRoot();
             var parserDiagnostics = parser.Diagnostics;
             var totalDiagnostics = new DiagnosticsBag(lexerDiagnostics.Concat(parserDiagnostics));
-            var root = new FileSyntaxNode(null, green, 0);
+            var root = new RootSyntaxNode(green, 0);
             return new SyntaxTree(root, totalDiagnostics);
         }
     }
 
     public class SyntaxTree
     {
-        public SyntaxTree(FileSyntaxNode root, DiagnosticsBag diagnostics)
+        public SyntaxTree(RootSyntaxNode nullRoot, DiagnosticsBag diagnostics)
         {
-            Root = root ?? throw new ArgumentNullException(nameof(root));
+            NullRoot = nullRoot ?? throw new ArgumentNullException(nameof(nullRoot));
             Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
         }
 
-        public FileSyntaxNode Root { get; }
+        public RootSyntaxNode NullRoot { get; }
+        public FileSyntaxNode Root => NullRoot.File;
         public DiagnosticsBag Diagnostics { get; }
     }
 

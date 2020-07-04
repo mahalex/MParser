@@ -10,6 +10,11 @@ namespace Parser.Internal
         {
         }
 
+        protected SyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics)
+            : base(kind, diagnostics)
+        {
+        }
+
         public IEnumerable<SyntaxToken> DescendantTokens => CalculateChildTokens();
 
         private IEnumerable<SyntaxToken> CalculateChildTokens()
@@ -57,11 +62,19 @@ namespace Parser.Internal
         protected StatementSyntaxNode(TokenKind kind) : base(kind)
         { 
         }
+
+        protected StatementSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
+        {
+        }
     }
-    
+
     internal abstract class ExpressionSyntaxNode : SyntaxNode
     {
         protected ExpressionSyntaxNode(TokenKind kind) : base(kind)
+        {
+        }
+
+        protected ExpressionSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
         {
         }
     }
@@ -71,12 +84,58 @@ namespace Parser.Internal
         protected FunctionHandleSyntaxNode(TokenKind kind) : base(kind)
         {
         }
+
+        protected FunctionHandleSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
+        {
+        }
     }
 
     internal abstract class MethodDeclarationSyntaxNode : StatementSyntaxNode
     {
         protected MethodDeclarationSyntaxNode(TokenKind kind) : base(kind)
         {
+        }
+
+        protected MethodDeclarationSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
+        {
+        }
+    }
+
+    internal class RootSyntaxNode : SyntaxNode
+    {
+        internal readonly FileSyntaxNode _file;
+
+        public RootSyntaxNode(FileSyntaxNode file) : base(TokenKind.Root)
+        {
+            Slots = 1;
+            this.AdjustWidth(file);
+            _file = file;
+        }
+
+        public RootSyntaxNode(FileSyntaxNode file, TokenDiagnostic[] diagnostics) : base(TokenKind.Root, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(file);
+            _file = file;
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            switch (i)
+            {
+                case 0: return _file;
+                default: return null;
+            }
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new RootSyntaxNode(this._file, diagnostics);
+        }
+
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
+        {
+            return new Parser.RootSyntaxNode(this, position);
         }
     }
 }

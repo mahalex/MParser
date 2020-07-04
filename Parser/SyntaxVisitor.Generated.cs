@@ -1,3 +1,4 @@
+#nullable enable
 namespace Parser
 {
     public partial class SyntaxVisitor
@@ -248,6 +249,11 @@ namespace Parser
         }
 
         public virtual void VisitEventsList(EventsListSyntaxNode node)
+        {
+            DefaultVisit(node);
+        }
+
+        public virtual void VisitEndKeyword(EndKeywordSyntaxNode node)
         {
             DefaultVisit(node);
         }

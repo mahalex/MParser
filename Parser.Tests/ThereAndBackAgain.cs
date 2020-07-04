@@ -44,7 +44,9 @@ namespace Parser.Tests
         }
 
         [Theory]
+#pragma warning disable xUnit1019 // MemberData must reference a member providing a valid data type
         [MemberData(nameof(FilesData))]
+#pragma warning restore xUnit1019 // MemberData must reference a member providing a valid data type
         public void TestFile(string fileName)
         {
             var text = File.ReadAllText(fileName);

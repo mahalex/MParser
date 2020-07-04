@@ -18,7 +18,7 @@ namespace Parser.Internal
 
         public SyntaxList<T> ToList()
         {
-            return _list.Count == 0 ? null : SyntaxList<T>.List(_list.ToArray());
+            return _list.Count == 0 ? SyntaxList<T>.Empty : SyntaxList<T>.List(_list.ToArray());
         }
 
     }

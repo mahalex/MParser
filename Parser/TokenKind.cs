@@ -271,5 +271,7 @@
         //     ToggleSomething
         // end
         EventsList,
+        EndKeyword,
+        Root
     }
 }

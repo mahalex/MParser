@@ -2,6 +2,8 @@
 
 namespace Parser.Tests
 {
+    using static DiagnosticExtensions;
+
     public class MParserShould
     {
         private static MParser GetSut(string text)
@@ -19,6 +21,11 @@ namespace Parser.Tests
             var actual = sut.Parse();
             var assignment = actual.Root.StatementList[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
+            if (assignment is null)
+            {
+                throw new System.Exception();
+            }
+
             Assert.IsType<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
 
@@ -30,6 +37,11 @@ namespace Parser.Tests
             var actual = sut.Parse();
             var statement = actual.Root.StatementList[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(statement);
+            if (statement is null)
+            {
+                throw new System.Exception();
+            }
+
             Assert.IsType<BinaryOperationExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)statement).Expression);
         }
 
@@ -41,6 +53,11 @@ namespace Parser.Tests
             var actual = sut.Parse();
             var assignment = actual.Root.StatementList[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
+            if (assignment is null)
+            {
+                throw new System.Exception();
+            }
+
             Assert.IsType<AssignmentExpressionSyntaxNode>(((ExpressionStatementSyntaxNode)assignment).Expression);
         }
 
@@ -50,7 +67,8 @@ namespace Parser.Tests
         {
             var sut = GetSut(text);
             var actual = sut.Parse();
-            Assert.Collection(actual.Diagnostics, item => Assert.Equal("Unexpected token 'SemicolonToken', expected 'IdentifierToken'.", item.Message));
+            var diagnostics = actual.Root.GetDiagnostics();
+            Assert.True(diagnostics.IsEquivalentTo(MissingToken(4, TokenKind.IdentifierToken)));
         }
 
         [Fact]
@@ -60,8 +78,8 @@ namespace Parser.Tests
             var sut = GetSut(text);
             var actual = sut.Parse();
             var statement = actual.Root.StatementList[0].AsNode() as ExpressionStatementSyntaxNode;
-            var expression = statement.Expression as BinaryOperationExpressionSyntaxNode;
-            var lhs = expression.Lhs;
+            var expression = statement!.Expression as BinaryOperationExpressionSyntaxNode;
+            var lhs = expression!.Lhs;
             var operation = expression.Operation;
             var rhs = expression.Rhs;
             Assert.Equal(0, lhs.Position);

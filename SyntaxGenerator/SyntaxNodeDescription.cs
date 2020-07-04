@@ -34,5 +34,7 @@ namespace SyntaxGenerator
         public string FieldType { get; set; }
         [XmlAttribute("Name")]
         public string FieldName { get; set; }
+        [XmlAttribute("Nullable")]
+        public bool FieldIsNullable { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Parser.Internal
+﻿using System.Linq;
+
+namespace Parser.Internal
 {
     internal class SyntaxList<T> : SyntaxNode where T : GreenNode
     {
@@ -14,9 +16,19 @@
             }
         }
 
-        public override GreenNode GetSlot(int i)
+        protected SyntaxList(T[] list, TokenDiagnostic[] diagnostics) : base(TokenKind.List, diagnostics)
         {
-            return (T)_list.GetSlot(i);
+            Slots = list.Length;
+            _list = SyntaxList.List(list);
+            foreach (var element in list)
+            {
+                this.AdjustWidth(element);
+            }
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            return (T)_list.GetListSlot(i);
         }
 
         public static SyntaxList<T> List(T[] elements)
@@ -24,11 +36,18 @@
             return new SyntaxList<T>(elements);
         }
 
+        public static SyntaxList<T> Empty => new SyntaxList<T>(new T[] { });
+
         public override bool IsList => true;
 
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
         {
             return new Parser.SyntaxNodeOrTokenList(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new SyntaxList<T>(_list._elements.Select(x => (T)x).ToArray(), diagnostics);
         }
     }
 }

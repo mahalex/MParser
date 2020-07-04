@@ -10,7 +10,10 @@ namespace Parser.Internal
     {
         public TokenKind Kind { get; }
         public int Slots { get; protected set; }
-        public abstract GreenNode GetSlot(int i);
+        public abstract GreenNode? GetSlot(int i);
+        public bool HasDiagnostics { get; }
+        private static Dictionary<GreenNode, TokenDiagnostic[]> diagnosticsTable = new Dictionary<GreenNode, TokenDiagnostic[]>();
+        private static TokenDiagnostic[] emptyDiagnostics = Array.Empty<TokenDiagnostic>();
 
         public GreenNode(TokenKind kind)
         {
@@ -23,13 +26,28 @@ namespace Parser.Internal
             _fullWidth = fullWidth;
         }
 
+        public GreenNode(TokenKind kind, TokenDiagnostic[] diagnostics)
+        {
+            Kind = kind;
+            HasDiagnostics = true;
+            diagnosticsTable[this] = diagnostics;
+        }
+
+        public GreenNode(TokenKind kind, int fullWidth, TokenDiagnostic[] diagnostics)
+        {
+            Kind = kind;
+            _fullWidth = fullWidth;
+            HasDiagnostics = true;
+            diagnosticsTable[this] = diagnostics;
+        }
+
         internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position);
 
         protected int _fullWidth;
 
         public int FullWidth => _fullWidth;
 
-        protected void AdjustWidth(GreenNode node)
+        protected void AdjustWidth(GreenNode? node)
         {
             if (!(node is null))
             {
@@ -55,11 +73,6 @@ namespace Parser.Internal
         protected bool _isMissing = false;
 
         internal bool IsMissing => _isMissing;
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
 
         private void WriteTo(TextWriter writer, bool leading, bool trailing)
         {
@@ -109,12 +122,12 @@ namespace Parser.Internal
             return -1;
         }
 
-        private GreenNode GetFirstTerminal()
+        private GreenNode? GetFirstTerminal()
         {
             var current = this;
             while (true)
             {
-                GreenNode next = null;
+                GreenNode? next = null;
                 if (current.Slots == 0)
                 {
                     return current;
@@ -141,12 +154,12 @@ namespace Parser.Internal
             }
         }
 
-        private GreenNode GetLastTerminal()
+        private GreenNode? GetLastTerminal()
         {
             var current = this;
             while (true)
             {
-                GreenNode next = null;
+                GreenNode? next = null;
                 if (current.Slots == 0)
                 {
                     return current;
@@ -224,6 +237,18 @@ namespace Parser.Internal
                     }
                 }
             }
+        }
+
+        public abstract GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics);
+
+        internal TokenDiagnostic[] GetDiagnostics()
+        {
+            if (diagnosticsTable.TryGetValue(this, out var diags))
+            {
+                return diags;
+            }
+
+            return emptyDiagnostics;
         }
     }
 }

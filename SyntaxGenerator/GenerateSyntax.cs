@@ -15,7 +15,7 @@ namespace SyntaxGenerator
 
         private static readonly List<(string visitorMethodName, string className)> Visitors = new List<(string, string)>();
 
-        private static string _outputPath;
+        private static readonly string _outputPath;
 
         static GenerateSyntax()
         {
@@ -62,12 +62,14 @@ namespace SyntaxGenerator
 
         private static string GenerateInternalFieldDeclaration(FieldDescription field)
         {
-            return $"        internal readonly {field.FieldType} _{field.FieldName};\n";
+            return $"        internal readonly {FullFieldType(field)} _{field.FieldName};\n";
         }
 
         private static string GeneratePrivateFieldDeclaration(FieldDescription field)
         {
-            return $"        private SyntaxNode _{field.FieldName};\n";
+            //var typeDeclaration = field.FieldIsNullable ? "SyntaxNode?" : "SyntaxNode";
+            var typeDeclaration = "SyntaxNode?";
+            return $"        private {typeDeclaration} _{field.FieldName};\n";
         }
 
         private static string GenerateFieldAssignmentInsideConstructor(FieldDescription field)
@@ -76,20 +78,41 @@ namespace SyntaxGenerator
             var fieldAssignment = $"            _{field.FieldName} = {field.FieldName};\n";
             return widthAdjustment + fieldAssignment;
         }
-        
-        private static string GenerateInternalConstructor(SyntaxNodeDescription node)
+
+        private static string GenerateInternalConstructorSimple(SyntaxNodeDescription node)
         {
             var arguments = string.Join(
                 ",",
-                node.Fields.Select(field => $"\n            {field.FieldType} {field.FieldName}"));
+                node.Fields.Select(field => $"\n            {FullFieldType(field)} {field.FieldName}"));
 
             var header =
-                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName})\n";
-            var slotsAssignment = $"\n            Slots = {node.Fields.Length};\n";
+                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName})";
+            var slotsAssignment = $"            Slots = {node.Fields.Length};";
             var assignments = string.Join(
                 "",
                 node.Fields.Select(GenerateFieldAssignmentInsideConstructor));
-            return header + "        {\n" + slotsAssignment + assignments + "        }\n";
+            return header + "\n        {\n" + slotsAssignment + "\n" + assignments + "        }\n";
+        }
+
+        private static string GenerateInternalConstructorWithDiagnostics(SyntaxNodeDescription node)
+        {
+            var arguments = string.Join(
+                ",",
+                node.Fields
+                    .Select(field => $"\n            {FullFieldType(field)} {field.FieldName}")
+                    .Concat(new[] { $"\n            TokenDiagnostic[] diagnostics" }));
+            var header =
+                $"        internal {node.ClassName}({arguments}) : base(TokenKind.{node.TokenKindName}, diagnostics)";
+            var slotsAssignment = $"            Slots = {node.Fields.Length};";
+            var assignments = string.Join(
+                "",
+                node.Fields.Select(GenerateFieldAssignmentInsideConstructor));
+            return header + "\n        {\n" + slotsAssignment + "\n" + assignments + "        }\n";
+        }
+
+        private static string GenerateInternalConstructors(SyntaxNodeDescription node)
+        {
+            return GenerateInternalConstructorSimple(node) + "\n" + GenerateInternalConstructorWithDiagnostics(node);
         }
 
         private static string GenerateConstructor(SyntaxNodeDescription node)
@@ -100,9 +123,21 @@ namespace SyntaxGenerator
             return header + "        {\n        }\n";
         }
 
+        private static string GenerateInternalSetDiagnostics(SyntaxNodeDescription node)
+        {
+            var header = $"        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)";
+            var arguments = string.Join(
+                ", ",
+                node.Fields
+                    .Select(field => "_" + field.FieldName)
+                    .Concat(new[] { "diagnostics" }));
+            var text = $"            return new {node.ClassName}({arguments});";
+            return header + "\n        {\n" + text + "\n        }\n";
+        }
+
         private static string GenerateInternalGetSlot(SyntaxNodeDescription node)
         {
-            var header = $"        public override GreenNode GetSlot(int i)\n";
+            var header = $"        public override GreenNode? GetSlot(int i)\n";
             var cases = string.Join(
                 "",
                 node.Fields.Select((f, i) => $"                case {i}: return _{f.FieldName};\n"));
@@ -117,10 +152,16 @@ namespace SyntaxGenerator
         
         private static string GenerateGetSlot(SyntaxNodeDescription node, List<(FieldDescription field, int index)> pairs)
         {
-            var header = $"        internal override SyntaxNode GetNode(int i)\n";
+            var header = $"        internal override SyntaxNode? GetNode(int i)\n";
+
+            string GetFieldNameWithPossibleBang(FieldDescription field)
+            {
+                return field.FieldIsNullable ? field.FieldName : field.FieldName + "!";
+            }
+
             var cases = string.Join(
                 "",
-                pairs.Select(pair => $"                case {pair.index}: return GetRed(ref _{pair.field.FieldName}, {pair.index});\n"));
+                pairs.Select(pair => $"                case {pair.index}: return GetRed(ref _{GetFieldNameWithPossibleBang(pair.field)}, {pair.index});\n"));
             var defaultCase = "                default: return null;\n";
             return header
                    + "        {\n            switch (i)\n            {\n"
@@ -148,15 +189,17 @@ namespace SyntaxGenerator
             var fields = string.Join(
                 "",
                 node.Fields.Select(GenerateInternalFieldDeclaration));
-            var constructor = GenerateInternalConstructor(node);
+            var constructor = GenerateInternalConstructors(node);
             var getSlot = GenerateInternalGetSlot(node);
             var createRed = GenerateCreateRed(node);
+            var setDiagnostics = GenerateInternalSetDiagnostics(node);
             return
                 header
                 + "\n    {\n"
                 + fields + "\n"
                 + constructor + "\n"
                 + createRed + "\n"
+                + setDiagnostics + "\n"
                 + getSlot + "    }\n";
         }
 
@@ -185,12 +228,17 @@ namespace SyntaxGenerator
             {
                 type = "SyntaxNodeOrTokenList";
             }
-            var header = $"        public {type} {Capitalize(field.FieldName)}\n        {{\n            get\n            {{\n";
+
+            var typeName = type + (field.FieldIsNullable ? "?" : "");
+            var header = $"        public {typeName} {Capitalize(field.FieldName)}\n        {{\n            get\n            {{\n";
+            var defaultReturnStatement = field.FieldIsNullable ? $"return default({type});" : $"throw new System.Exception(\"{field.FieldName} cannot be null\");";
+
+            var fieldNameWithPossibleBang = field.FieldIsNullable ? field.FieldName : field.FieldName + "!";
             var text =
-                $"                var red = this.GetRed(ref this._{field.FieldName}, {index});\n"
+                $"                var red = this.GetRed(ref this._{fieldNameWithPossibleBang}, {index});\n"
                 + $"                if (red != null)\n"
                 + $"                    return ({type})red;\n\n"
-                + $"                return default({type});\n";
+                + $"                {defaultReturnStatement}\n";
             return header + text + "            }\n        }\n";
         }
 
@@ -257,7 +305,7 @@ namespace SyntaxGenerator
 
         private static string GenerateInternalSyntaxNodeFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {InternalNamespace}\n";
+            var header = $"#nullable enable\nnamespace {InternalNamespace}\n";
             var classes = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateInternalClass)
@@ -267,7 +315,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxNodeFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {OuterNamespace}\n";
+            var header = $"#nullable enable\nnamespace {OuterNamespace}\n";
             var classes = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateClass)
@@ -287,13 +335,18 @@ namespace SyntaxGenerator
             }
         }
 
+        private static string FullFieldType(FieldDescription field)
+        {
+            return field.FieldIsNullable ? field.FieldType + "?" : field.FieldType;
+        }
+
         private static string GenerateFactoryMethod(SyntaxNodeDescription node)
         {
             var methodName = FactoryMethodNameFromClassName(node.ClassName);
             var header = $"        public {node.ClassName} {methodName}";
             var arguments = string.Join(
                 ", ",
-                node.Fields.Select(field => $"\n            {field.FieldType} {field.FieldName}"));
+                node.Fields.Select(field => $"\n            {FullFieldType(field)} {field.FieldName}"));
             var constructorParameters = string.Join(
                 ", ",
                 node.Fields.Select(field => $"\n                {field.FieldName}"));
@@ -305,7 +358,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxFactoryFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {InternalNamespace}\n{{\n    internal partial class SyntaxFactory\n";
+            var header = $"#nullable enable\nnamespace {InternalNamespace}\n{{\n    internal partial class SyntaxFactory\n";
             var methods = string.Join(
                 "\n",
                 syntax.Nodes.Select(GenerateFactoryMethod)
@@ -322,7 +375,7 @@ namespace SyntaxGenerator
 
         private static string GenerateSyntaxVisitorFile(SyntaxDescription syntax)
         {
-            var header = $"namespace {OuterNamespace}\n{{\n    public partial class SyntaxVisitor\n";
+            var header = $"#nullable enable\nnamespace {OuterNamespace}\n{{\n    public partial class SyntaxVisitor\n";
             var methods = string.Join(
                 "\n",
                Visitors.Select(GenerateVisitor));
@@ -335,8 +388,7 @@ namespace SyntaxGenerator
             var serializer = new XmlSerializer(typeof(SyntaxDescription));
             using (var stream = new FileStream("input.xml", FileMode.Open))
             {
-                var syntax = serializer.Deserialize(stream) as SyntaxDescription;
-                if (syntax == null)
+                if (!(serializer.Deserialize(stream) is SyntaxDescription syntax))
                 {
                     Console.WriteLine("Couldn't deserialize syntax.");
                     return;

@@ -22,7 +22,7 @@ namespace Parser
             return Equals(_parent, other._parent) && Equals(_trivia, other._trivia);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is SyntaxTrivia trivia && Equals(trivia);
