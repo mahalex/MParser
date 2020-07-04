@@ -258,4 +258,4 @@ namespace Parser
             DefaultVisit(node);
         }
     }
-};
+}
