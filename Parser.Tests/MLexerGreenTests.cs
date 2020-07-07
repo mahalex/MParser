@@ -89,8 +89,6 @@ namespace Parser.Tests
                 let text = SyntaxFacts.GetText(kind)
                 where !(text is null)
                 where !(SyntaxFacts.IsUnaryTokenKind(kind)
-                        || SyntaxFacts.IsOpeningToken(kind)
-                        || SyntaxFacts.IsClosingToken(kind)
                         || kind == TokenKind.ApostropheToken)
                 select (kind, text);
 
@@ -254,6 +252,22 @@ namespace Parser.Tests
             {
                 return true;
             }
+
+            if (kind1 == TokenKind.CloseBraceToken && kind2 == TokenKind.StringLiteralToken)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.CloseParenthesisToken && kind2 == TokenKind.StringLiteralToken)
+            {
+                return true;
+            }
+
+            if (kind1 == TokenKind.CloseSquareBracketToken && kind2 == TokenKind.StringLiteralToken)
+            {
+                return true;
+            }
+            
             return false;
         }
         

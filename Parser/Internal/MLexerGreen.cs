@@ -798,19 +798,22 @@ namespace Parser.Internal
                     }
                     else
                     {
-                        throw new ParsingException($"Unmatched \"{tokenInfo.Text}\" at {Window.Position}.");
+                        Diagnostics.ReportUnmatchedCloseParenthesis(
+                            new TextSpan(Window.Position.Offset, 1), tokenInfo.Kind);
                     }
                 }
                 else
                 {
-                    throw new ParsingException($"Unmatched \"{tokenInfo.Text}\" at {Window.Position}.");
+                    Diagnostics.ReportUnmatchedCloseParenthesis(
+                        new TextSpan(Window.Position.Offset, 1), tokenInfo.Kind);
                 }
             }
 
             if (tokenInfo.Kind == TokenKind.EndOfFileToken
                 && TokenStack.Any())
             {
-                throw new ParsingException($"Unmatched \"{TokenStack.Pop()}\" by the end of file.");
+                Diagnostics.ReportUnmatchedOpenParenthesisByEndOfFile(
+                    new TextSpan(Window.Position.Offset, 1));
             }
 
             var result = Create(
