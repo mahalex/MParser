@@ -57,6 +57,16 @@ namespace Parser.Internal
             Report($"Unexpected token '{actual}', expected '{expected}'.");
         }
 
+        internal void ReportUnmatchedCloseParenthesis(TextSpan span, TokenKind kind)
+        {
+            Report(span, $"Unmatched close parenthesis '{kind}'.");
+        }
+
+        internal void ReportUnmatchedOpenParenthesisByEndOfFile(TextSpan span)
+        {
+            Report(span, "Unmatched open parenthesis by the end of file.");
+        }
+
         public IEnumerator<Diagnostic> GetEnumerator()
         {
             return _diagnostics.GetEnumerator();
@@ -66,5 +76,6 @@ namespace Parser.Internal
         {
             return GetEnumerator();
         }
+
     }
 }
