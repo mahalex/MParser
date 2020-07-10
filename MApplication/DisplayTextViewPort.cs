@@ -10,16 +10,18 @@ namespace MApplication
             int height,
             int startingColumn = 0,
             int startingLine = 0,
-            int cursorRelativeColumn = 0,
-            int cursorRelativeLine = 0)
+            int cursorAbsoluteColumn = 0,
+            int cursorAbsoluteLine = 0,
+            int virtualCursorAbsoluteColumn = 0)
         {
             Text = text;
             Width = width;
             Height = height;
             StartingColumn = startingColumn;
             StartingLine = startingLine;
-            CursorRelativeColumn = cursorRelativeColumn;
-            CursorRelativeLine = cursorRelativeLine;
+            CursorAbsoluteColumn = cursorAbsoluteColumn;
+            CursorAbsoluteLine = cursorAbsoluteLine;
+            VirtualCursorAbsoluteColumn = virtualCursorAbsoluteColumn;
         }
 
         public DisplayText Text { get; }
@@ -32,61 +34,80 @@ namespace MApplication
 
         public int StartingLine { get; }
 
-        public int CursorRelativeColumn { get; }
+        public int CursorRelativeColumn => CursorAbsoluteColumn - StartingColumn;
 
-        public int CursorRelativeLine { get; }
+        public int CursorRelativeLine => CursorAbsoluteLine - StartingLine;
 
-        public int CursorAbsoluteColumn => CursorRelativeColumn + StartingColumn;
+        public int CursorAbsoluteColumn { get; }
 
-        public int CursorAbsoluteLine => CursorRelativeLine + StartingLine;
+        public int CursorAbsoluteLine { get; }
+
+        public int VirtualCursorAbsoluteColumn { get; }
 
         public int CurrentLineWidth => Text.Lines[CursorAbsoluteLine].Width;
 
         public DisplayTextViewPort CursorLeft(out bool needsRedraw)
         {
+            var newCursorAbsoluteColumn = Math.Max(CursorAbsoluteColumn - 1, 0);
             if (CursorRelativeColumn == 0)
             {
-                return ShiftLeft(out needsRedraw);
+                return With(
+                    out needsRedraw,
+                    cursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    virtualCursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    startingColumn: Math.Max(StartingColumn - 1, 0));
             }
             else
             {
-                return With(out needsRedraw, cursorRelativeColumn: CursorRelativeColumn - 1);
+                return With(
+                    out needsRedraw,
+                    cursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    virtualCursorAbsoluteColumn: newCursorAbsoluteColumn);
             }
         }
 
         public DisplayTextViewPort CursorRight(out bool needsRedraw)
         {
+            var newCursorAbsoluteColumn = Math.Min(CursorAbsoluteColumn + 1, CurrentLineWidth);
             if (CursorRelativeColumn == Width - 1)
             {
-                return ShiftRight(out needsRedraw);
+                return With(
+                    out needsRedraw,
+                    cursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    virtualCursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    startingColumn: StartingColumn + 1);
             }
             else
             {
-                return With(out needsRedraw, cursorRelativeColumn: CursorRelativeColumn + 1);
+                return With(
+                    out needsRedraw,
+                    cursorAbsoluteColumn: newCursorAbsoluteColumn,
+                    virtualCursorAbsoluteColumn: newCursorAbsoluteColumn);
             }
         }
 
         private DisplayTextViewPort SnapToLine(out bool needsRedraw)
         {
-            if (CursorAbsoluteColumn > CurrentLineWidth)
+            var cursorAbsoluteColumn = Math.Min(VirtualCursorAbsoluteColumn, CurrentLineWidth);
+            if (cursorAbsoluteColumn < StartingColumn)
             {
-                needsRedraw = true;
-                var toSubtract = CursorAbsoluteColumn - CurrentLineWidth;
-                if (toSubtract < CursorRelativeColumn)
-                {
-                    return With(out var _, cursorRelativeColumn: CursorRelativeColumn - toSubtract);
-                }
-
                 return With(
-                    out var _,
-                    startingColumn: StartingColumn - (toSubtract - CursorRelativeColumn),
-                    cursorRelativeColumn: 0);
+                    out needsRedraw,
+                    startingColumn: cursorAbsoluteColumn,
+                    cursorAbsoluteColumn: cursorAbsoluteColumn);
             }
-            else
+
+            if (cursorAbsoluteColumn > StartingColumn + Width - 1)
             {
-                needsRedraw = false;
-                return this;
+                return With(
+                    out needsRedraw,
+                    startingColumn: cursorAbsoluteColumn - Width + 1,
+                    cursorAbsoluteColumn: cursorAbsoluteColumn);
             }
+
+            return With(
+                out needsRedraw,
+                cursorAbsoluteColumn: cursorAbsoluteColumn);
         }
 
         public DisplayTextViewPort CursorUp(out bool needsRedraw)
@@ -94,8 +115,11 @@ namespace MApplication
             bool changed1;
             var result1 = CursorRelativeLine switch
             {
-                0 => ShiftUp(out changed1),
-                _ => With(out changed1, cursorRelativeLine: CursorRelativeLine - 1),
+                0 => With(
+                    out changed1,
+                    startingLine: Math.Max(StartingLine - 1, 0),
+                    cursorAbsoluteLine: Math.Max(StartingLine - 1, 0)),
+                _ => With(out changed1, cursorAbsoluteLine: CursorAbsoluteLine - 1),
             };
             var result = result1.SnapToLine(out var changed2);
             needsRedraw = changed1 || changed2;
@@ -107,8 +131,14 @@ namespace MApplication
             bool changed1;
             var result1 = CursorRelativeLine switch
             {
-                _ when CursorRelativeLine == Height - 1 => ShiftDown(out changed1),
-                _ => With(out changed1, cursorRelativeLine: CursorRelativeLine + 1),
+                _ when CursorRelativeLine == Height - 1 =>
+                    With(
+                        out changed1,
+                        startingLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count) - Height + 1,
+                        cursorAbsoluteLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count)),
+                _ => With(
+                    out changed1,
+                    cursorAbsoluteLine: CursorAbsoluteLine + 1),
             };
             var result = result1.SnapToLine(out var changed2);
             needsRedraw = changed1 || changed2;
@@ -117,7 +147,11 @@ namespace MApplication
 
         public DisplayTextViewPort CursorHome(out bool needsRedraw)
         {
-            return With(out needsRedraw, startingColumn: 0, cursorRelativeColumn: 0);
+            return With(
+                out needsRedraw,
+                startingColumn: 0,
+                cursorAbsoluteColumn: 0,
+                virtualCursorAbsoluteColumn: 0);
         }
 
         public DisplayTextViewPort CursorEnd(out bool needsRedraw)
@@ -132,33 +166,17 @@ namespace MApplication
 
             if (CursorRelativeColumn + toAdd < Width)
             {
-                return With(out needsRedraw, cursorRelativeColumn: CursorRelativeColumn + toAdd);
+                return With(
+                    out needsRedraw,
+                    cursorAbsoluteColumn: CursorAbsoluteColumn + toAdd,
+                    virtualCursorAbsoluteColumn: CursorAbsoluteColumn + toAdd);
             }
 
             return With(
                 out needsRedraw,
-                startingColumn: StartingColumn + CursorRelativeColumn + toAdd - Width + 1,
-                cursorRelativeColumn: Width - 1);
-        }
-
-        public DisplayTextViewPort ShiftLeft(out bool needsRedraw)
-        {
-            return With(out needsRedraw, startingColumn: Math.Max(StartingColumn - 1, 0));
-        }
-
-        public DisplayTextViewPort ShiftRight(out bool needsRedraw)
-        {
-            return With(out needsRedraw, startingColumn: StartingColumn + 1);
-        }
-
-        public DisplayTextViewPort ShiftUp(out bool needsRedraw)
-        {
-            return With(out needsRedraw, startingLine: Math.Max(StartingLine - 1, 0));
-        }
-
-        public DisplayTextViewPort ShiftDown(out bool needsRedraw)
-        {
-            return With(out needsRedraw, startingLine: StartingLine + 1);
+                startingColumn: lineWidth - Width + 1,
+                cursorAbsoluteColumn: lineWidth,
+                virtualCursorAbsoluteColumn: lineWidth);
         }
 
         public void RenderTo(IOutputView view)
@@ -172,6 +190,7 @@ namespace MApplication
                     view.WriteText(new string(' ', Width));
                     continue;
                 }
+
                 var line = Text.Lines[lineNumber];
                 var startsIn = StartingColumn;
                 foreach (var chunk in line.Chunks)
@@ -207,21 +226,24 @@ namespace MApplication
             int? height = null,
             int? startingColumn = null,
             int? startingLine = null,
-            int? cursorRelativeColumn = null,
-            int? cursorRelativeLine = null)
+            int? cursorAbsoluteColumn = null,
+            int? cursorAbsoluteLine = null,
+            int? virtualCursorAbsoluteColumn = null)
         {
             var widthValue = width ?? Width;
             var heightValue = height ?? Height;
             var startingColumnValue = startingColumn ?? StartingColumn;
             var startingLineValue = startingLine ?? StartingLine;
-            var cursorRelativeColumnValue = cursorRelativeColumn ?? CursorRelativeColumn;
-            var cursorRelativeLineValue = cursorRelativeLine ?? CursorRelativeLine;
+            var cursorAbsoluteColumnValue = cursorAbsoluteColumn ?? CursorAbsoluteColumn;
+            var cursorAbsoluteLineValue = cursorAbsoluteLine ?? CursorAbsoluteLine;
+            var virtualCursorAbsoluteColumnValue = virtualCursorAbsoluteColumn ?? VirtualCursorAbsoluteColumn;
             if (widthValue == Width &&
                 heightValue == Height &&
                 startingColumnValue == StartingColumn &&
                 startingLineValue == StartingLine &&
-                cursorRelativeColumnValue == CursorRelativeColumn &&
-                cursorRelativeLineValue == CursorRelativeLine)
+                cursorAbsoluteColumnValue == CursorAbsoluteColumn &&
+                cursorAbsoluteLineValue == CursorAbsoluteLine &&
+                virtualCursorAbsoluteColumnValue == VirtualCursorAbsoluteColumn)
             {
                 changed = false;
                 return this;
@@ -234,8 +256,9 @@ namespace MApplication
                 height: heightValue,
                 startingColumn: startingColumnValue,
                 startingLine: startingLineValue,
-                cursorRelativeColumn: cursorRelativeColumnValue,
-                cursorRelativeLine: cursorRelativeLineValue);
+                cursorAbsoluteColumn: cursorAbsoluteColumnValue,
+                cursorAbsoluteLine: cursorAbsoluteLineValue,
+                virtualCursorAbsoluteColumn: virtualCursorAbsoluteColumnValue);
         }
     }
 }
