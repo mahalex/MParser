@@ -20,6 +20,11 @@ namespace MApplication
 
         public int Height { get; }
 
+        public void HideCursor()
+        {
+            Console.CursorVisible = false;
+        }
+
         public void MoveCursorTo(int column, int line)
         {
             Console.CursorLeft = StartingColumn + column;
@@ -37,6 +42,11 @@ namespace MApplication
             {
                 Console.BackgroundColor = style.BackgroundColor;
             }
+        }
+
+        public void ShowCursor()
+        {
+            Console.CursorVisible = true;
         }
 
         public void WriteText(string s)
