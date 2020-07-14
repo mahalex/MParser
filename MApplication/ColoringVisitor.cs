@@ -89,7 +89,7 @@ namespace MApplication
         {
             AddToken(node.ClassdefKeyword, _scheme.Keyword);
             Visit(node.Attributes);
-            Visit(node.ClassName);
+            AddToken(node.ClassName, _scheme.Identifier);
             Visit(node.BaseClassList);
             Visit(node.Nodes);
             AddToken(node.EndKeyword, _scheme.Keyword);
@@ -302,7 +302,7 @@ namespace MApplication
 
         public override void VisitCommandExpression(CommandExpressionSyntaxNode node)
         {
-            Visit(node.CommandName);
+            AddToken(node.CommandName, _scheme.Identifier);
             Visit(node.Arguments);
         }
 
@@ -338,7 +338,7 @@ namespace MApplication
 
         public override void VisitAttribute(AttributeSyntaxNode node)
         {
-            Visit(node.Name);
+            AddToken(node.Name, _scheme.Identifier);
             Visit(node.Assignment);
         }
 
@@ -401,7 +401,7 @@ namespace MApplication
 
         public override void VisitEnumerationItem(EnumerationItemSyntaxNode node)
         {
-            Visit(node.Name);
+            AddToken(node.Name, _scheme.Identifier);
             Visit(node.Values);
             Visit(node.Commas);
         }

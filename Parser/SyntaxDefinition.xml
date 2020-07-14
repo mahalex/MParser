@@ -169,7 +169,7 @@
         <Field Type="SyntaxToken" Name="closingBracket" />
     </Class>
     <Class Name="CommandExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="CommandExpression">
-        <Field Type="IdentifierNameExpressionSyntaxNode" Name="commandName" />
+        <Field Type="SyntaxToken" Name="commandName" />
         <Field Type="SyntaxList&lt;UnquotedStringLiteralSyntaxNode&gt;" Name="arguments" />
     </Class>
     <Class Name="BaseClassInvokationSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ClassInvokationExpression">
@@ -182,7 +182,7 @@
         <Field Type="ExpressionSyntaxNode" Name="value" />
     </Class>
     <Class Name="AttributeSyntaxNode" BaseClass="SyntaxNode" Kind="Attribute">
-        <Field Type="IdentifierNameExpressionSyntaxNode" Name="name" />
+        <Field Type="SyntaxToken" Name="name" />
         <Field Type="AttributeAssignmentSyntaxNode" Name="assignment" Nullable="true" />
     </Class>
     <Class Name="AttributeListSyntaxNode" BaseClass="SyntaxNode" Kind="AttributeList">
@@ -223,7 +223,7 @@
     <Class Name="ClassDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ClassDeclaration">
         <Field Type="SyntaxToken" Name="classdefKeyword" />
         <Field Type="AttributeListSyntaxNode" Name="attributes" Nullable="true" />
-        <Field Type="IdentifierNameExpressionSyntaxNode" Name="className" />
+        <Field Type="SyntaxToken" Name="className" />
         <Field Type="BaseClassListSyntaxNode" Name="baseClassList" Nullable="true" />
         <Field Type="SyntaxList" Name="nodes" />
         <Field Type="SyntaxToken" Name="endKeyword" />
@@ -234,7 +234,7 @@
         <Field Type="SyntaxToken" Name="closingBracket" />
     </Class>
     <Class Name="EnumerationItemSyntaxNode" BaseClass="SyntaxNode" Kind="EnumerationItem">
-        <Field Type="IdentifierNameExpressionSyntaxNode" Name="name" />
+        <Field Type="SyntaxToken" Name="name" />
         <Field Type="EnumerationItemValueSyntaxNode" Name="values" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
     </Class>

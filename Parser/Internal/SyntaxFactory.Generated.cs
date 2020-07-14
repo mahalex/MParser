@@ -178,7 +178,7 @@ namespace Parser.Internal
             return new IndirectMemberAccessSyntaxNode(openingBracket, expression, closingBracket);
         }
 
-        public CommandExpressionSyntaxNode CommandExpressionSyntax(IdentifierNameExpressionSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments)
+        public CommandExpressionSyntaxNode CommandExpressionSyntax(SyntaxToken commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments)
         {
             return new CommandExpressionSyntaxNode(commandName, arguments);
         }
@@ -193,7 +193,7 @@ namespace Parser.Internal
             return new AttributeAssignmentSyntaxNode(assignmentSign, value);
         }
 
-        public AttributeSyntaxNode AttributeSyntax(IdentifierNameExpressionSyntaxNode name, AttributeAssignmentSyntaxNode? assignment)
+        public AttributeSyntaxNode AttributeSyntax(SyntaxToken name, AttributeAssignmentSyntaxNode? assignment)
         {
             return new AttributeSyntaxNode(name, assignment);
         }
@@ -228,7 +228,7 @@ namespace Parser.Internal
             return new BaseClassListSyntaxNode(lessSign, baseClasses);
         }
 
-        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameExpressionSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
+        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, SyntaxToken className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
         {
             return new ClassDeclarationSyntaxNode(classdefKeyword, attributes, className, baseClassList, nodes, endKeyword);
         }
@@ -238,7 +238,7 @@ namespace Parser.Internal
             return new EnumerationItemValueSyntaxNode(openingBracket, values, closingBracket);
         }
 
-        public EnumerationItemSyntaxNode EnumerationItemSyntax(IdentifierNameExpressionSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
+        public EnumerationItemSyntaxNode EnumerationItemSyntax(SyntaxToken name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
         {
             return new EnumerationItemSyntaxNode(name, values, commas);
         }

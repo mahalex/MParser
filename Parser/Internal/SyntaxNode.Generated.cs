@@ -1648,9 +1648,9 @@ namespace Parser.Internal
 
     internal class CommandExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal readonly IdentifierNameExpressionSyntaxNode _commandName;
+        internal readonly SyntaxToken _commandName;
         internal readonly SyntaxList<UnquotedStringLiteralSyntaxNode> _arguments;
-        internal CommandExpressionSyntaxNode(IdentifierNameExpressionSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments): base(TokenKind.CommandExpression)
+        internal CommandExpressionSyntaxNode(SyntaxToken commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments): base(TokenKind.CommandExpression)
         {
             Slots = 2;
             this.AdjustWidth(commandName);
@@ -1659,7 +1659,7 @@ namespace Parser.Internal
             _arguments = arguments;
         }
 
-        internal CommandExpressionSyntaxNode(IdentifierNameExpressionSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments, TokenDiagnostic[] diagnostics): base(TokenKind.CommandExpression, diagnostics)
+        internal CommandExpressionSyntaxNode(SyntaxToken commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments, TokenDiagnostic[] diagnostics): base(TokenKind.CommandExpression, diagnostics)
         {
             Slots = 2;
             this.AdjustWidth(commandName);
@@ -1782,9 +1782,9 @@ namespace Parser.Internal
 
     internal class AttributeSyntaxNode : SyntaxNode
     {
-        internal readonly IdentifierNameExpressionSyntaxNode _name;
+        internal readonly SyntaxToken _name;
         internal readonly AttributeAssignmentSyntaxNode? _assignment;
-        internal AttributeSyntaxNode(IdentifierNameExpressionSyntaxNode name, AttributeAssignmentSyntaxNode? assignment): base(TokenKind.Attribute)
+        internal AttributeSyntaxNode(SyntaxToken name, AttributeAssignmentSyntaxNode? assignment): base(TokenKind.Attribute)
         {
             Slots = 2;
             this.AdjustWidth(name);
@@ -1793,7 +1793,7 @@ namespace Parser.Internal
             _assignment = assignment;
         }
 
-        internal AttributeSyntaxNode(IdentifierNameExpressionSyntaxNode name, AttributeAssignmentSyntaxNode? assignment, TokenDiagnostic[] diagnostics): base(TokenKind.Attribute, diagnostics)
+        internal AttributeSyntaxNode(SyntaxToken name, AttributeAssignmentSyntaxNode? assignment, TokenDiagnostic[] diagnostics): base(TokenKind.Attribute, diagnostics)
         {
             Slots = 2;
             this.AdjustWidth(name);
@@ -2140,11 +2140,11 @@ namespace Parser.Internal
     {
         internal readonly SyntaxToken _classdefKeyword;
         internal readonly AttributeListSyntaxNode? _attributes;
-        internal readonly IdentifierNameExpressionSyntaxNode _className;
+        internal readonly SyntaxToken _className;
         internal readonly BaseClassListSyntaxNode? _baseClassList;
         internal readonly SyntaxList _nodes;
         internal readonly SyntaxToken _endKeyword;
-        internal ClassDeclarationSyntaxNode(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameExpressionSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword): base(TokenKind.ClassDeclaration)
+        internal ClassDeclarationSyntaxNode(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, SyntaxToken className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword): base(TokenKind.ClassDeclaration)
         {
             Slots = 6;
             this.AdjustWidth(classdefKeyword);
@@ -2161,7 +2161,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal ClassDeclarationSyntaxNode(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameExpressionSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ClassDeclaration, diagnostics)
+        internal ClassDeclarationSyntaxNode(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, SyntaxToken className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ClassDeclaration, diagnostics)
         {
             Slots = 6;
             this.AdjustWidth(classdefKeyword);
@@ -2249,10 +2249,10 @@ namespace Parser.Internal
 
     internal class EnumerationItemSyntaxNode : SyntaxNode
     {
-        internal readonly IdentifierNameExpressionSyntaxNode _name;
+        internal readonly SyntaxToken _name;
         internal readonly EnumerationItemValueSyntaxNode? _values;
         internal readonly SyntaxList<SyntaxToken> _commas;
-        internal EnumerationItemSyntaxNode(IdentifierNameExpressionSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas): base(TokenKind.EnumerationItem)
+        internal EnumerationItemSyntaxNode(SyntaxToken name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas): base(TokenKind.EnumerationItem)
         {
             Slots = 3;
             this.AdjustWidth(name);
@@ -2263,7 +2263,7 @@ namespace Parser.Internal
             _commas = commas;
         }
 
-        internal EnumerationItemSyntaxNode(IdentifierNameExpressionSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas, TokenDiagnostic[] diagnostics): base(TokenKind.EnumerationItem, diagnostics)
+        internal EnumerationItemSyntaxNode(SyntaxToken name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas, TokenDiagnostic[] diagnostics): base(TokenKind.EnumerationItem, diagnostics)
         {
             Slots = 3;
             this.AdjustWidth(name);

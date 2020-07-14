@@ -118,7 +118,7 @@ namespace ProjectConsole
             OutputKeyword(node.ClassdefKeyword);
             Visit(node.Attributes);
             BoldOn();
-            Visit(node.ClassName);
+            OutputIdentifier(node.ClassName);
             BoldOff();
             Visit(node.BaseClassList);
             Visit(node.Nodes);
@@ -355,7 +355,7 @@ namespace ProjectConsole
 
         public override void VisitCommandExpression(CommandExpressionSyntaxNode node)
         {
-            Visit(node.CommandName);
+            OutputIdentifier(node.CommandName);
             Visit(node.Arguments);
         }
 
@@ -391,7 +391,7 @@ namespace ProjectConsole
 
         public override void VisitAttribute(AttributeSyntaxNode node)
         {
-            Visit(node.Name);
+            OutputIdentifier(node.Name);
             Visit(node.Assignment);
         }
 
@@ -454,7 +454,7 @@ namespace ProjectConsole
 
         public override void VisitEnumerationItem(EnumerationItemSyntaxNode node)
         {
-            Visit(node.Name);
+            OutputIdentifier(node.Name);
             Visit(node.Values);
             Visit(node.Commas);
         }

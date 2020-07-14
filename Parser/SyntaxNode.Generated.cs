@@ -1663,18 +1663,16 @@ namespace Parser
 
     public class CommandExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode? _commandName;
         private SyntaxNode? _arguments;
         internal CommandExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameExpressionSyntaxNode CommandName
+        public SyntaxToken CommandName
         {
             get
             {
-                var red = this.GetRed(ref this._commandName!, 0);
-                return red is null ? throw new System.Exception("commandName cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.CommandExpressionSyntaxNode)_green)._commandName, this.GetChildPosition(0));
             }
         }
 
@@ -1691,7 +1689,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _commandName!, 0), 1 => GetRed(ref _arguments!, 1), _ => null
+            1 => GetRed(ref _arguments!, 1), _ => null
             }
 
             ;
@@ -1795,18 +1793,16 @@ namespace Parser
 
     public class AttributeSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _name;
         private SyntaxNode? _assignment;
         internal AttributeSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameExpressionSyntaxNode Name
+        public SyntaxToken Name
         {
             get
             {
-                var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.AttributeSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -1823,7 +1819,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _name!, 0), 1 => GetRed(ref _assignment, 1), _ => null
+            1 => GetRed(ref _assignment, 1), _ => null
             }
 
             ;
@@ -2184,7 +2180,6 @@ namespace Parser
     public class ClassDeclarationSyntaxNode : StatementSyntaxNode
     {
         private SyntaxNode? _attributes;
-        private SyntaxNode? _className;
         private SyntaxNode? _baseClassList;
         private SyntaxNode? _nodes;
         internal ClassDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
@@ -2196,6 +2191,14 @@ namespace Parser
             get
             {
                 return new SyntaxToken(this, ((Parser.Internal.ClassDeclarationSyntaxNode)_green)._classdefKeyword, this.GetChildPosition(0));
+            }
+        }
+
+        public SyntaxToken ClassName
+        {
+            get
+            {
+                return new SyntaxToken(this, ((Parser.Internal.ClassDeclarationSyntaxNode)_green)._className, this.GetChildPosition(2));
             }
         }
 
@@ -2213,15 +2216,6 @@ namespace Parser
             {
                 var red = this.GetRed(ref this._attributes, 1);
                 return red is null ? default : (AttributeListSyntaxNode)red;
-            }
-        }
-
-        public IdentifierNameExpressionSyntaxNode ClassName
-        {
-            get
-            {
-                var red = this.GetRed(ref this._className!, 2);
-                return red is null ? throw new System.Exception("className cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
             }
         }
 
@@ -2247,7 +2241,7 @@ namespace Parser
         {
             return i switch
             {
-            1 => GetRed(ref _attributes, 1), 2 => GetRed(ref _className!, 2), 3 => GetRed(ref _baseClassList, 3), 4 => GetRed(ref _nodes!, 4), _ => null
+            1 => GetRed(ref _attributes, 1), 3 => GetRed(ref _baseClassList, 3), 4 => GetRed(ref _nodes!, 4), _ => null
             }
 
             ;
@@ -2309,19 +2303,17 @@ namespace Parser
 
     public class EnumerationItemSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _name;
         private SyntaxNode? _values;
         private SyntaxNode? _commas;
         internal EnumerationItemSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameExpressionSyntaxNode Name
+        public SyntaxToken Name
         {
             get
             {
-                var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.EnumerationItemSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -2347,7 +2339,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _name!, 0), 1 => GetRed(ref _values, 1), 2 => GetRed(ref _commas!, 2), _ => null
+            1 => GetRed(ref _values, 1), 2 => GetRed(ref _commas!, 2), _ => null
             }
 
             ;

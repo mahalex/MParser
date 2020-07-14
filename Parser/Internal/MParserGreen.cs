@@ -422,7 +422,7 @@ namespace Parser.Internal
                     builder.Add(Factory.UnquotedStringLiteralSyntax(EatToken()));
                 }
 
-                return Factory.CommandExpressionSyntax(idNameNode, builder.ToList());
+                return Factory.CommandExpressionSyntax(idNameNode._name, builder.ToList());
             }
 
             if (expression is null)
@@ -866,7 +866,7 @@ namespace Parser.Internal
 
         private AttributeSyntaxNode ParseAttribute()
         {
-            var name = Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken));
+            var name = EatToken(TokenKind.IdentifierToken);
             var assignment = ParseAttributeAssignment();
             return Factory.AttributeSyntax(name, assignment);
         }
@@ -1023,7 +1023,7 @@ namespace Parser.Internal
 
         private EnumerationItemSyntaxNode ParseEnumerationItem()
         {
-            var name = Factory.IdentifierNameExpressionSyntax(EatToken());
+            var name = EatToken();
             var values = ParseEnumerationValue();
             var commas = ParseOptionalCommas();
             return Factory.EnumerationItemSyntax(name, values, commas);
@@ -1104,7 +1104,7 @@ namespace Parser.Internal
             {
                 attributes = ParseAttributesList();
             }
-            var className = Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken));
+            var className = EatToken(TokenKind.IdentifierToken);
             BaseClassListSyntaxNode? baseClassList = null;
             if (CurrentToken.Kind == TokenKind.LessToken)
             {
