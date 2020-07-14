@@ -4,14 +4,10 @@ using Parser.Objects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Parser
 {
-    internal class EvaluationScope
-    {
-        public Dictionary<string, MObject> Variables { get; } = new Dictionary<string, MObject>();
-    }
-
     internal class Evaluator
     {
         private readonly SyntaxTree _syntaxTree;
@@ -218,7 +214,59 @@ namespace Parser
 
         private MObject? EvaluateFunctionCall(FunctionCallExpressionSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            var arguments = new List<MObject>();
+            var nodes = expression.Nodes.Where(n => n.IsNode).Select(n => (ExpressionSyntaxNode)n.AsNode()!);
+            var allGood = true;
+            foreach (var node in nodes)
+            {
+                var argument = EvaluateExpression(node);
+                if (argument is null)
+                {
+                    _diagnostics.ReportCannotEvaluateExpression(
+                        new TextSpan(node.Position, node.FullWidth));
+                    allGood = false;
+                }
+                else
+                {
+                    arguments.Add(argument);
+                }
+
+            }
+            if (!allGood)
+            {
+                return null;
+            }
+
+            var function = GetFunctionSymbol(expression.FunctionName);
+            if (function.Name == "disp")
+            {
+                return EvaluateDisp(arguments);
+            }
+            else
+            {
+                throw new NotImplementedException("Functions are not supported.");
+            }
+        }
+
+        private MObject? EvaluateDisp(List<MObject> arguments)
+        {
+            if (arguments.Count != 1)
+            {
+                throw new NotImplementedException($"Cannot evaluate disp() with {arguments.Count} arguments.");
+            }
+
+            Console.WriteLine(arguments[0]);
+            return null;
+        }
+
+        private FunctionSymbol GetFunctionSymbol(ExpressionSyntaxNode functionName)
+        {
+            if (functionName.Kind == TokenKind.IdentifierNameExpression)
+            {
+                return new FunctionSymbol(((IdentifierNameExpressionSyntaxNode)functionName).Text);
+            }
+
+            throw new NotImplementedException($"Unknown function symbol '{functionName.Text}'.");
         }
 
         private MObject? EvaluateCellArrayElementAccess(CellArrayElementAccessExpressionSyntaxNode expression)
@@ -248,7 +296,11 @@ namespace Parser
 
         private MObject? EvaluateStringLiteralExpression(StringLiteralSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            return expression.StringToken.Value switch
+            {
+                string s => MObject.CreateCharArray(s.ToCharArray()),
+                _ => null,
+            };
         }
 
         private MObject? EvaluateNumberLiteralExpression(NumberLiteralSyntaxNode expression)

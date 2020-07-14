@@ -6,5 +6,10 @@
         {
             return MDoubleNumber.Create(value);
         }
+
+        public static MCharArray CreateCharArray(char[] chars)
+        {
+            return MCharArray.Create(chars);
+        }
     }
 }
