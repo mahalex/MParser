@@ -93,17 +93,17 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitCompoundName(CompoundNameSyntaxNode node)
+        public virtual void VisitCompoundNameExpression(CompoundNameExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitNamedFunctionHandle(NamedFunctionHandleSyntaxNode node)
+        public virtual void VisitNamedFunctionHandleExpression(NamedFunctionHandleExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitLambda(LambdaSyntaxNode node)
+        public virtual void VisitLambdaExpression(LambdaExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
@@ -113,7 +113,7 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitIdentifierName(IdentifierNameSyntaxNode node)
+        public virtual void VisitIdentifierNameExpression(IdentifierNameExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }

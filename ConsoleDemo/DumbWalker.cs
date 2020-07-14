@@ -22,8 +22,8 @@ namespace ConsoleDemo
         {
             switch (lhs.Kind)
             {
-                case TokenKind.IdentifierName:
-                    var name = ((IdentifierNameSyntaxNode) lhs).Name.Text;
+                case TokenKind.IdentifierNameExpression:
+                    var name = ((IdentifierNameExpressionSyntaxNode) lhs).Name.Text;
                     Console.WriteLine($"Adding variable assignment for {name}");
                     _variableAssignments.Add(name, new Variable());
                     break;
@@ -66,8 +66,8 @@ namespace ConsoleDemo
         {
             switch (node.Kind)
             {
-                case TokenKind.IdentifierName:
-                    var name = (IdentifierNameSyntaxNode) node;
+                case TokenKind.IdentifierNameExpression:
+                    var name = (IdentifierNameExpressionSyntaxNode) node;
                     if (_context.FindFunction(name.Name.Text))
                     {
                         return true;
@@ -90,7 +90,7 @@ namespace ConsoleDemo
             Variable assignment;
             switch (node.Kind)
             {
-                case TokenKind.IdentifierName:
+                case TokenKind.IdentifierNameExpression:
                     assignment = _variableAssignments.Find(node.Text);
                     if (assignment != null || node.Text == "end")
                     {
@@ -98,12 +98,12 @@ namespace ConsoleDemo
                     }
 
                     break;
-                case TokenKind.FunctionCall:
+                case TokenKind.FunctionCallExpression:
                     var functionCall = (FunctionCallExpressionSyntaxNode)node;
                     return
                         (IsDefined(functionCall.FunctionName) && IsDefined(functionCall.Nodes)) ||
                         (IsDefinedFunctionName(functionCall.FunctionName) && IsDefined(functionCall.Nodes));
-                case TokenKind.CellArrayElementAccess:
+                case TokenKind.CellArrayElementAccessExpression:
                     var cellArrayElementAccess = (CellArrayElementAccessExpressionSyntaxNode) node;
                     return IsDefined(cellArrayElementAccess.Expression) && IsDefined(cellArrayElementAccess.Nodes);
                 case TokenKind.List:
@@ -113,7 +113,7 @@ namespace ConsoleDemo
                     return true;
                 case TokenKind.StringLiteralExpression:
                     return true;
-                case TokenKind.BinaryOperation:
+                case TokenKind.BinaryOperationExpression:
                     var binaryOperation = (BinaryOperationExpressionSyntaxNode) node;
                     return IsDefined(binaryOperation.Lhs) && IsDefined(binaryOperation.Rhs);
                 case TokenKind.UnaryPrefixOperationExpression:
@@ -139,7 +139,7 @@ namespace ConsoleDemo
                 {
                     var parameterAsNode = parameter.AsNode();
                     Console.WriteLine($"Parameter node: {parameterAsNode}");
-                    if (parameterAsNode.Kind == TokenKind.IdentifierName)
+                    if (parameterAsNode.Kind == TokenKind.IdentifierNameExpression)
                     {
                         Console.WriteLine($"Adding variable assignment for {parameterAsNode.Text}");
                         _variableAssignments.Add(parameterAsNode.Text, new Variable());

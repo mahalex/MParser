@@ -941,10 +941,10 @@ namespace Parser
         }
     }
 
-    public class CompoundNameSyntaxNode : ExpressionSyntaxNode
+    public class CompoundNameExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _nodes;
-        internal CompoundNameSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal CompoundNameExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -969,14 +969,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitCompoundName(this);
+            visitor.VisitCompoundNameExpression(this);
         }
     }
 
-    public class NamedFunctionHandleSyntaxNode : FunctionHandleSyntaxNode
+    public class NamedFunctionHandleExpressionSyntaxNode : FunctionHandleExpressionSyntaxNode
     {
         private SyntaxNode? _functionName;
-        internal NamedFunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal NamedFunctionHandleExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -984,16 +984,16 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.NamedFunctionHandleSyntaxNode)_green)._atSign, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.NamedFunctionHandleExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(0));
             }
         }
 
-        public CompoundNameSyntaxNode FunctionName
+        public CompoundNameExpressionSyntaxNode FunctionName
         {
             get
             {
                 var red = this.GetRed(ref this._functionName!, 1);
-                return red is null ? throw new System.Exception("functionName cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("functionName cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1009,15 +1009,15 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitNamedFunctionHandle(this);
+            visitor.VisitNamedFunctionHandleExpression(this);
         }
     }
 
-    public class LambdaSyntaxNode : FunctionHandleSyntaxNode
+    public class LambdaExpressionSyntaxNode : FunctionHandleExpressionSyntaxNode
     {
         private SyntaxNode? _input;
         private SyntaxNode? _body;
-        internal LambdaSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal LambdaExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1025,7 +1025,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.LambdaSyntaxNode)_green)._atSign, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.LambdaExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(0));
             }
         }
 
@@ -1059,7 +1059,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitLambda(this);
+            visitor.VisitLambdaExpression(this);
         }
     }
 
@@ -1113,9 +1113,9 @@ namespace Parser
         }
     }
 
-    public class IdentifierNameSyntaxNode : ExpressionSyntaxNode
+    public class IdentifierNameExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal IdentifierNameSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal IdentifierNameExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1123,7 +1123,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IdentifierNameSyntaxNode)_green)._name, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.IdentifierNameExpressionSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -1139,7 +1139,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitIdentifierName(this);
+            visitor.VisitIdentifierNameExpression(this);
         }
     }
 
@@ -1669,12 +1669,12 @@ namespace Parser
         {
         }
 
-        public IdentifierNameSyntaxNode CommandName
+        public IdentifierNameExpressionSyntaxNode CommandName
         {
             get
             {
                 var red = this.GetRed(ref this._commandName!, 0);
-                return red is null ? throw new System.Exception("commandName cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("commandName cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1801,12 +1801,12 @@ namespace Parser
         {
         }
 
-        public IdentifierNameSyntaxNode Name
+        public IdentifierNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1912,12 +1912,12 @@ namespace Parser
             }
         }
 
-        public CompoundNameSyntaxNode Name
+        public CompoundNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 2);
-                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1991,12 +1991,12 @@ namespace Parser
             }
         }
 
-        public CompoundNameSyntaxNode Name
+        public CompoundNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 1);
-                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -2216,12 +2216,12 @@ namespace Parser
             }
         }
 
-        public IdentifierNameSyntaxNode ClassName
+        public IdentifierNameExpressionSyntaxNode ClassName
         {
             get
             {
                 var red = this.GetRed(ref this._className!, 2);
-                return red is null ? throw new System.Exception("className cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("className cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
             }
         }
 
@@ -2316,12 +2316,12 @@ namespace Parser
         {
         }
 
-        public IdentifierNameSyntaxNode Name
+        public IdentifierNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameExpressionSyntaxNode)red;
             }
         }
 

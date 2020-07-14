@@ -221,7 +221,7 @@ namespace MApplication
             AddToken(node.ClosingBrace, _scheme.Bracket);
         }
 
-        public override void VisitIdentifierName(IdentifierNameSyntaxNode node)
+        public override void VisitIdentifierNameExpression(IdentifierNameExpressionSyntaxNode node)
         {
             AddToken(node.Name, _scheme.Identifier);
         }
@@ -357,7 +357,7 @@ namespace MApplication
             AddToken(node.ClosingBrace, _scheme.Bracket);
         }
 
-        public override void VisitCompoundName(CompoundNameSyntaxNode node)
+        public override void VisitCompoundNameExpression(CompoundNameExpressionSyntaxNode node)
         {
             Visit(node.Nodes);
         }
@@ -426,14 +426,14 @@ namespace MApplication
             AddToken(node.ClosingBracket, _scheme.Bracket);
         }
 
-        public override void VisitLambda(LambdaSyntaxNode node)
+        public override void VisitLambdaExpression(LambdaExpressionSyntaxNode node)
         {
             AddToken(node.AtSign, _scheme.Operator);
             Visit(node.Input);
             Visit(node.Body);
         }
 
-        public override void VisitNamedFunctionHandle(NamedFunctionHandleSyntaxNode node)
+        public override void VisitNamedFunctionHandleExpression(NamedFunctionHandleExpressionSyntaxNode node)
         {
             AddToken(node.AtSign, _scheme.Operator);
             Visit(node.FunctionName);

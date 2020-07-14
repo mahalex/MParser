@@ -113,7 +113,7 @@ namespace Parser.Internal
                 }
 
                 firstToken = false;
-                outputs.Add(Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken)));
+                outputs.Add(Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken)));
             }
 
             return outputs.ToList();
@@ -141,7 +141,7 @@ namespace Parser.Internal
                 if (PeekToken(1).Kind == TokenKind.EqualsToken)
                 {
                     var identifierToken = EatIdentifier();
-                    builder.Add(Factory.IdentifierNameSyntax(identifierToken));
+                    builder.Add(Factory.IdentifierNameExpressionSyntax(identifierToken));
                     assignmentSign = EatToken(TokenKind.EqualsToken);
                 }
                 else
@@ -180,7 +180,7 @@ namespace Parser.Internal
                 else
                 {
                     var identifierToken = EatToken(TokenKind.IdentifierToken);
-                    builder.Add(Factory.IdentifierNameSyntax(identifierToken));
+                    builder.Add(Factory.IdentifierNameExpressionSyntax(identifierToken));
                 }
             }
 
@@ -329,7 +329,7 @@ namespace Parser.Internal
                     break;
                 default:
                     var id = EatToken(TokenKind.IdentifierToken);
-                    expression = Factory.IdentifierNameSyntax(id);
+                    expression = Factory.IdentifierNameExpressionSyntax(id);
                     break;
             }
 
@@ -377,7 +377,7 @@ namespace Parser.Internal
                             closingBracket);
                         break;
                     case TokenKind.DotToken: // member access
-                        if (expression is IdentifierNameSyntaxNode
+                        if (expression is IdentifierNameExpressionSyntaxNode
                             || expression is MemberAccessSyntaxNode
                             || expression is FunctionCallExpressionSyntaxNode
                             || expression is CellArrayElementAccessExpressionSyntaxNode)
@@ -414,7 +414,7 @@ namespace Parser.Internal
 
         private CommandExpressionSyntaxNode ParseCommandExpression(ExpressionSyntaxNode expression)
         {
-            if (expression is IdentifierNameSyntaxNode idNameNode)
+            if (expression is IdentifierNameExpressionSyntaxNode idNameNode)
             {
                 var builder = new SyntaxListBuilder<UnquotedStringLiteralSyntaxNode>();
                 while (CurrentToken.Kind == TokenKind.UnquotedStringLiteralToken)
@@ -434,7 +434,7 @@ namespace Parser.Internal
 
         private BaseClassInvokationSyntaxNode ParseBaseClassInvokation(ExpressionSyntaxNode expression)
         {
-            if (expression is IdentifierNameSyntaxNode methodName
+            if (expression is IdentifierNameExpressionSyntaxNode methodName
                 && !expression.TrailingTrivia.Any())
             {
                 var atToken = EatToken();
@@ -463,7 +463,7 @@ namespace Parser.Internal
         {
             if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
-                return Factory.IdentifierNameSyntax(EatToken());
+                return Factory.IdentifierNameExpressionSyntax(EatToken());
             }
             if (CurrentToken.Kind == TokenKind.OpenParenthesisToken)
             {
@@ -523,7 +523,7 @@ namespace Parser.Internal
                 closeParen);
         }
 
-        private CompoundNameSyntaxNode ParseCompoundName()
+        private CompoundNameExpressionSyntaxNode ParseCompoundName()
         {
             var lastToken = EatToken(TokenKind.IdentifierToken);
             var firstName = lastToken;
@@ -538,16 +538,16 @@ namespace Parser.Internal
                 builder.Add(lastToken);
             }
 
-            return Factory.CompoundNameSyntax(builder.ToList());
+            return Factory.CompoundNameExpressionSyntax(builder.ToList());
         }
 
-        private FunctionHandleSyntaxNode ParseFunctionHandle()
+        private FunctionHandleExpressionSyntaxNode ParseFunctionHandle()
         {
             var atSign = EatToken();
             if (CurrentToken.Kind == TokenKind.IdentifierToken)
             {
                 var compoundName = ParseCompoundName();
-                return Factory.NamedFunctionHandleSyntax(
+                return Factory.NamedFunctionHandleExpressionSyntax(
                     atSign,
                     compoundName);
             }
@@ -563,7 +563,7 @@ namespace Parser.Internal
                 {
                     throw new Exception($"Lambda expression body cannot be empty.");
                 }
-                return Factory.LambdaSyntax(atSign, inputs, body);
+                return Factory.LambdaExpressionSyntax(atSign, inputs, body);
             }
             throw new ParsingException($"Unexpected token {CurrentToken} while parsing function handle at {CurrentPosition}.");
         }
@@ -866,7 +866,7 @@ namespace Parser.Internal
 
         private AttributeSyntaxNode ParseAttribute()
         {
-            var name = Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken));
+            var name = Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken));
             var assignment = ParseAttributeAssignment();
             return Factory.AttributeSyntax(name, assignment);
         }
@@ -1023,7 +1023,7 @@ namespace Parser.Internal
 
         private EnumerationItemSyntaxNode ParseEnumerationItem()
         {
-            var name = Factory.IdentifierNameSyntax(EatToken());
+            var name = Factory.IdentifierNameExpressionSyntax(EatToken());
             var values = ParseEnumerationValue();
             var commas = ParseOptionalCommas();
             return Factory.EnumerationItemSyntax(name, values, commas);
@@ -1104,7 +1104,7 @@ namespace Parser.Internal
             {
                 attributes = ParseAttributesList();
             }
-            var className = Factory.IdentifierNameSyntax(EatToken(TokenKind.IdentifierToken));
+            var className = Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken));
             BaseClassListSyntaxNode? baseClassList = null;
             if (CurrentToken.Kind == TokenKind.LessToken)
             {

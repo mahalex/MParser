@@ -93,19 +93,19 @@ namespace Parser.Internal
             return new UnaryPrefixOperationExpressionSyntaxNode(operation, operand);
         }
 
-        public CompoundNameSyntaxNode CompoundNameSyntax(SyntaxList nodes)
+        public CompoundNameExpressionSyntaxNode CompoundNameExpressionSyntax(SyntaxList nodes)
         {
-            return new CompoundNameSyntaxNode(nodes);
+            return new CompoundNameExpressionSyntaxNode(nodes);
         }
 
-        public NamedFunctionHandleSyntaxNode NamedFunctionHandleSyntax(SyntaxToken atSign, CompoundNameSyntaxNode functionName)
+        public NamedFunctionHandleExpressionSyntaxNode NamedFunctionHandleExpressionSyntax(SyntaxToken atSign, CompoundNameExpressionSyntaxNode functionName)
         {
-            return new NamedFunctionHandleSyntaxNode(atSign, functionName);
+            return new NamedFunctionHandleExpressionSyntaxNode(atSign, functionName);
         }
 
-        public LambdaSyntaxNode LambdaSyntax(SyntaxToken atSign, FunctionInputDescriptionSyntaxNode input, ExpressionSyntaxNode body)
+        public LambdaExpressionSyntaxNode LambdaExpressionSyntax(SyntaxToken atSign, FunctionInputDescriptionSyntaxNode input, ExpressionSyntaxNode body)
         {
-            return new LambdaSyntaxNode(atSign, input, body);
+            return new LambdaExpressionSyntaxNode(atSign, input, body);
         }
 
         public BinaryOperationExpressionSyntaxNode BinaryOperationExpressionSyntax(ExpressionSyntaxNode lhs, SyntaxToken operation, ExpressionSyntaxNode rhs)
@@ -113,9 +113,9 @@ namespace Parser.Internal
             return new BinaryOperationExpressionSyntaxNode(lhs, operation, rhs);
         }
 
-        public IdentifierNameSyntaxNode IdentifierNameSyntax(SyntaxToken name)
+        public IdentifierNameExpressionSyntaxNode IdentifierNameExpressionSyntax(SyntaxToken name)
         {
-            return new IdentifierNameSyntaxNode(name);
+            return new IdentifierNameExpressionSyntaxNode(name);
         }
 
         public NumberLiteralSyntaxNode NumberLiteralSyntax(SyntaxToken number)
@@ -178,7 +178,7 @@ namespace Parser.Internal
             return new IndirectMemberAccessSyntaxNode(openingBracket, expression, closingBracket);
         }
 
-        public CommandExpressionSyntaxNode CommandExpressionSyntax(IdentifierNameSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments)
+        public CommandExpressionSyntaxNode CommandExpressionSyntax(IdentifierNameExpressionSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments)
         {
             return new CommandExpressionSyntaxNode(commandName, arguments);
         }
@@ -193,7 +193,7 @@ namespace Parser.Internal
             return new AttributeAssignmentSyntaxNode(assignmentSign, value);
         }
 
-        public AttributeSyntaxNode AttributeSyntax(IdentifierNameSyntaxNode name, AttributeAssignmentSyntaxNode? assignment)
+        public AttributeSyntaxNode AttributeSyntax(IdentifierNameExpressionSyntaxNode name, AttributeAssignmentSyntaxNode? assignment)
         {
             return new AttributeSyntaxNode(name, assignment);
         }
@@ -203,12 +203,12 @@ namespace Parser.Internal
             return new AttributeListSyntaxNode(openingBracket, nodes, closingBracket);
         }
 
-        public MethodDefinitionSyntaxNode MethodDefinitionSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, SyntaxList body, EndKeywordSyntaxNode? endKeyword)
+        public MethodDefinitionSyntaxNode MethodDefinitionSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, SyntaxList body, EndKeywordSyntaxNode? endKeyword)
         {
             return new MethodDefinitionSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
         }
 
-        public AbstractMethodDeclarationSyntaxNode AbstractMethodDeclarationSyntax(FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription)
+        public AbstractMethodDeclarationSyntaxNode AbstractMethodDeclarationSyntax(FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription)
         {
             return new AbstractMethodDeclarationSyntaxNode(outputDescription, name, inputDescription);
         }
@@ -228,7 +228,7 @@ namespace Parser.Internal
             return new BaseClassListSyntaxNode(lessSign, baseClasses);
         }
 
-        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
+        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameExpressionSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
         {
             return new ClassDeclarationSyntaxNode(classdefKeyword, attributes, className, baseClassList, nodes, endKeyword);
         }
@@ -238,7 +238,7 @@ namespace Parser.Internal
             return new EnumerationItemValueSyntaxNode(openingBracket, values, closingBracket);
         }
 
-        public EnumerationItemSyntaxNode EnumerationItemSyntax(IdentifierNameSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
+        public EnumerationItemSyntaxNode EnumerationItemSyntax(IdentifierNameExpressionSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
         {
             return new EnumerationItemSyntaxNode(name, values, commas);
         }

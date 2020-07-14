@@ -49,8 +49,8 @@ namespace ConsoleDemo
         {
             switch (lhs.Kind)
             {
-                case TokenKind.IdentifierName:
-                    var name = ((IdentifierNameSyntaxNode)lhs).Name.Text;
+                case TokenKind.IdentifierNameExpression:
+                    var name = ((IdentifierNameExpressionSyntaxNode)lhs).Name.Text;
                     Console.WriteLine($"Adding variable assignment for {name}");
                     _variableAssignments.Add(name, new Variable());
                     break;
@@ -100,7 +100,7 @@ namespace ConsoleDemo
                 {
                     var parameterAsNode = parameter.AsNode();
                     Console.WriteLine($"Parameter node: {parameterAsNode}");
-                    if (parameterAsNode.Kind == TokenKind.IdentifierName)
+                    if (parameterAsNode.Kind == TokenKind.IdentifierNameExpression)
                     {
                         Console.WriteLine($"Adding variable assignment for {parameterAsNode.Text}");
                         _variableAssignments.Add(parameterAsNode.Text, new Variable());
@@ -131,7 +131,7 @@ namespace ConsoleDemo
                 {
                     var parameterAsNode = parameter.AsNode();
                     Console.WriteLine($"Parameter node: {parameterAsNode}");
-                    if (parameterAsNode.Kind == TokenKind.IdentifierName)
+                    if (parameterAsNode.Kind == TokenKind.IdentifierNameExpression)
                     {
                         Console.WriteLine($"Adding variable assignment for {parameterAsNode.Text}");
                         _variableAssignments.Add(parameterAsNode.Text, new Variable());

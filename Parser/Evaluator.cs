@@ -43,28 +43,28 @@ namespace Parser
         {
             return statement.Kind switch
             {
-                TokenKind.ExpressionStatement =>
-                    EvaluateExpressionStatement((ExpressionStatementSyntaxNode)statement),
-                TokenKind.MethodDefinition =>
-                    EvaluateMethodDefinition((MethodDefinitionSyntaxNode)statement),
                 TokenKind.AbstractMethodDeclaration =>
                     EvaluateAbstractMethodDeclaration((AbstractMethodDeclarationSyntaxNode)statement),
-                TokenKind.FunctionDeclaration =>
-                    EvaluateFunctionDeclaration((FunctionDeclarationSyntaxNode)statement),
-                TokenKind.SwitchStatement =>
-                    EvaluateSwitchStatement((SwitchStatementSyntaxNode)statement),
-                TokenKind.WhileStatement =>
-                    EvaluateWhileStatement((WhileStatementSyntaxNode)statement),
-                TokenKind.IfStatement =>
-                    EvaluateIfStatement((IfStatementSyntaxNode)statement),
-                TokenKind.ForStatement =>
-                    EvaluateForStatement((ForStatementSyntaxNode)statement),
-                TokenKind.TryCatchStatement =>
-                    EvaluateTryCatchStatement((TryCatchStatementSyntaxNode)statement),
-                TokenKind.EmptyStatement =>
-                    EvaluateEmptyStatement((EmptyStatementSyntaxNode)statement),
                 TokenKind.ClassDeclaration =>
                     EvaluateClassDeclaration((ClassDeclarationSyntaxNode)statement),
+                TokenKind.EmptyStatement =>
+                    EvaluateEmptyStatement((EmptyStatementSyntaxNode)statement),
+                TokenKind.ExpressionStatement =>
+                    EvaluateExpressionStatement((ExpressionStatementSyntaxNode)statement),
+                TokenKind.ForStatement =>
+                    EvaluateForStatement((ForStatementSyntaxNode)statement),
+                TokenKind.FunctionDeclaration =>
+                    EvaluateFunctionDeclaration((FunctionDeclarationSyntaxNode)statement),
+                TokenKind.IfStatement =>
+                    EvaluateIfStatement((IfStatementSyntaxNode)statement),
+                TokenKind.ConcreteMethodDeclaration =>
+                    EvaluateMethodDefinition((MethodDefinitionSyntaxNode)statement),
+                TokenKind.SwitchStatement =>
+                    EvaluateSwitchStatement((SwitchStatementSyntaxNode)statement),
+                TokenKind.TryCatchStatement =>
+                    EvaluateTryCatchStatement((TryCatchStatementSyntaxNode)statement),
+                TokenKind.WhileStatement =>
+                    EvaluateWhileStatement((WhileStatementSyntaxNode)statement),
                 _ => throw new NotImplementedException($"Invalid statement kind '{statement.Kind}'."),
             };
         }
@@ -128,50 +128,57 @@ namespace Parser
         {
             return expression.Kind switch
             {
-                TokenKind.Lambda =>
-                    EvaluateLambda((LambdaSyntaxNode)expression),
-                TokenKind.AssignmentExpression =>
-                    EvaluateAssignmentExpression((AssignmentExpressionSyntaxNode)expression),
-                TokenKind.EmptyExpression =>
-                    EvaluateEmptyExpression((EmptyExpressionSyntaxNode)expression),
-                TokenKind.UnaryPrefixOperationExpression =>
-                    EvaluateUnaryPrefixOperationExpression((UnaryPrefixOperationExpressionSyntaxNode)expression),
-                TokenKind.CompoundName =>
-                    EvaluateCompoundName((CompoundNameSyntaxNode)expression),
-                TokenKind.BinaryOperation =>
-                    EvaluateBinaryOperation((BinaryOperationExpressionSyntaxNode)expression),
-                TokenKind.IdentifierName =>
-                    EvaluateIdentifierName((IdentifierNameSyntaxNode)expression),
-                TokenKind.NumberLiteralExpression =>
-                    EvaluateNumberLiteralExpression((NumberLiteralSyntaxNode)expression),
-                TokenKind.StringLiteralExpression =>
-                    EvaluateStringLiteralExpression((StringLiteralSyntaxNode)expression),
-                TokenKind.DoubleQuotedStringLiteralExpression =>
-                    EvaluateDoubleQuotedStringLiteralExpression((DoubleQuotedStringLiteralSyntaxNode)expression),
-                TokenKind.UnquotedStringLiteralExpression =>
-                    EvaluateUnquotedStringLiteralExpression((UnquotedStringLiteralSyntaxNode)expression),
                 TokenKind.ArrayLiteralExpression =>
                     EvaluateArrayLiteralExpression((ArrayLiteralExpressionSyntaxNode)expression),
+                TokenKind.AssignmentExpression =>
+                    EvaluateAssignmentExpression((AssignmentExpressionSyntaxNode)expression),
+                TokenKind.BinaryOperationExpression =>
+                    EvaluateBinaryOperation((BinaryOperationExpressionSyntaxNode)expression),
+                TokenKind.CellArrayElementAccessExpression =>
+                    EvaluateCellArrayElementAccess((CellArrayElementAccessExpressionSyntaxNode)expression),
                 TokenKind.CellArrayLiteralExpression =>
                     EvaluateCellArrayLiteralExpression((CellArrayLiteralExpressionSyntaxNode)expression),
-                TokenKind.ParenthesizedExpression =>
-                    EvaluateNamedFunctionHandle((NamedFunctionHandleSyntaxNode)expression),
-                TokenKind.CellArrayElementAccess =>
-                    EvaluateCellArrayElementAccess((CellArrayElementAccessExpressionSyntaxNode)expression),
-                TokenKind.FunctionCall =>
+                TokenKind.ClassInvokationExpression =>
+                    EvaluateClassInvokation((BaseClassInvokationSyntaxNode)expression),
+                TokenKind.CommandExpression =>
+                    EvaluateCommand((CommandExpressionSyntaxNode)expression),
+                TokenKind.CompoundNameExpression =>
+                    EvaluateCompoundName((CompoundNameExpressionSyntaxNode)expression),
+                TokenKind.DoubleQuotedStringLiteralExpression =>
+                    EvaluateDoubleQuotedStringLiteralExpression((DoubleQuotedStringLiteralSyntaxNode)expression),
+                TokenKind.EmptyExpression =>
+                    EvaluateEmptyExpression((EmptyExpressionSyntaxNode)expression),
+                TokenKind.FunctionCallExpression =>
                     EvaluateFunctionCall((FunctionCallExpressionSyntaxNode)expression),
-                TokenKind.MemberAccess =>
+                TokenKind.IdentifierNameExpression =>
+                    EvaluateIdentifierNameExpression((IdentifierNameExpressionSyntaxNode)expression),
+                TokenKind.IndirectMemberAccessExpression =>
+                    EvaluateIndirectMemberAccess((IndirectMemberAccessSyntaxNode)expression),
+                TokenKind.LambdaExpression =>
+                    EvaluateLambdaExpression((LambdaExpressionSyntaxNode)expression),
+                TokenKind.MemberAccessExpression =>
                     EvaluateMemberAccess((MemberAccessSyntaxNode)expression),
+                TokenKind.NamedFunctionHandleExpression =>
+                    EvaluateNamedFunctionHandleExpression((NamedFunctionHandleExpressionSyntaxNode)expression),
+                TokenKind.NumberLiteralExpression =>
+                    EvaluateNumberLiteralExpression((NumberLiteralSyntaxNode)expression),
+                TokenKind.ParenthesizedExpression =>
+                    EvaluateParenthesizedExpression((ParenthesizedExpressionSyntaxNode)expression),
+                TokenKind.StringLiteralExpression =>
+                    EvaluateStringLiteralExpression((StringLiteralSyntaxNode)expression),
+                TokenKind.UnaryPrefixOperationExpression =>
+                    EvaluateUnaryPrefixOperationExpression((UnaryPrefixOperationExpressionSyntaxNode)expression),
                 TokenKind.UnaryPostfixOperationExpression =>
                     EvaluateUnaryPostfixOperationExpression((UnaryPostixOperationExpressionSyntaxNode)expression),
-                TokenKind.IndirectMemberAccess =>
-                    EvaluateIndirectMemberAccess((IndirectMemberAccessSyntaxNode)expression),
-                TokenKind.Command =>
-                    EvaluateCommand((CommandExpressionSyntaxNode)expression),
-                TokenKind.ClassInvokation =>
-                    EvaluateClassInvokation((BaseClassInvokationSyntaxNode)expression),
+                TokenKind.UnquotedStringLiteralExpression =>
+                    EvaluateUnquotedStringLiteralExpression((UnquotedStringLiteralSyntaxNode)expression),
                 _ => throw new NotImplementedException($"Invalid expression kind '{expression.Kind}'."),
             };
+        }
+
+        private MObject? EvaluateParenthesizedExpression(ParenthesizedExpressionSyntaxNode expression)
+        {
+            throw new NotImplementedException();
         }
 
         private MObject? EvaluateClassInvokation(BaseClassInvokationSyntaxNode expression)
@@ -239,7 +246,7 @@ namespace Parser
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateIdentifierName(IdentifierNameSyntaxNode expression)
+        private MObject? EvaluateIdentifierNameExpression(IdentifierNameExpressionSyntaxNode expression)
         {
             throw new NotImplementedException();
         }
@@ -249,7 +256,7 @@ namespace Parser
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateCompoundName(CompoundNameSyntaxNode expression)
+        private MObject? EvaluateCompoundName(CompoundNameExpressionSyntaxNode expression)
         {
             throw new NotImplementedException();
         }
@@ -269,12 +276,12 @@ namespace Parser
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateLambda(LambdaSyntaxNode expression)
+        private MObject? EvaluateLambdaExpression(LambdaExpressionSyntaxNode expression)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateNamedFunctionHandle(NamedFunctionHandleSyntaxNode expression)
+        private MObject? EvaluateNamedFunctionHandleExpression(NamedFunctionHandleExpressionSyntaxNode expression)
         {
             throw new NotImplementedException();
         }

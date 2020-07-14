@@ -274,7 +274,7 @@ namespace ProjectConsole
             OutputBracket(node.ClosingBrace);            
         }
 
-        public override void VisitIdentifierName(IdentifierNameSyntaxNode node)
+        public override void VisitIdentifierNameExpression(IdentifierNameExpressionSyntaxNode node)
         {
             OutputIdentifier(node.Name);
         }
@@ -410,7 +410,7 @@ namespace ProjectConsole
             OutputBracket(node.ClosingBrace);
         }
 
-        public override void VisitCompoundName(CompoundNameSyntaxNode node)
+        public override void VisitCompoundNameExpression(CompoundNameExpressionSyntaxNode node)
         {
             Visit(node.Nodes);
         }
@@ -479,14 +479,14 @@ namespace ProjectConsole
             OutputBracket(node.ClosingBracket);
         }
 
-        public override void VisitLambda(LambdaSyntaxNode node)
+        public override void VisitLambdaExpression(LambdaExpressionSyntaxNode node)
         {
             OutputOperator(node.AtSign);
             Visit(node.Input);
             Visit(node.Body);
         }
 
-        public override void VisitNamedFunctionHandle(NamedFunctionHandleSyntaxNode node)
+        public override void VisitNamedFunctionHandleExpression(NamedFunctionHandleExpressionSyntaxNode node)
         {
             OutputOperator(node.AtSign);
             Visit(node.FunctionName);

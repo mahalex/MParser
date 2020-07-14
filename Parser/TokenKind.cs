@@ -3,7 +3,9 @@
     // We use the same set of kinds for syntax tokens & syntax nodes.
     public enum TokenKind
     {
-        // SYNTAX TOKENS
+        // *****************
+        // * SYNTAX TOKENS *
+        // *****************
 
         None = 0,
         BadToken = 1,
@@ -123,31 +125,54 @@
         UnaryNot = 59,
         UnaryQuestionMark = 60,
 
-        // SYNTAX NODES
+        // ****************
+        // * SYNTAX NODES *
+        // ****************
+
         // The whole file.
         File = 100,
+
         // a list of syntax nodes and/or tokens.
         List,
+
+
+        // STATEMENTS
+        // The name ends with "Declaration" or "Statement".
+
+        // result = abstractMethod(object)
+        AbstractMethodDeclaration,
+
+        // classdef MyClass < BaseClass, AnotherBaseClass
+        //     properties
+        //         y
+        //     end
+        //     methods
+        //         <...>
+        //     end
+        // end
+        ClassDeclaration,
+
+        // function result = method(obj)
+        //     <...>
+        // end
+        ConcreteMethodDeclaration,
+
+        // 
+        EmptyStatement,
+
+        // a = 5;
+        ExpressionStatement,
+
+        // for a = 1:5
+        //     process(a);
+        // end
+        ForStatement,
+
         // [output1, output2] = function(input1, input2)
         // <...>
         // end
         FunctionDeclaration,
-        // (input1, input2)
-        FunctionInputDescription,
-        // [output1, output2] =
-        FunctionOutputDescription,
-        // switch a
-        //     case 1
-        // <...>
-        // end
-        SwitchStatement,
-        // case 1
-        //     doSomething();
-        SwitchCase,
-        // while a < 10
-        //     doSomething();
-        // end
-        WhileStatement,
+
         // if a < 5
         //     doSomething();
         // elseif a > 10
@@ -156,84 +181,125 @@
         //     GiveUp();
         // end
         IfStatement,
-        // elseif a > 10
-        //     doSomethingElse();
-        ElseifClause,
-        // else
-        //     GiveUp();
-        ElseClause,
-        // for a = 1:5
-        //     process(a);
+
+        // switch a
+        //     case 1
+        // <...>
         // end
-        ForStatement,
-        // a = 1:5
-        AssignmentExpression,
-        // catch e
-        //     dealWithIt(e);
-        // end
-        CatchClause,
+        SwitchStatement,
+
         // try
         //     somethingWeird();
         // catch e
         //     dealWithIt(e);
         // end
         TryCatchStatement,
-        // a = 5;
-        ExpressionStatement,
-        // 
-        EmptyStatement,
-        // 
-        EmptyExpression,
-        // -13
-        UnaryPrefixOperationExpression,
-        // some.complex.name
-        CompoundName,
-        // @func
-        NamedFunctionHandle,
-        // @(x) x + 1
-        Lambda,
-        // +
-        BinaryOperation,
-        // a
-        IdentifierName,
-        // 123
-        NumberLiteralExpression,
-        // 'abc'
-        StringLiteralExpression,
-        // "abc"
-        DoubleQuotedStringLiteralExpression,
-        // abc
-        UnquotedStringLiteralExpression,
+
+        // while a < 10
+        //     doSomething();
+        // end
+        WhileStatement,
+
+
+        // EXPRESSIONS
+        // The name ends with "Expression".
+
         // [1, 2; 3 4]
         ArrayLiteralExpression,
+
+        // a = 1:5
+        AssignmentExpression,
+
+        // +
+        BinaryOperationExpression,
+
+        // abc{2}
+        CellArrayElementAccessExpression,
+
         // {1, 3, 'abc'}
         CellArrayLiteralExpression,
+
+        // method@SuperClass(object)
+        ClassInvokationExpression,
+
+        // cd some/+folder/
+        CommandExpression,
+
+        // some.complex.name
+        CompoundNameExpression,
+
+        // "abc"
+        DoubleQuotedStringLiteralExpression,
+
+        // 
+        EmptyExpression,
+
+        // doSomething(5)
+        FunctionCallExpression,
+
+        // a
+        IdentifierNameExpression,
+
+        // struct.(field)
+        IndirectMemberAccessExpression,
+
+        // @(x) x + 1
+        LambdaExpression,
+
+        // object.member
+        MemberAccessExpression,
+
+        // @func
+        NamedFunctionHandleExpression,
+
+        // 123
+        NumberLiteralExpression,
+
         // (1 + 2 * 3)
         ParenthesizedExpression,
-        // abc{2}
-        CellArrayElementAccess,
-        // doSomething(5)
-        FunctionCall,
-        // object.member
-        MemberAccess,
+
+        // 'abc'
+        StringLiteralExpression,
+
+        // -13
+        UnaryPrefixOperationExpression,
+
         // [1 2 3]'
         UnaryPostfixOperationExpression,
-        // struct.(field)
-        IndirectMemberAccess,
-        // cd some/+folder/
-        Command,
-        // method@SuperClass(object)
-        ClassInvokation,
+
+        // abc
+        UnquotedStringLiteralExpression,
+
+
+        // PARTS OF STATEMENTS & EXPRESSIONS
+
+        // (input1, input2)
+        FunctionInputDescription,
+        // [output1, output2] =
+        FunctionOutputDescription,
+
+        // case 1
+        //     doSomething();
+        SwitchCase,
+
+        // elseif a > 10
+        //     doSomethingElse();
+        ElseifClause,
+        // else
+        //     GiveUp();
+        ElseClause,
+        // catch e
+        //     dealWithIt(e);
+        // end
+        CatchClause,
+
         // = true
         AttributeAssignment,
         // Sealed = true
         Attribute,
         // (Sealed = true)
         AttributeList,
-        // function result = method(obj)
-        //     <...>
-        // end
-        MethodDefinition,
+
         // methods
         //     function result = method(obj)
         //     <...>
@@ -247,15 +313,7 @@
         PropertiesList,
         // < BaseClass, AnotherBaseClass
         BaseClassList,
-        // classdef MyClass < BaseClass, AnotherBaseClass
-        //     properties
-        //         y
-        //     end
-        //     methods
-        //         <...>
-        //     end
-        // end
-        ClassDeclaration,
+
         // (1)
         EnumerationItemValue,
         // One (1)
@@ -265,8 +323,6 @@
         //     Two (2)
         // end
         EnumerationList,
-        // result = abstractMethod(object)
-        AbstractMethodDeclaration,
         // events
         //     ToggleSomething
         // end
