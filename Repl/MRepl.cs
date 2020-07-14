@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Parser;
 
 namespace Repl
@@ -50,8 +51,7 @@ namespace Repl
         private string Evaluate(string submission)
         {
             var tree = SyntaxTree.Parse(submission);
-            var compilation = Compilation.Create(tree);
-            if (tree.Diagnostics.Diagnostics.Count > 0)
+            if (tree.Diagnostics.Any())
             {
                 foreach (var diagnostic in tree.Diagnostics.Diagnostics)
                 {
@@ -64,7 +64,7 @@ namespace Repl
             }
 
             TreeRenderer.RenderTree(tree);
-
+            var compilation = Compilation.Create(tree);
             var evaluationResult = compilation.Evaluate(_context);
 
             foreach (var diagnostic in evaluationResult.Diagnostics)

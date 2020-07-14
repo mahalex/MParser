@@ -120,7 +120,7 @@ namespace ConsoleDemo
             _insideFunction = false;
         }
 
-        public override void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public override void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             _insideMethod = true;
             _variableAssignments = new VariableAssignments();
@@ -146,7 +146,7 @@ namespace ConsoleDemo
                     Console.WriteLine($"Parameter token: {parameter.AsToken()}");
                 }
             }
-            base.VisitMethodDefinition(node);
+            base.VisitConcreteMethodDeclaration(node);
             _variableAssignments = null;
             _insideMethod = false;
         }

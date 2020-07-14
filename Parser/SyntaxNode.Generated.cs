@@ -1143,9 +1143,9 @@ namespace Parser
         }
     }
 
-    public class NumberLiteralSyntaxNode : ExpressionSyntaxNode
+    public class NumberLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal NumberLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal NumberLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1153,7 +1153,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.NumberLiteralSyntaxNode)_green)._number, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.NumberLiteralExpressionSyntaxNode)_green)._number, this.GetChildPosition(0));
             }
         }
 
@@ -1169,13 +1169,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitNumberLiteral(this);
+            visitor.VisitNumberLiteralExpression(this);
         }
     }
 
-    public class StringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class StringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal StringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal StringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1183,7 +1183,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.StringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.StringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1199,13 +1199,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitStringLiteral(this);
+            visitor.VisitStringLiteralExpression(this);
         }
     }
 
-    public class DoubleQuotedStringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class DoubleQuotedStringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal DoubleQuotedStringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal DoubleQuotedStringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1213,7 +1213,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.DoubleQuotedStringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.DoubleQuotedStringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1229,13 +1229,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitDoubleQuotedStringLiteral(this);
+            visitor.VisitDoubleQuotedStringLiteralExpression(this);
         }
     }
 
-    public class UnquotedStringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class UnquotedStringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal UnquotedStringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal UnquotedStringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1243,7 +1243,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.UnquotedStringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.UnquotedStringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1259,7 +1259,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitUnquotedStringLiteral(this);
+            visitor.VisitUnquotedStringLiteralExpression(this);
         }
     }
 
@@ -1523,11 +1523,11 @@ namespace Parser
         }
     }
 
-    public class MemberAccessSyntaxNode : ExpressionSyntaxNode
+    public class MemberAccessExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _leftOperand;
         private SyntaxNode? _rightOperand;
-        internal MemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal MemberAccessExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1535,7 +1535,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.MemberAccessSyntaxNode)_green)._dot, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.MemberAccessExpressionSyntaxNode)_green)._dot, this.GetChildPosition(1));
             }
         }
 
@@ -1569,14 +1569,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitMemberAccess(this);
+            visitor.VisitMemberAccessExpression(this);
         }
     }
 
-    public class UnaryPostixOperationExpressionSyntaxNode : ExpressionSyntaxNode
+    public class UnaryPostfixOperationExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _operand;
-        internal UnaryPostixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal UnaryPostfixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1584,7 +1584,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.UnaryPostixOperationExpressionSyntaxNode)_green)._operation, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.UnaryPostfixOperationExpressionSyntaxNode)_green)._operation, this.GetChildPosition(1));
             }
         }
 
@@ -1609,14 +1609,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitUnaryPostixOperationExpression(this);
+            visitor.VisitUnaryPostfixOperationExpression(this);
         }
     }
 
-    public class IndirectMemberAccessSyntaxNode : ExpressionSyntaxNode
+    public class IndirectMemberAccessExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _expression;
-        internal IndirectMemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal IndirectMemberAccessExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1624,7 +1624,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessSyntaxNode)_green)._openingBracket, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessExpressionSyntaxNode)_green)._openingBracket, this.GetChildPosition(0));
             }
         }
 
@@ -1632,7 +1632,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessSyntaxNode)_green)._closingBracket, this.GetChildPosition(2));
+                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessExpressionSyntaxNode)_green)._closingBracket, this.GetChildPosition(2));
             }
         }
 
@@ -1657,7 +1657,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitIndirectMemberAccess(this);
+            visitor.VisitIndirectMemberAccessExpression(this);
         }
     }
 
@@ -1701,11 +1701,11 @@ namespace Parser
         }
     }
 
-    public class BaseClassInvokationSyntaxNode : ExpressionSyntaxNode
+    public class ClassInvokationExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _methodName;
         private SyntaxNode? _baseClassNameAndArguments;
-        internal BaseClassInvokationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal ClassInvokationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1713,7 +1713,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.BaseClassInvokationSyntaxNode)_green)._atSign, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.ClassInvokationExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(1));
             }
         }
 
@@ -1747,7 +1747,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitBaseClassInvokation(this);
+            visitor.VisitClassInvokationExpression(this);
         }
     }
 
@@ -1879,7 +1879,7 @@ namespace Parser
         }
     }
 
-    public class MethodDefinitionSyntaxNode : MethodDeclarationSyntaxNode
+    public class ConcreteMethodDeclarationSyntaxNode : MethodDeclarationSyntaxNode
     {
         private SyntaxNode? _outputDescription;
         private SyntaxNode? _name;
@@ -1887,7 +1887,7 @@ namespace Parser
         private SyntaxNode? _commas;
         private SyntaxNode? _body;
         private SyntaxNode? _endKeyword;
-        internal MethodDefinitionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal ConcreteMethodDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1895,7 +1895,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.MethodDefinitionSyntaxNode)_green)._functionKeyword, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.ConcreteMethodDeclarationSyntaxNode)_green)._functionKeyword, this.GetChildPosition(0));
             }
         }
 
@@ -1965,7 +1965,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitMethodDefinition(this);
+            visitor.VisitConcreteMethodDeclaration(this);
         }
     }
 

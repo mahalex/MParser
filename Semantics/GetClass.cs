@@ -7,7 +7,7 @@ namespace Semantics
 {
     public class GetClass
     {
-        private static MMethod MethodFromDefinition(MethodDefinitionSyntaxNode methodDefinition)
+        private static MMethod MethodFromDefinition(ConcreteMethodDeclarationSyntaxNode methodDefinition)
         {
             var name = methodDefinition.Name.Text;
             var description = "";
@@ -42,7 +42,7 @@ namespace Semantics
                     continue;
                 }
 
-                if (method.AsNode() is MethodDefinitionSyntaxNode methodDefinition)
+                if (method.AsNode() is ConcreteMethodDeclarationSyntaxNode methodDefinition)
                 {
                     result.Add(MethodFromDefinition(methodDefinition));
                 }

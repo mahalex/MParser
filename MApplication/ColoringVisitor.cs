@@ -138,7 +138,7 @@ namespace MApplication
             AddToken(node.EndKeyword, _scheme.Keyword);
         }
 
-        public override void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public override void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             AddToken(node.FunctionKeyword, _scheme.Keyword);
             Visit(node.OutputDescription);
@@ -253,12 +253,12 @@ namespace MApplication
             AddToken(node.EndKeyword, _scheme.ControlKeyword);
         }
 
-        public override void VisitUnquotedStringLiteral(UnquotedStringLiteralSyntaxNode node)
+        public override void VisitUnquotedStringLiteralExpression(UnquotedStringLiteralExpressionSyntaxNode node)
         {
             AddToken(node.StringToken, _scheme.UnquotedStringLiteral);
         }
 
-        public override void VisitStringLiteral(StringLiteralSyntaxNode node)
+        public override void VisitStringLiteralExpression(StringLiteralExpressionSyntaxNode node)
         {
             AddToken(node.StringToken, _scheme.StringLiteral);
         }
@@ -306,7 +306,7 @@ namespace MApplication
             Visit(node.Arguments);
         }
 
-        public override void VisitNumberLiteral(NumberLiteralSyntaxNode node)
+        public override void VisitNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             AddToken(node.Number, _scheme.NumberLiteral);
         }
@@ -317,13 +317,13 @@ namespace MApplication
             Visit(node.Operand);
         }
 
-        public override void VisitUnaryPostixOperationExpression(UnaryPostixOperationExpressionSyntaxNode node)
+        public override void VisitUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)
         {
             Visit(node.Operand);
             AddToken(node.Operation, _scheme.Operator);
         }
 
-        public override void VisitBaseClassInvokation(BaseClassInvokationSyntaxNode node)
+        public override void VisitClassInvokationExpression(ClassInvokationExpressionSyntaxNode node)
         {
             Visit(node.MethodName);
             AddToken(node.AtSign, _scheme.Operator);
@@ -362,7 +362,7 @@ namespace MApplication
             Visit(node.Nodes);
         }
 
-        public override void VisitDoubleQuotedStringLiteral(DoubleQuotedStringLiteralSyntaxNode node)
+        public override void VisitDoubleQuotedStringLiteralExpression(DoubleQuotedStringLiteralExpressionSyntaxNode node)
         {
             AddToken(node.StringToken, _scheme.StringLiteral);
         }
@@ -419,7 +419,7 @@ namespace MApplication
             AddToken(node.AssignmentSign, _scheme.Operator);
         }
 
-        public override void VisitIndirectMemberAccess(IndirectMemberAccessSyntaxNode node)
+        public override void VisitIndirectMemberAccessExpression(IndirectMemberAccessExpressionSyntaxNode node)
         {
             AddToken(node.OpeningBracket, _scheme.Bracket);
             Visit(node.Expression);
@@ -439,7 +439,7 @@ namespace MApplication
             Visit(node.FunctionName);
         }
 
-        public override void VisitMemberAccess(MemberAccessSyntaxNode node)
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntaxNode node)
         {
             Visit(node.LeftOperand);
             AddToken(node.Dot, _scheme.Operator);

@@ -159,10 +159,10 @@ namespace ConsoleDemo
             _insideFunction = false;
         }
 
-        public override void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public override void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             _insideMethod = true;
-            base.VisitMethodDefinition(node);
+            base.VisitConcreteMethodDeclaration(node);
             _insideMethod = false;
         }
 

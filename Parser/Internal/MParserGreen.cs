@@ -307,13 +307,13 @@ namespace Parser.Internal
             switch (token.Kind)
             {
                 case TokenKind.NumberLiteralToken:
-                    expression = Factory.NumberLiteralSyntax(EatToken());
+                    expression = Factory.NumberLiteralExpressionSyntax(EatToken());
                     break;
                 case TokenKind.StringLiteralToken:
-                    expression = Factory.StringLiteralSyntax(EatToken());
+                    expression = Factory.StringLiteralExpressionSyntax(EatToken());
                     break;
                 case TokenKind.DoubleQuotedStringLiteralToken:
-                    expression = Factory.DoubleQuotedStringLiteralSyntax(EatToken());
+                    expression = Factory.DoubleQuotedStringLiteralExpressionSyntax(EatToken());
                     break;
                 case TokenKind.OpenSquareBracketToken:
                     expression = ParseArrayLiteral();
@@ -378,13 +378,13 @@ namespace Parser.Internal
                         break;
                     case TokenKind.DotToken: // member access
                         if (expression is IdentifierNameExpressionSyntaxNode
-                            || expression is MemberAccessSyntaxNode
+                            || expression is MemberAccessExpressionSyntaxNode
                             || expression is FunctionCallExpressionSyntaxNode
                             || expression is CellArrayElementAccessExpressionSyntaxNode)
                         {
                             var dot = EatToken();
                             var member = ParseMemberAccess();
-                            expression = Factory.MemberAccessSyntax(expression, dot, member);
+                            expression = Factory.MemberAccessExpressionSyntax(expression, dot, member);
                         }
                         else
                         {
@@ -396,7 +396,7 @@ namespace Parser.Internal
                     case TokenKind.ApostropheToken:
                     case TokenKind.DotApostropheToken:
                         var operation = EatToken();
-                        expression = Factory.UnaryPostixOperationExpressionSyntax(expression, operation);
+                        expression = Factory.UnaryPostfixOperationExpressionSyntax(expression, operation);
                         break;
                     case TokenKind.UnquotedStringLiteralToken:
                         return ParseCommandExpression(expression);
@@ -416,10 +416,10 @@ namespace Parser.Internal
         {
             if (expression is IdentifierNameExpressionSyntaxNode idNameNode)
             {
-                var builder = new SyntaxListBuilder<UnquotedStringLiteralSyntaxNode>();
+                var builder = new SyntaxListBuilder<UnquotedStringLiteralExpressionSyntaxNode>();
                 while (CurrentToken.Kind == TokenKind.UnquotedStringLiteralToken)
                 {
-                    builder.Add(Factory.UnquotedStringLiteralSyntax(EatToken()));
+                    builder.Add(Factory.UnquotedStringLiteralExpressionSyntax(EatToken()));
                 }
 
                 return Factory.CommandExpressionSyntax(idNameNode._name, builder.ToList());
@@ -432,7 +432,7 @@ namespace Parser.Internal
             throw new ParsingException($"Unexpected token \"{CurrentToken}\" while parsing expression \"{expression.FullText}\" at {CurrentPosition}.");
         }
 
-        private BaseClassInvokationSyntaxNode ParseBaseClassInvokation(ExpressionSyntaxNode expression)
+        private ClassInvokationExpressionSyntaxNode ParseBaseClassInvokation(ExpressionSyntaxNode expression)
         {
             if (expression is IdentifierNameExpressionSyntaxNode methodName
                 && !expression.TrailingTrivia.Any())
@@ -443,9 +443,9 @@ namespace Parser.Internal
                 {
                     throw new Exception($"Base class name cannot be empty.");
                 }
-                return Factory.BaseClassInvokationSyntax(methodName, atToken, baseClassNameWithArguments);
+                return Factory.ClassInvokationExpressionSyntax(methodName, atToken, baseClassNameWithArguments);
             }
-            if (expression is MemberAccessSyntaxNode memberAccess
+            if (expression is MemberAccessExpressionSyntaxNode memberAccess
                 && !expression.TrailingTrivia.Any())
             {
                 var atToken = EatToken();
@@ -454,7 +454,7 @@ namespace Parser.Internal
                 {
                     throw new Exception($"Base class name cannot be empty.");
                 }
-                return Factory.BaseClassInvokationSyntax(memberAccess, atToken, baseClassNameWithArguments);
+                return Factory.ClassInvokationExpressionSyntax(memberAccess, atToken, baseClassNameWithArguments);
             }
             throw new ParsingException($"Unexpected token \"{CurrentToken}\" at {CurrentPosition}.");
         }
@@ -474,7 +474,7 @@ namespace Parser.Internal
                     throw new Exception("Indirect member invokation cannot be empty.");
                 }
                 var closingBracket = EatToken(TokenKind.CloseParenthesisToken);
-                return Factory.IndirectMemberAccessSyntax(
+                return Factory.IndirectMemberAccessExpressionSyntax(
                     openingBracket,
                     indirectMember,
                     closingBracket);
@@ -920,7 +920,7 @@ namespace Parser.Internal
             throw new ParsingException($"Unexpected token {CurrentToken} while parsing method declaration at {CurrentPosition}.");
         }
 
-        private MethodDefinitionSyntaxNode ParseMethodDefinition()
+        private ConcreteMethodDeclarationSyntaxNode ParseMethodDefinition()
         {
             var functionKeyword = EatIdentifier("function");
             var outputDescription = ParseFunctionOutputDescription();
@@ -929,7 +929,7 @@ namespace Parser.Internal
             var commas = ParseOptionalCommas();
             var body = ParseStatementList();
             var endKeyword = ParseEndKeyword();
-            return Factory.MethodDefinitionSyntax(
+            return Factory.ConcreteMethodDeclarationSyntax(
                 functionKeyword,
                 outputDescription,
                 name,

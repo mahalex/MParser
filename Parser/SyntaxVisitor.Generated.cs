@@ -118,22 +118,22 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitNumberLiteral(NumberLiteralSyntaxNode node)
+        public virtual void VisitNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitStringLiteral(StringLiteralSyntaxNode node)
+        public virtual void VisitStringLiteralExpression(StringLiteralExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitDoubleQuotedStringLiteral(DoubleQuotedStringLiteralSyntaxNode node)
+        public virtual void VisitDoubleQuotedStringLiteralExpression(DoubleQuotedStringLiteralExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitUnquotedStringLiteral(UnquotedStringLiteralSyntaxNode node)
+        public virtual void VisitUnquotedStringLiteralExpression(UnquotedStringLiteralExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
@@ -163,17 +163,17 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitMemberAccess(MemberAccessSyntaxNode node)
+        public virtual void VisitMemberAccessExpression(MemberAccessExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitUnaryPostixOperationExpression(UnaryPostixOperationExpressionSyntaxNode node)
+        public virtual void VisitUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
 
-        public virtual void VisitIndirectMemberAccess(IndirectMemberAccessSyntaxNode node)
+        public virtual void VisitIndirectMemberAccessExpression(IndirectMemberAccessExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
@@ -183,7 +183,7 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitBaseClassInvokation(BaseClassInvokationSyntaxNode node)
+        public virtual void VisitClassInvokationExpression(ClassInvokationExpressionSyntaxNode node)
         {
             DefaultVisit(node);
         }
@@ -203,7 +203,7 @@ namespace Parser
             DefaultVisit(node);
         }
 
-        public virtual void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public virtual void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             DefaultVisit(node);
         }

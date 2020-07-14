@@ -1,4 +1,5 @@
-﻿using Parser.Internal;
+﻿using Parser.Binding;
+using Parser.Internal;
 using Parser.MFunctions;
 using Parser.Objects;
 using System;
@@ -10,15 +11,15 @@ namespace Parser
 {
     internal class Evaluator
     {
-        private readonly SyntaxTree _syntaxTree;
+        private readonly BoundProgram _program;
         private readonly CompilationContext _context;
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
         private bool _insideFunction = false;
         private readonly Stack<EvaluationScope> _scopeStack = new Stack<EvaluationScope>();
 
-        public Evaluator(SyntaxTree syntaxTree, CompilationContext context)
+        public Evaluator(BoundProgram program, CompilationContext context)
         {
-            _syntaxTree = syntaxTree;
+            _program = program;
             _context = context;
             var outerScope = new EvaluationScope();
             _scopeStack.Push(outerScope);
@@ -26,209 +27,204 @@ namespace Parser
 
         internal EvaluationResult Evaluate()
         {
-            var result = EvaluateFile(_syntaxTree.Root);
+            var result = EvaluateFile(_program.Root);
             return new EvaluationResult(result, _diagnostics.ToImmutableArray());
         }
 
-        private MObject? EvaluateFile(FileSyntaxNode root)
+        private MObject? EvaluateFile(BoundFile root)
         {
             MObject? lastResult = null;
-            foreach (var nodeOrToken in root.StatementList)
+            foreach (var statement in root.Statements)
             {
-                if (nodeOrToken.IsNode)
-                {
-                    var statement = (StatementSyntaxNode)nodeOrToken.AsNode()!;
-                    lastResult = EvaluateStatement(statement) ?? lastResult;
-                }
+                lastResult = EvaluateStatement(statement) ?? lastResult;
             }
 
             return lastResult;
         }
 
-        private MObject? EvaluateStatement(StatementSyntaxNode statement)
+        private MObject? EvaluateStatement(BoundStatement node)
         {
-            return statement.Kind switch
+            return node.Kind switch
             {
-                TokenKind.AbstractMethodDeclaration =>
-                    EvaluateAbstractMethodDeclaration((AbstractMethodDeclarationSyntaxNode)statement),
-                TokenKind.ClassDeclaration =>
-                    EvaluateClassDeclaration((ClassDeclarationSyntaxNode)statement),
-                TokenKind.EmptyStatement =>
-                    EvaluateEmptyStatement((EmptyStatementSyntaxNode)statement),
-                TokenKind.ExpressionStatement =>
-                    EvaluateExpressionStatement((ExpressionStatementSyntaxNode)statement),
-                TokenKind.ForStatement =>
-                    EvaluateForStatement((ForStatementSyntaxNode)statement),
-                TokenKind.FunctionDeclaration =>
-                    EvaluateFunctionDeclaration((FunctionDeclarationSyntaxNode)statement),
-                TokenKind.IfStatement =>
-                    EvaluateIfStatement((IfStatementSyntaxNode)statement),
-                TokenKind.ConcreteMethodDeclaration =>
-                    EvaluateMethodDefinition((MethodDefinitionSyntaxNode)statement),
-                TokenKind.SwitchStatement =>
-                    EvaluateSwitchStatement((SwitchStatementSyntaxNode)statement),
-                TokenKind.TryCatchStatement =>
-                    EvaluateTryCatchStatement((TryCatchStatementSyntaxNode)statement),
-                TokenKind.WhileStatement =>
-                    EvaluateWhileStatement((WhileStatementSyntaxNode)statement),
-                _ => throw new NotImplementedException($"Invalid statement kind '{statement.Kind}'."),
+                BoundNodeKind.AbstractMethodDeclaration =>
+                    EvaluateAbstractMethodDeclaration((BoundAbstractMethodDeclaration)node),
+                BoundNodeKind.ClassDeclaration =>
+                    EvaluateClassDeclaration((BoundClassDeclaration)node),
+                BoundNodeKind.EmptyStatement =>
+                    EvaluateEmptyStatement((BoundEmptyStatement)node),
+                BoundNodeKind.ExpressionStatement =>
+                    EvaluateExpressionStatement((BoundExpressionStatement)node),
+                BoundNodeKind.ForStatement =>
+                    EvaluateForStatement((BoundForStatement)node),
+                BoundNodeKind.FunctionDeclaration =>
+                    EvaluateFunctionDeclaration((BoundFunctionDeclaration)node),
+                BoundNodeKind.IfStatement =>
+                    EvaluateIfStatement((BoundIfStatement)node),
+                BoundNodeKind.ConcreteMethodDeclaration =>
+                    EvaluateMethodDefinition((BoundConcreteMethodDeclaration)node),
+                BoundNodeKind.SwitchStatement =>
+                    EvaluateSwitchStatement((BoundSwitchStatement)node),
+                BoundNodeKind.TryCatchStatement =>
+                    EvaluateTryCatchStatement((BoundTryCatchStatement)node),
+                BoundNodeKind.WhileStatement =>
+                    EvaluateWhileStatement((BoundWhileStatement)node),
+                _ => throw new NotImplementedException($"Invalid statement kind '{node.Kind}'."),
             };
         }
 
-        private MObject? EvaluateClassDeclaration(ClassDeclarationSyntaxNode statement)
+        private MObject? EvaluateClassDeclaration(BoundClassDeclaration node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateEmptyStatement(EmptyStatementSyntaxNode statement)
+        private MObject? EvaluateEmptyStatement(BoundEmptyStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateTryCatchStatement(TryCatchStatementSyntaxNode statement)
+        private MObject? EvaluateTryCatchStatement(BoundTryCatchStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateForStatement(ForStatementSyntaxNode statement)
+        private MObject? EvaluateForStatement(BoundForStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateIfStatement(IfStatementSyntaxNode statement)
+        private MObject? EvaluateIfStatement(BoundIfStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateWhileStatement(WhileStatementSyntaxNode statement)
+        private MObject? EvaluateWhileStatement(BoundWhileStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateSwitchStatement(SwitchStatementSyntaxNode statement)
+        private MObject? EvaluateSwitchStatement(BoundSwitchStatement node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateFunctionDeclaration(FunctionDeclarationSyntaxNode statement)
+        private MObject? EvaluateFunctionDeclaration(BoundFunctionDeclaration node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateAbstractMethodDeclaration(AbstractMethodDeclarationSyntaxNode statement)
+        private MObject? EvaluateAbstractMethodDeclaration(BoundAbstractMethodDeclaration node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateMethodDefinition(MethodDefinitionSyntaxNode statement)
+        private MObject? EvaluateMethodDefinition(BoundConcreteMethodDeclaration node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateExpressionStatement(ExpressionStatementSyntaxNode statement)
+        private MObject? EvaluateExpressionStatement(BoundExpressionStatement node)
         {
-            return EvaluateExpression(statement.Expression);
+            return EvaluateExpression(node.Expression);
         }
 
-        private MObject? EvaluateExpression(ExpressionSyntaxNode expression)
+        private MObject? EvaluateExpression(BoundExpression node)
         {
-            return expression.Kind switch
+            return node.Kind switch
             {
-                TokenKind.ArrayLiteralExpression =>
-                    EvaluateArrayLiteralExpression((ArrayLiteralExpressionSyntaxNode)expression),
-                TokenKind.AssignmentExpression =>
-                    EvaluateAssignmentExpression((AssignmentExpressionSyntaxNode)expression),
-                TokenKind.BinaryOperationExpression =>
-                    EvaluateBinaryOperation((BinaryOperationExpressionSyntaxNode)expression),
-                TokenKind.CellArrayElementAccessExpression =>
-                    EvaluateCellArrayElementAccess((CellArrayElementAccessExpressionSyntaxNode)expression),
-                TokenKind.CellArrayLiteralExpression =>
-                    EvaluateCellArrayLiteralExpression((CellArrayLiteralExpressionSyntaxNode)expression),
-                TokenKind.ClassInvokationExpression =>
-                    EvaluateClassInvokation((BaseClassInvokationSyntaxNode)expression),
-                TokenKind.CommandExpression =>
-                    EvaluateCommand((CommandExpressionSyntaxNode)expression),
-                TokenKind.CompoundNameExpression =>
-                    EvaluateCompoundName((CompoundNameExpressionSyntaxNode)expression),
-                TokenKind.DoubleQuotedStringLiteralExpression =>
-                    EvaluateDoubleQuotedStringLiteralExpression((DoubleQuotedStringLiteralSyntaxNode)expression),
-                TokenKind.EmptyExpression =>
-                    EvaluateEmptyExpression((EmptyExpressionSyntaxNode)expression),
-                TokenKind.FunctionCallExpression =>
-                    EvaluateFunctionCall((FunctionCallExpressionSyntaxNode)expression),
-                TokenKind.IdentifierNameExpression =>
-                    EvaluateIdentifierNameExpression((IdentifierNameExpressionSyntaxNode)expression),
-                TokenKind.IndirectMemberAccessExpression =>
-                    EvaluateIndirectMemberAccess((IndirectMemberAccessSyntaxNode)expression),
-                TokenKind.LambdaExpression =>
-                    EvaluateLambdaExpression((LambdaExpressionSyntaxNode)expression),
-                TokenKind.MemberAccessExpression =>
-                    EvaluateMemberAccess((MemberAccessSyntaxNode)expression),
-                TokenKind.NamedFunctionHandleExpression =>
-                    EvaluateNamedFunctionHandleExpression((NamedFunctionHandleExpressionSyntaxNode)expression),
-                TokenKind.NumberLiteralExpression =>
-                    EvaluateNumberLiteralExpression((NumberLiteralSyntaxNode)expression),
-                TokenKind.ParenthesizedExpression =>
-                    EvaluateParenthesizedExpression((ParenthesizedExpressionSyntaxNode)expression),
-                TokenKind.StringLiteralExpression =>
-                    EvaluateStringLiteralExpression((StringLiteralSyntaxNode)expression),
-                TokenKind.UnaryPrefixOperationExpression =>
-                    EvaluateUnaryPrefixOperationExpression((UnaryPrefixOperationExpressionSyntaxNode)expression),
-                TokenKind.UnaryPostfixOperationExpression =>
-                    EvaluateUnaryPostfixOperationExpression((UnaryPostixOperationExpressionSyntaxNode)expression),
-                TokenKind.UnquotedStringLiteralExpression =>
-                    EvaluateUnquotedStringLiteralExpression((UnquotedStringLiteralSyntaxNode)expression),
-                _ => throw new NotImplementedException($"Invalid expression kind '{expression.Kind}'."),
+                BoundNodeKind.ArrayLiteralExpression =>
+                    EvaluateArrayLiteralExpression((BoundArrayLiteralExpression)node),
+                BoundNodeKind.AssignmentExpression =>
+                    EvaluateAssignmentExpression((BoundAssignmentExpression)node),
+                BoundNodeKind.BinaryOperationExpression =>
+                    EvaluateBinaryOperation((BoundBinaryOperationExpression)node),
+                BoundNodeKind.CellArrayElementAccessExpression =>
+                    EvaluateCellArrayElementAccess((BoundCellArrayElementAccessExpression)node),
+                BoundNodeKind.CellArrayLiteralExpression =>
+                    EvaluateCellArrayLiteralExpression((BoundCellArrayLiteralExpression)node),
+                BoundNodeKind.ClassInvokationExpression =>
+                    EvaluateClassInvokation((BoundClassInvokationExpression)node),
+                BoundNodeKind.CommandExpression =>
+                    EvaluateCommand((BoundCommandExpression)node),
+                BoundNodeKind.CompoundNameExpression =>
+                    EvaluateCompoundName((BoundCompoundNameExpression)node),
+                BoundNodeKind.DoubleQuotedStringLiteralExpression =>
+                    EvaluateDoubleQuotedStringLiteralExpression((BoundDoubleQuotedStringLiteralExpression)node),
+                BoundNodeKind.EmptyExpression =>
+                    EvaluateEmptyExpression((BoundEmptyExpression)node),
+                BoundNodeKind.FunctionCallExpression =>
+                    EvaluateFunctionCall((BoundFunctionCallExpression)node),
+                BoundNodeKind.IdentifierNameExpression =>
+                    EvaluateIdentifierNameExpression((BoundIdentifierNameExpression)node),
+                BoundNodeKind.IndirectMemberAccessExpression =>
+                    EvaluateIndirectMemberAccess((BoundIndirectMemberAccessExpression)node),
+                BoundNodeKind.LambdaExpression =>
+                    EvaluateLambdaExpression((BoundLambdaExpression)node),
+                BoundNodeKind.MemberAccessExpression =>
+                    EvaluateMemberAccess((BoundMemberAccessExpression)node),
+                BoundNodeKind.NamedFunctionHandleExpression =>
+                    EvaluateNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
+                BoundNodeKind.NumberLiteralExpression =>
+                    EvaluateNumberLiteralExpression((BoundNumberLiteralExpression)node),
+                BoundNodeKind.ParenthesizedExpression =>
+                    EvaluateParenthesizedExpression((BoundParenthesizedExpression)node),
+                BoundNodeKind.StringLiteralExpression =>
+                    EvaluateStringLiteralExpression((BoundStringLiteralExpression)node),
+                BoundNodeKind.UnaryPrefixOperationExpression =>
+                    EvaluateUnaryPrefixOperationExpression((BoundUnaryPrefixOperationExpression)node),
+                BoundNodeKind.UnaryPostfixOperationExpression =>
+                    EvaluateUnaryPostfixOperationExpression((BoundUnaryPostfixOperationExpression)node),
+                BoundNodeKind.UnquotedStringLiteralExpression =>
+                    EvaluateUnquotedStringLiteralExpression((BoundUnquotedStringLiteralExpression)node),
+                _ => throw new NotImplementedException($"Invalid expression kind '{node.Kind}'."),
             };
         }
 
-        private MObject? EvaluateParenthesizedExpression(ParenthesizedExpressionSyntaxNode expression)
+        private MObject? EvaluateParenthesizedExpression(BoundParenthesizedExpression node)
         {
-            return EvaluateExpression(expression.Expression);
+            return EvaluateExpression(node.Expression);
         }
 
-        private MObject? EvaluateClassInvokation(BaseClassInvokationSyntaxNode expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MObject? EvaluateCommand(CommandExpressionSyntaxNode expression)
+        private MObject? EvaluateClassInvokation(BoundClassInvokationExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateIndirectMemberAccess(IndirectMemberAccessSyntaxNode expression)
+        private MObject? EvaluateCommand(BoundCommandExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateUnaryPostfixOperationExpression(UnaryPostixOperationExpressionSyntaxNode expression)
+        private MObject? EvaluateIndirectMemberAccess(BoundIndirectMemberAccessExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateMemberAccess(MemberAccessSyntaxNode expression)
+        private MObject? EvaluateUnaryPostfixOperationExpression(BoundUnaryPostfixOperationExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateFunctionCall(FunctionCallExpressionSyntaxNode expression)
+        private MObject? EvaluateMemberAccess(BoundMemberAccessExpression node)
+        {
+            throw new NotImplementedException();
+        }
+
+        private MObject? EvaluateFunctionCall(BoundFunctionCallExpression node)
         {
             var arguments = new List<MObject>();
-            var nodes = expression.Nodes.Where(n => n.IsNode).Select(n => (ExpressionSyntaxNode)n.AsNode()!);
             var allGood = true;
-            foreach (var node in nodes)
+            foreach (var argument in node.Arguments)
             {
-                var argument = EvaluateExpression(node);
+                var evaluatedArgument = EvaluateExpression(argument);
                 if (argument is null)
                 {
                     _diagnostics.ReportCannotEvaluateExpression(
-                        new TextSpan(node.Position, node.FullWidth));
+                        new TextSpan(argument.Syntax.Position, argument.Syntax.FullWidth));
                     allGood = false;
                 }
                 else
                 {
-                    arguments.Add(argument);
+                    arguments.Add(evaluatedArgument);
                 }
 
             }
@@ -237,7 +233,7 @@ namespace Parser
                 return null;
             }
 
-            var function = GetFunctionSymbol(expression.FunctionName);
+            var function = GetFunctionSymbol(node.Name);
             if (function.Name == "disp")
             {
                 return EvaluateDisp(arguments);
@@ -256,128 +252,126 @@ namespace Parser
             }
 
             Console.WriteLine(arguments[0]);
-            return null;
+            return arguments[0];
         }
 
-        private FunctionSymbol GetFunctionSymbol(ExpressionSyntaxNode functionName)
+        private FunctionSymbol GetFunctionSymbol(BoundExpression functionName)
         {
-            if (functionName.Kind == TokenKind.IdentifierNameExpression)
+            if (functionName.Kind == BoundNodeKind.IdentifierNameExpression)
             {
-                return new FunctionSymbol(((IdentifierNameExpressionSyntaxNode)functionName).Text);
+                return new FunctionSymbol(((BoundIdentifierNameExpression)functionName).Name);
             }
 
-            throw new NotImplementedException($"Unknown function symbol '{functionName.Text}'.");
+            throw new NotImplementedException($"Unknown function symbol '{functionName.Syntax.Text}'.");
         }
 
-        private MObject? EvaluateCellArrayElementAccess(CellArrayElementAccessExpressionSyntaxNode expression)
+        private MObject? EvaluateCellArrayElementAccess(BoundCellArrayElementAccessExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateCellArrayLiteralExpression(CellArrayLiteralExpressionSyntaxNode expression)
+        private MObject? EvaluateCellArrayLiteralExpression(BoundCellArrayLiteralExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateArrayLiteralExpression(ArrayLiteralExpressionSyntaxNode expression)
+        private MObject? EvaluateArrayLiteralExpression(BoundArrayLiteralExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateUnquotedStringLiteralExpression(UnquotedStringLiteralSyntaxNode expression)
+        private MObject? EvaluateUnquotedStringLiteralExpression(BoundUnquotedStringLiteralExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateDoubleQuotedStringLiteralExpression(DoubleQuotedStringLiteralSyntaxNode expression)
+        private MObject? EvaluateDoubleQuotedStringLiteralExpression(BoundDoubleQuotedStringLiteralExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateStringLiteralExpression(StringLiteralSyntaxNode expression)
+        private MObject? EvaluateStringLiteralExpression(BoundStringLiteralExpression node)
         {
-            return expression.StringToken.Value switch
+            return node.Value switch
             {
                 string s => MObject.CreateCharArray(s.ToCharArray()),
                 _ => null,
             };
         }
 
-        private MObject? EvaluateNumberLiteralExpression(NumberLiteralSyntaxNode expression)
+        private MObject? EvaluateNumberLiteralExpression(BoundNumberLiteralExpression node)
         {
-            return expression.Number.Value is double value
-                ? MObject.CreateDoubleNumber(value)
-                : null;
+            return MObject.CreateDoubleNumber(node.Value);
         }
 
-        private MObject? EvaluateIdentifierNameExpression(IdentifierNameExpressionSyntaxNode expression)
+        private MObject? EvaluateIdentifierNameExpression(BoundIdentifierNameExpression node)
         {
-            var variableName = expression.Name.Text;
+            var variableName = node.Name;
             var maybeValue = GetVariableValue(variableName);
             if (maybeValue is null)
             {
                 _diagnostics.ReportVariableNotFound(
-                    new TextSpan(expression.Name.Position, expression.Name.Text.Length),
+                    new TextSpan(node.Syntax.Position, node.Syntax.FullWidth),
                     variableName);
             }
 
             return maybeValue;
         }
 
-        private MObject? EvaluateBinaryOperation(BinaryOperationExpressionSyntaxNode expression)
+        private MObject? EvaluateBinaryOperation(BoundBinaryOperationExpression node)
         {
-            var left = EvaluateExpression(expression.Lhs);
+            var left = EvaluateExpression(node.Left);
             if (left is null)
             {
                 return null;
             }
 
-            var right = EvaluateExpression(expression.Rhs);
+            var right = EvaluateExpression(node.Right);
             if (right is null)
             {
                 return null;
             }
 
-            return expression.Operation.Kind switch
+            return node.Op.Kind switch
             {
-                TokenKind.PlusToken => MOperations.Plus(left, right),
-                TokenKind.MinusToken => MOperations.Minus(left, right),
-                TokenKind.StarToken => MOperations.Star(left, right),
-                TokenKind.SlashToken => MOperations.Slash(left, right),
-                _ => throw new NotImplementedException($"Binary operation {expression.Operation.Kind} is not implemented."),
+                BoundBinaryOperatorKind.Plus => MOperations.Plus(left, right),
+                BoundBinaryOperatorKind.Minus => MOperations.Minus(left, right),
+                BoundBinaryOperatorKind.Star => MOperations.Star(left, right),
+                BoundBinaryOperatorKind.Slash => MOperations.Slash(left, right),
+                _ => throw new NotImplementedException($"Binary operation {node.Op.Kind} is not implemented."),
             };
         }
 
-        private MObject? EvaluateCompoundName(CompoundNameExpressionSyntaxNode expression)
+        private MObject? EvaluateCompoundName(BoundCompoundNameExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateUnaryPrefixOperationExpression(UnaryPrefixOperationExpressionSyntaxNode expression)
+        private MObject? EvaluateUnaryPrefixOperationExpression(BoundUnaryPrefixOperationExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateEmptyExpression(EmptyExpressionSyntaxNode expression)
+        private MObject? EvaluateEmptyExpression(BoundEmptyExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateAssignmentExpression(AssignmentExpressionSyntaxNode expression)
+        private MObject? EvaluateAssignmentExpression(BoundAssignmentExpression node)
         {
-            var rightValue = EvaluateExpression(expression.Rhs);
+            var rightValue = EvaluateExpression(node.Right);
             if (rightValue is null)
             {
                 _diagnostics.ReportCannotEvaluateExpression(
-                    new TextSpan(expression.Rhs.Position, expression.Rhs.Position + expression.Rhs.FullWidth));
+                    new TextSpan(node.Right.Syntax.Position, node.Right.Syntax.Position + node.Right.Syntax.FullWidth));
                 return null;
             }
 
-            var left = expression.Lhs;
-            if (left.Kind == TokenKind.IdentifierNameExpression)
+            var left = node.Left;
+            if (left.Kind == BoundNodeKind.IdentifierNameExpression)
             {
-                var leftIdentifier = (IdentifierNameExpressionSyntaxNode)left;
-                var variableName = leftIdentifier.Name.Text;
+                var leftIdentifier = (BoundIdentifierNameExpression)left;
+                var variableName = leftIdentifier.Name;
                 SetVariableValue(variableName, rightValue);
                 return rightValue;
             }
@@ -428,12 +422,12 @@ namespace Parser
             }
         }
 
-        private MObject? EvaluateLambdaExpression(LambdaExpressionSyntaxNode expression)
+        private MObject? EvaluateLambdaExpression(BoundLambdaExpression node)
         {
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateNamedFunctionHandleExpression(NamedFunctionHandleExpressionSyntaxNode expression)
+        private MObject? EvaluateNamedFunctionHandleExpression(BoundNamedFunctionHandleExpression node)
         {
             throw new NotImplementedException();
         }

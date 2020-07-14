@@ -186,7 +186,7 @@ namespace ProjectConsole
             OutputKeyword(node.EndKeyword);
         }
 
-        public override void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public override void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             OutputKeyword(node.FunctionKeyword);
             Visit(node.OutputDescription);
@@ -306,12 +306,12 @@ namespace ProjectConsole
             OutputControlKeyword(node.EndKeyword);
         }
 
-        public override void VisitUnquotedStringLiteral(UnquotedStringLiteralSyntaxNode node)
+        public override void VisitUnquotedStringLiteralExpression(UnquotedStringLiteralExpressionSyntaxNode node)
         {
             OutputUnquotedStringLiteral(node.StringToken);
         }
 
-        public override void VisitStringLiteral(StringLiteralSyntaxNode node)
+        public override void VisitStringLiteralExpression(StringLiteralExpressionSyntaxNode node)
         {
             OutputStringLiteral(node.StringToken);
         }
@@ -359,7 +359,7 @@ namespace ProjectConsole
             Visit(node.Arguments);
         }
 
-        public override void VisitNumberLiteral(NumberLiteralSyntaxNode node)
+        public override void VisitNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             OutputNumberLiteral(node.Number);
         }
@@ -370,13 +370,13 @@ namespace ProjectConsole
             Visit(node.Operand);
         }
 
-        public override void VisitUnaryPostixOperationExpression(UnaryPostixOperationExpressionSyntaxNode node)
+        public override void VisitUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)
         {
             Visit(node.Operand);
             OutputOperator(node.Operation);
         }
 
-        public override void VisitBaseClassInvokation(BaseClassInvokationSyntaxNode node)
+        public override void VisitClassInvokationExpression(ClassInvokationExpressionSyntaxNode node)
         {
             Visit(node.MethodName);
             OutputOperator(node.AtSign);
@@ -415,7 +415,7 @@ namespace ProjectConsole
             Visit(node.Nodes);
         }
 
-        public override void VisitDoubleQuotedStringLiteral(DoubleQuotedStringLiteralSyntaxNode node)
+        public override void VisitDoubleQuotedStringLiteralExpression(DoubleQuotedStringLiteralExpressionSyntaxNode node)
         {
             OutputStringLiteral(node.StringToken);
         }
@@ -472,7 +472,7 @@ namespace ProjectConsole
             OutputOperator(node.AssignmentSign);
         }
 
-        public override void VisitIndirectMemberAccess(IndirectMemberAccessSyntaxNode node)
+        public override void VisitIndirectMemberAccessExpression(IndirectMemberAccessExpressionSyntaxNode node)
         {
             OutputBracket(node.OpeningBracket);
             Visit(node.Expression);
@@ -492,7 +492,7 @@ namespace ProjectConsole
             Visit(node.FunctionName);
         }
 
-        public override void VisitMemberAccess(MemberAccessSyntaxNode node)
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntaxNode node)
         {
             Visit(node.LeftOperand);
             OutputOperator(node.Dot);

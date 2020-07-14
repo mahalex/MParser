@@ -115,16 +115,16 @@
     <Class Name="IdentifierNameExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="IdentifierNameExpression">
         <Field Type="SyntaxToken" Name="name" />
     </Class>
-    <Class Name="NumberLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="NumberLiteralExpression">
+    <Class Name="NumberLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="NumberLiteralExpression">
         <Field Type="SyntaxToken" Name="number" />
     </Class>
-    <Class Name="StringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="StringLiteralExpression">
+    <Class Name="StringLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="StringLiteralExpression">
         <Field Type="SyntaxToken" Name="stringToken" />
     </Class>
-    <Class Name="DoubleQuotedStringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="DoubleQuotedStringLiteralExpression">
+    <Class Name="DoubleQuotedStringLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="DoubleQuotedStringLiteralExpression">
         <Field Type="SyntaxToken" Name="stringToken" />
     </Class>
-    <Class Name="UnquotedStringLiteralSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnquotedStringLiteralExpression">
+    <Class Name="UnquotedStringLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnquotedStringLiteralExpression">
         <Field Type="SyntaxToken" Name="stringToken" />
     </Class>
     <Class Name="ArrayLiteralExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ArrayLiteralExpression">
@@ -154,25 +154,25 @@
         <Field Type="SyntaxList" Name="nodes" />
         <Field Type="SyntaxToken" Name="closingBracket" />
     </Class>
-    <Class Name="MemberAccessSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="MemberAccessExpression">
+    <Class Name="MemberAccessExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="MemberAccessExpression">
         <Field Type="SyntaxNode" Name="leftOperand" />
         <Field Type="SyntaxToken" Name="dot" />
         <Field Type="SyntaxNode" Name="rightOperand" />
     </Class>
-    <Class Name="UnaryPostixOperationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnaryPostfixOperationExpression">
+    <Class Name="UnaryPostfixOperationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="UnaryPostfixOperationExpression">
         <Field Type="ExpressionSyntaxNode" Name="operand" />
         <Field Type="SyntaxToken" Name="operation" />
     </Class>
-    <Class Name="IndirectMemberAccessSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="IndirectMemberAccessExpression">
+    <Class Name="IndirectMemberAccessExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="IndirectMemberAccessExpression">
         <Field Type="SyntaxToken" Name="openingBracket" />
         <Field Type="ExpressionSyntaxNode" Name="expression" />
         <Field Type="SyntaxToken" Name="closingBracket" />
     </Class>
     <Class Name="CommandExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="CommandExpression">
         <Field Type="SyntaxToken" Name="commandName" />
-        <Field Type="SyntaxList&lt;UnquotedStringLiteralSyntaxNode&gt;" Name="arguments" />
+        <Field Type="SyntaxList&lt;UnquotedStringLiteralExpressionSyntaxNode&gt;" Name="arguments" />
     </Class>
-    <Class Name="BaseClassInvokationSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ClassInvokationExpression">
+    <Class Name="ClassInvokationExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="ClassInvokationExpression">
         <Field Type="ExpressionSyntaxNode" Name="methodName" />
         <Field Type="SyntaxToken" Name="atSign" />
         <Field Type="ExpressionSyntaxNode" Name="baseClassNameAndArguments" />
@@ -190,7 +190,7 @@
         <Field Type="SyntaxList" Name="nodes" />
         <Field Type="SyntaxToken" Name="closingBracket" />
     </Class>
-    <Class Name="MethodDefinitionSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="ConcreteMethodDeclaration">
+    <Class Name="ConcreteMethodDeclarationSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="ConcreteMethodDeclaration">
         <Field Type="SyntaxToken" Name="functionKeyword" />
         <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" Nullable="true" />
         <Field Type="CompoundNameExpressionSyntaxNode" Name="name" />
