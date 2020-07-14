@@ -13,6 +13,7 @@ namespace Parser.Internal
             public string Text { get; set; } = "";
             public string StringValue { get; set; } = "";
             public double DoubleValue { get; set; }
+            public bool ImaginaryFlag { get; set; }
         }
 
         private ITextWindow Window { get; }
@@ -358,18 +359,46 @@ namespace Parser.Internal
 
             if (success)
             {
+                tokenInfo.Kind = TokenKind.NumberLiteralToken;
+                Range rangeToParse;
                 if (Window.PeekChar(n) == 'i' || Window.PeekChar(n) == 'j')
                 {
+                    tokenInfo.ImaginaryFlag = true;
                     n++;
+                    rangeToParse = ..^1;
                 }
-                var s = Window.GetAndConsumeChars(n);
+                else
+                {
+                    rangeToParse = ..;
+                }
 
-                tokenInfo.Kind = TokenKind.NumberLiteralToken;
+                var s = Window.GetAndConsumeChars(n);
                 tokenInfo.Text = s;
-                return true;
+                var maybeValue = ParseDoubleValue(s[rangeToParse]);
+                if (maybeValue is double value)
+                {
+                    tokenInfo.DoubleValue = value;
+                    return true;
+                }
+                else
+                {
+                    tokenInfo.DoubleValue = double.NaN;
+                    return true;
+                }
             }
 
             return false;
+        }
+
+        private double? ParseDoubleValue(string s)
+        {
+            if (double.TryParse(s, out var doubleValue))
+            {
+                return doubleValue;
+            } else
+            {
+                return null;
+            }
         }
 
         private bool ContinueLexingGeneralStringLiteral(ref TokenInfo tokenInfo, char quote)

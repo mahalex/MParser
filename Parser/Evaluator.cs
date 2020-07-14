@@ -1,21 +1,31 @@
 ﻿using Parser.Internal;
+using Parser.MFunctions;
 using Parser.Objects;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Parser
 {
+    internal class EvaluationScope
+    {
+        public Dictionary<string, MObject> Variables { get; } = new Dictionary<string, MObject>();
+    }
+
     internal class Evaluator
     {
-        private SyntaxTree _syntaxTree;
-        private CompilationContext _context;
-        private DiagnosticsBag _diagnostics;
+        private readonly SyntaxTree _syntaxTree;
+        private readonly CompilationContext _context;
+        private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
+        private bool _insideFunction = false;
+        private readonly Stack<EvaluationScope> _scopeStack = new Stack<EvaluationScope>();
 
         public Evaluator(SyntaxTree syntaxTree, CompilationContext context)
         {
             _syntaxTree = syntaxTree;
             _context = context;
-            _diagnostics = new DiagnosticsBag();
+            var outerScope = new EvaluationScope();
+            _scopeStack.Push(outerScope);
         }
 
         internal EvaluationResult Evaluate()
@@ -178,7 +188,7 @@ namespace Parser
 
         private MObject? EvaluateParenthesizedExpression(ParenthesizedExpressionSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            return EvaluateExpression(expression.Expression);
         }
 
         private MObject? EvaluateClassInvokation(BaseClassInvokationSyntaxNode expression)
@@ -243,17 +253,47 @@ namespace Parser
 
         private MObject? EvaluateNumberLiteralExpression(NumberLiteralSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            return expression.Number.Value is double value
+                ? MObject.CreateDoubleNumber(value)
+                : null;
         }
 
         private MObject? EvaluateIdentifierNameExpression(IdentifierNameExpressionSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            var variableName = expression.Name.Text;
+            var maybeValue = GetVariableValue(variableName);
+            if (maybeValue is null)
+            {
+                _diagnostics.ReportVariableNotFound(
+                    new TextSpan(expression.Name.Position, expression.Name.Text.Length),
+                    variableName);
+            }
+
+            return maybeValue;
         }
 
         private MObject? EvaluateBinaryOperation(BinaryOperationExpressionSyntaxNode expression)
         {
-            throw new NotImplementedException();
+            var left = EvaluateExpression(expression.Lhs);
+            if (left is null)
+            {
+                return null;
+            }
+
+            var right = EvaluateExpression(expression.Rhs);
+            if (right is null)
+            {
+                return null;
+            }
+
+            return expression.Operation.Kind switch
+            {
+                TokenKind.PlusToken => MOperations.Plus(left, right),
+                TokenKind.MinusToken => MOperations.Minus(left, right),
+                TokenKind.StarToken => MOperations.Star(left, right),
+                TokenKind.SlashToken => MOperations.Slash(left, right),
+                _ => throw new NotImplementedException($"Binary operation {expression.Operation.Kind} is not implemented."),
+            };
         }
 
         private MObject? EvaluateCompoundName(CompoundNameExpressionSyntaxNode expression)
@@ -273,7 +313,67 @@ namespace Parser
 
         private MObject? EvaluateAssignmentExpression(AssignmentExpressionSyntaxNode expression)
         {
+            var rightValue = EvaluateExpression(expression.Rhs);
+            if (rightValue is null)
+            {
+                _diagnostics.ReportCannotEvaluateExpression(
+                    new TextSpan(expression.Rhs.Position, expression.Rhs.Position + expression.Rhs.FullWidth));
+                return null;
+            }
+
+            var left = expression.Lhs;
+            if (left.Kind == TokenKind.IdentifierNameExpression)
+            {
+                var leftIdentifier = (IdentifierNameExpressionSyntaxNode)left;
+                var variableName = leftIdentifier.Name.Text;
+                SetVariableValue(variableName, rightValue);
+                return rightValue;
+            }
+
             throw new NotImplementedException();
+        }
+
+        private MObject? GetVariableValue(string name)
+        {
+            if (_insideFunction)
+            {
+                if (_context.Variables.TryGetValue(name, out var globalValue))
+                {
+                    return globalValue;
+                }
+
+                var currentScope = _scopeStack.Peek();
+                return currentScope.Variables.TryGetValue(name, out var localValue) ? globalValue : null;
+            }
+            else
+            {
+                if (_context.Variables.TryGetValue(name, out var globalValue))
+                {
+                    return globalValue;
+                }
+
+                return null;
+            }
+        }
+
+        private void SetVariableValue(string name, MObject value)
+        {
+            if (_insideFunction)
+            {
+                if (_context.Variables.ContainsKey(name))
+                {
+                    _context.Variables[name] = value;
+                }
+                else
+                {
+                    var currentScope = _scopeStack.Peek();
+                    currentScope.Variables[name] = value;
+                }
+            }
+            else
+            {
+                _context.Variables[name] = value;
+            }
         }
 
         private MObject? EvaluateLambdaExpression(LambdaExpressionSyntaxNode expression)

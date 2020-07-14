@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,6 +68,11 @@ namespace Parser.Internal
             Report(span, "Unmatched open parenthesis by the end of file.");
         }
 
+        internal void ReportCannotEvaluateExpression(TextSpan span)
+        {
+            Report(span, $"Cannot evaluate expression.");
+        }
+
         public IEnumerator<Diagnostic> GetEnumerator()
         {
             return _diagnostics.GetEnumerator();
@@ -77,5 +83,9 @@ namespace Parser.Internal
             return GetEnumerator();
         }
 
+        internal void ReportVariableNotFound(TextSpan span, string variableName)
+        {
+            Report(span, $"Variable '{variableName}' not found.");
+        }
     }
 }

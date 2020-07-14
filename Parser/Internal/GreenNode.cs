@@ -43,6 +43,11 @@ namespace Parser.Internal
 
         internal abstract Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position);
 
+        public virtual object? GetValue()
+        {
+            return null;
+        }
+
         protected int _fullWidth;
 
         public int FullWidth => _fullWidth;

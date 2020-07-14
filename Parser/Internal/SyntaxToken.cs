@@ -116,6 +116,7 @@ namespace Parser.Internal
                 _fullWidth = text?.Length ?? 0;
             }
 
+
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
             {
                 writer.Write(_text);
@@ -126,7 +127,9 @@ namespace Parser.Internal
                 return new SyntaxTokenWithValue<T>(Kind, _text, _value, diagnostics);
             }
 
-            public T Value => _value;
+            public T TypedValue => _value;
+
+            public override object? Value => TypedValue;
         }
 
         internal class SyntaxTokenWithValueAndTrivia<T> : SyntaxTokenWithValue<T>
@@ -181,7 +184,7 @@ namespace Parser.Internal
 
             public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
             {
-                return new SyntaxTokenWithValueAndTrivia<T>(Kind, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
+                return new SyntaxTokenWithValueAndTrivia<T>(Kind, _text, TypedValue, LeadingTrivia, TrailingTrivia, diagnostics);
             }
         }
 
@@ -310,6 +313,10 @@ namespace Parser.Internal
         }
 
         internal static SyntaxToken NoneToken => new MissingTokenWithTrivia(TokenKind.None, s_EmptySyntaxTriviaList, s_EmptySyntaxTriviaList);
+
+        public virtual object? Value => null;
+
+        public override object? GetValue() => Value;
 
         public virtual int Width => Text.Length;
 

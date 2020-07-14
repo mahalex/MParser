@@ -36,7 +36,9 @@ namespace Repl
 
         private void Print(string result)
         {
-            Console.Write(result);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(result);
+            Console.ResetColor();
         }
 
         private string Read()
