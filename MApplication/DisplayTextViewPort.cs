@@ -134,12 +134,34 @@ namespace MApplication
                 _ when CursorRelativeLine == Height - 1 =>
                     With(
                         out changed1,
-                        startingLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count) - Height + 1,
-                        cursorAbsoluteLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count)),
+                        startingLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count - 1) - Height + 1,
+                        cursorAbsoluteLine: Math.Min(CursorAbsoluteLine + 1, Text.Lines.Count - 1)),
                 _ => With(
                     out changed1,
                     cursorAbsoluteLine: CursorAbsoluteLine + 1),
             };
+            var result = result1.SnapToLine(out var changed2);
+            needsRedraw = changed1 || changed2;
+            return result;
+        }
+
+        internal DisplayTextViewPort PageDown(out bool needsRedraw)
+        {
+            var result1 = With(
+                out var changed1,
+                startingLine: Math.Min(StartingLine + Height, Text.Lines.Count - 1),
+                cursorAbsoluteLine: Math.Min(CursorAbsoluteLine + Height, Text.Lines.Count - 1));
+            var result = result1.SnapToLine(out var changed2);
+            needsRedraw = changed1 || changed2;
+            return result;
+        }
+
+        internal DisplayTextViewPort PageUp(out bool needsRedraw)
+        {
+            var result1 = With(
+                out var changed1,
+                startingLine: Math.Max(StartingLine - Height, 0),
+                cursorAbsoluteLine: Math.Max(CursorAbsoluteLine - Height, 0));
             var result = result1.SnapToLine(out var changed2);
             needsRedraw = changed1 || changed2;
             return result;

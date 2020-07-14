@@ -47,35 +47,24 @@ namespace MApplication
                 _outputView.MoveCursorTo(viewPort.CursorRelativeColumn, viewPort.CursorRelativeLine);
 
                 var key = Console.ReadKey(intercept: true);
-                switch (key.Key)
+                viewPort = key.Key switch
                 {
-                    case ConsoleKey.LeftArrow:
-                        viewPort = viewPort.CursorLeft(out needsRedraw);
-                        break;
-
-                    case ConsoleKey.RightArrow:
-                        viewPort = viewPort.CursorRight(out needsRedraw);
-                        break;
-
-                    case ConsoleKey.UpArrow:
-                        viewPort = viewPort.CursorUp(out needsRedraw);
-                        break;
-
-                    case ConsoleKey.DownArrow:
-                        viewPort = viewPort.CursorDown(out needsRedraw);
-                        break;
-
-                    case ConsoleKey.Home:
-                        viewPort = viewPort.CursorHome(out needsRedraw);
-                        break;
-
-                    case ConsoleKey.End:
-                        viewPort = viewPort.CursorEnd(out needsRedraw);
-                        break;
+                    ConsoleKey.LeftArrow => viewPort.CursorLeft(out needsRedraw),
+                    ConsoleKey.RightArrow => viewPort.CursorRight(out needsRedraw),
+                    ConsoleKey.UpArrow => viewPort.CursorUp(out needsRedraw),
+                    ConsoleKey.DownArrow => viewPort.CursorDown(out needsRedraw),
+                    ConsoleKey.Home => viewPort.CursorHome(out needsRedraw),
+                    ConsoleKey.End => viewPort.CursorEnd(out needsRedraw),
+                    ConsoleKey.PageUp => viewPort.PageUp(out needsRedraw),
+                    ConsoleKey.PageDown => viewPort.PageDown(out needsRedraw),
+                    _ => viewPort,
+                };
+                if (key.Key == ConsoleKey.Q)
+                {
+                    return;
                 }
             }
         }
-
     }
 
     class Program
