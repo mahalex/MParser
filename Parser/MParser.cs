@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Parser.Internal;
+﻿using Parser.Internal;
 using System.Linq;
 
 namespace Parser
@@ -27,18 +25,4 @@ namespace Parser
             return new SyntaxTree(root, totalDiagnostics);
         }
     }
-
-    public class SyntaxTree
-    {
-        public SyntaxTree(RootSyntaxNode nullRoot, DiagnosticsBag diagnostics)
-        {
-            NullRoot = nullRoot ?? throw new ArgumentNullException(nameof(nullRoot));
-            Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
-        }
-
-        public RootSyntaxNode NullRoot { get; }
-        public FileSyntaxNode Root => NullRoot.File;
-        public DiagnosticsBag Diagnostics { get; }
-    }
-
 }
