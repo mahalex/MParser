@@ -13,7 +13,7 @@ namespace Parser.Internal
             return new BlockStatementSyntaxNode(statements);
         }
 
-        public FunctionDeclarationSyntaxNode FunctionDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
+        public FunctionDeclarationSyntaxNode FunctionDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
         {
             return new FunctionDeclarationSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
         }
@@ -33,32 +33,32 @@ namespace Parser.Internal
             return new SwitchStatementSyntaxNode(switchKeyword, switchExpression, optionalCommas, cases, endKeyword);
         }
 
-        public SwitchCaseSyntaxNode SwitchCaseSyntax(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body)
+        public SwitchCaseSyntaxNode SwitchCaseSyntax(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body)
         {
             return new SwitchCaseSyntaxNode(caseKeyword, caseIdentifier, optionalCommas, body);
         }
 
-        public WhileStatementSyntaxNode WhileStatementSyntax(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword)
+        public WhileStatementSyntaxNode WhileStatementSyntax(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword)
         {
             return new WhileStatementSyntaxNode(whileKeyword, condition, optionalCommas, body, endKeyword);
         }
 
-        public ElseifClause ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body)
+        public ElseifClause ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body)
         {
             return new ElseifClause(elseifKeyword, condition, optionalCommas, body);
         }
 
-        public ElseClause ElseClause(SyntaxToken elseKeyword, BlockStatementSyntaxNode body)
+        public ElseClause ElseClause(SyntaxToken elseKeyword, StatementSyntaxNode body)
         {
             return new ElseClause(elseKeyword, body);
         }
 
-        public IfStatementSyntaxNode IfStatementSyntax(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword)
+        public IfStatementSyntaxNode IfStatementSyntax(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword)
         {
             return new IfStatementSyntaxNode(ifKeyword, condition, optionalCommas, body, elseifClauses, elseClause, endKeyword);
         }
 
-        public ForStatementSyntaxNode ForStatementSyntax(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword)
+        public ForStatementSyntaxNode ForStatementSyntax(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword)
         {
             return new ForStatementSyntaxNode(forKeyword, assignment, optionalCommas, body, endKeyword);
         }
@@ -73,7 +73,7 @@ namespace Parser.Internal
             return new CatchClauseSyntaxNode(catchKeyword, catchBody);
         }
 
-        public TryCatchStatementSyntaxNode TryCatchStatementSyntax(SyntaxToken tryKeyword, BlockStatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword)
+        public TryCatchStatementSyntaxNode TryCatchStatementSyntax(SyntaxToken tryKeyword, StatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword)
         {
             return new TryCatchStatementSyntaxNode(tryKeyword, tryBody, catchClause, endKeyword);
         }
@@ -208,7 +208,7 @@ namespace Parser.Internal
             return new AttributeListSyntaxNode(openingBracket, nodes, closingBracket);
         }
 
-        public ConcreteMethodDeclarationSyntaxNode ConcreteMethodDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
+        public ConcreteMethodDeclarationSyntaxNode ConcreteMethodDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
         {
             return new ConcreteMethodDeclarationSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
         }

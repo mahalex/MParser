@@ -70,14 +70,14 @@ namespace Parser.Binding
         private BoundIfStatement BindIfStatement(IfStatementSyntaxNode node)
         {
             var condition = BindExpression(node.Condition);
-            var body = BindBlockStatement(node.Body);
-            var elseIfClauses = node.ElseifClauses
+            var body = BindStatement(node.Body);
+            var elseifClauses = node.ElseifClauses
                 .Where(n => n.IsNode)
                 .Select(n => (ElseifClause)n.AsNode()!);
-            var builder = ImmutableArray.CreateBuilder<BoundElseIfClause>();
-            foreach (var elseIfClause in elseIfClauses)
+            var builder = ImmutableArray.CreateBuilder<BoundElseifClause>();
+            foreach (var elseifClause in elseifClauses)
             {
-                var clause = BindElseIfClause(elseIfClause);
+                var clause = BindElseifClause(elseifClause);
                 builder.Add(clause);
             }
             var maybeElseClause = node.ElseClause switch
@@ -86,12 +86,12 @@ namespace Parser.Binding
                 _ => null,
             };
 
-            return new BoundIfStatement(node, condition, body, elseIfClauses, maybeElseClause);
+            return new BoundIfStatement(node, condition, body, builder.ToImmutable(), maybeElseClause);
         }
 
         private BoundElseClause BindElseClause(ElseClause node)
         {
-            var body = BindBlockStatement(node.Body);
+            var body = BindStatement(node.Body);
             return new BoundElseClause(node, body);
         }
 
@@ -127,11 +127,11 @@ namespace Parser.Binding
             return builder.ToImmutable();
         }
 
-        private BoundElseIfClause BindElseIfClause(ElseifClause node)
+        private BoundElseifClause BindElseifClause(ElseifClause node)
         {
             var condition = BindExpression(node.Condition);
-            var body = BindBlockStatement(node.Body);
-            return new BoundElseIfClause(node, condition, body);
+            var body = BindStatement(node.Body);
+            return new BoundElseifClause(node, condition, body);
         }
 
         private BoundFunctionDeclaration BindFunctionDeclaration(FunctionDeclarationSyntaxNode node)

@@ -89,9 +89,9 @@ namespace Parser.Internal
         internal readonly SyntaxToken _name;
         internal readonly FunctionInputDescriptionSyntaxNode? _inputDescription;
         internal readonly SyntaxList<SyntaxToken> _commas;
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly StatementSyntaxNode _body;
         internal readonly EndKeywordSyntaxNode? _endKeyword;
-        internal FunctionDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword): base(TokenKind.FunctionDeclaration)
+        internal FunctionDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword): base(TokenKind.FunctionDeclaration)
         {
             Slots = 7;
             this.AdjustWidth(functionKeyword);
@@ -110,7 +110,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal FunctionDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.FunctionDeclaration, diagnostics)
+        internal FunctionDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.FunctionDeclaration, diagnostics)
         {
             Slots = 7;
             this.AdjustWidth(functionKeyword);
@@ -304,8 +304,8 @@ namespace Parser.Internal
         internal readonly SyntaxToken _caseKeyword;
         internal readonly ExpressionSyntaxNode _caseIdentifier;
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
-        internal readonly BlockStatementSyntaxNode _body;
-        internal SwitchCaseSyntaxNode(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body): base(TokenKind.SwitchCase)
+        internal readonly StatementSyntaxNode _body;
+        internal SwitchCaseSyntaxNode(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body): base(TokenKind.SwitchCase)
         {
             Slots = 4;
             this.AdjustWidth(caseKeyword);
@@ -318,7 +318,7 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal SwitchCaseSyntaxNode(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.SwitchCase, diagnostics)
+        internal SwitchCaseSyntaxNode(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.SwitchCase, diagnostics)
         {
             Slots = 4;
             this.AdjustWidth(caseKeyword);
@@ -357,9 +357,9 @@ namespace Parser.Internal
         internal readonly SyntaxToken _whileKeyword;
         internal readonly ExpressionSyntaxNode _condition;
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly StatementSyntaxNode _body;
         internal readonly SyntaxToken _endKeyword;
-        internal WhileStatementSyntaxNode(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword): base(TokenKind.WhileStatement)
+        internal WhileStatementSyntaxNode(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword): base(TokenKind.WhileStatement)
         {
             Slots = 5;
             this.AdjustWidth(whileKeyword);
@@ -374,7 +374,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal WhileStatementSyntaxNode(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.WhileStatement, diagnostics)
+        internal WhileStatementSyntaxNode(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.WhileStatement, diagnostics)
         {
             Slots = 5;
             this.AdjustWidth(whileKeyword);
@@ -415,8 +415,8 @@ namespace Parser.Internal
         internal readonly SyntaxToken _elseifKeyword;
         internal readonly ExpressionSyntaxNode _condition;
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
-        internal readonly BlockStatementSyntaxNode _body;
-        internal ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body): base(TokenKind.ElseifClause)
+        internal readonly StatementSyntaxNode _body;
+        internal ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body): base(TokenKind.ElseifClause)
         {
             Slots = 4;
             this.AdjustWidth(elseifKeyword);
@@ -429,7 +429,7 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.ElseifClause, diagnostics)
+        internal ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.ElseifClause, diagnostics)
         {
             Slots = 4;
             this.AdjustWidth(elseifKeyword);
@@ -466,8 +466,8 @@ namespace Parser.Internal
     internal class ElseClause : SyntaxNode
     {
         internal readonly SyntaxToken _elseKeyword;
-        internal readonly BlockStatementSyntaxNode _body;
-        internal ElseClause(SyntaxToken elseKeyword, BlockStatementSyntaxNode body): base(TokenKind.ElseClause)
+        internal readonly StatementSyntaxNode _body;
+        internal ElseClause(SyntaxToken elseKeyword, StatementSyntaxNode body): base(TokenKind.ElseClause)
         {
             Slots = 2;
             this.AdjustWidth(elseKeyword);
@@ -476,7 +476,7 @@ namespace Parser.Internal
             _body = body;
         }
 
-        internal ElseClause(SyntaxToken elseKeyword, BlockStatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.ElseClause, diagnostics)
+        internal ElseClause(SyntaxToken elseKeyword, StatementSyntaxNode body, TokenDiagnostic[] diagnostics): base(TokenKind.ElseClause, diagnostics)
         {
             Slots = 2;
             this.AdjustWidth(elseKeyword);
@@ -511,11 +511,11 @@ namespace Parser.Internal
         internal readonly SyntaxToken _ifKeyword;
         internal readonly ExpressionSyntaxNode _condition;
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly StatementSyntaxNode _body;
         internal readonly SyntaxList<ElseifClause> _elseifClauses;
         internal readonly ElseClause? _elseClause;
         internal readonly SyntaxToken _endKeyword;
-        internal IfStatementSyntaxNode(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword): base(TokenKind.IfStatement)
+        internal IfStatementSyntaxNode(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword): base(TokenKind.IfStatement)
         {
             Slots = 7;
             this.AdjustWidth(ifKeyword);
@@ -534,7 +534,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal IfStatementSyntaxNode(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.IfStatement, diagnostics)
+        internal IfStatementSyntaxNode(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.IfStatement, diagnostics)
         {
             Slots = 7;
             this.AdjustWidth(ifKeyword);
@@ -579,9 +579,9 @@ namespace Parser.Internal
         internal readonly SyntaxToken _forKeyword;
         internal readonly AssignmentExpressionSyntaxNode _assignment;
         internal readonly SyntaxList<SyntaxToken> _optionalCommas;
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly StatementSyntaxNode _body;
         internal readonly SyntaxToken _endKeyword;
-        internal ForStatementSyntaxNode(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword): base(TokenKind.ForStatement)
+        internal ForStatementSyntaxNode(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword): base(TokenKind.ForStatement)
         {
             Slots = 5;
             this.AdjustWidth(forKeyword);
@@ -596,7 +596,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal ForStatementSyntaxNode(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, BlockStatementSyntaxNode body, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ForStatement, diagnostics)
+        internal ForStatementSyntaxNode(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ForStatement, diagnostics)
         {
             Slots = 5;
             this.AdjustWidth(forKeyword);
@@ -726,10 +726,10 @@ namespace Parser.Internal
     internal class TryCatchStatementSyntaxNode : StatementSyntaxNode
     {
         internal readonly SyntaxToken _tryKeyword;
-        internal readonly BlockStatementSyntaxNode _tryBody;
+        internal readonly StatementSyntaxNode _tryBody;
         internal readonly CatchClauseSyntaxNode? _catchClause;
         internal readonly SyntaxToken _endKeyword;
-        internal TryCatchStatementSyntaxNode(SyntaxToken tryKeyword, BlockStatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword): base(TokenKind.TryCatchStatement)
+        internal TryCatchStatementSyntaxNode(SyntaxToken tryKeyword, StatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword): base(TokenKind.TryCatchStatement)
         {
             Slots = 4;
             this.AdjustWidth(tryKeyword);
@@ -742,7 +742,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal TryCatchStatementSyntaxNode(SyntaxToken tryKeyword, BlockStatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.TryCatchStatement, diagnostics)
+        internal TryCatchStatementSyntaxNode(SyntaxToken tryKeyword, StatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.TryCatchStatement, diagnostics)
         {
             Slots = 4;
             this.AdjustWidth(tryKeyword);
@@ -1916,9 +1916,9 @@ namespace Parser.Internal
         internal readonly CompoundNameExpressionSyntaxNode _name;
         internal readonly FunctionInputDescriptionSyntaxNode? _inputDescription;
         internal readonly SyntaxList<SyntaxToken> _commas;
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly StatementSyntaxNode _body;
         internal readonly EndKeywordSyntaxNode? _endKeyword;
-        internal ConcreteMethodDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword): base(TokenKind.ConcreteMethodDeclaration)
+        internal ConcreteMethodDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword): base(TokenKind.ConcreteMethodDeclaration)
         {
             Slots = 7;
             this.AdjustWidth(functionKeyword);
@@ -1937,7 +1937,7 @@ namespace Parser.Internal
             _endKeyword = endKeyword;
         }
 
-        internal ConcreteMethodDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, BlockStatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ConcreteMethodDeclaration, diagnostics)
+        internal ConcreteMethodDeclarationSyntaxNode(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword, TokenDiagnostic[] diagnostics): base(TokenKind.ConcreteMethodDeclaration, diagnostics)
         {
             Slots = 7;
             this.AdjustWidth(functionKeyword);
