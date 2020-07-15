@@ -8,6 +8,11 @@ namespace Parser
             DefaultVisit(node);
         }
 
+        public virtual void VisitBlockStatement(BlockStatementSyntaxNode node)
+        {
+            DefaultVisit(node);
+        }
+
         public virtual void VisitFunctionDeclaration(FunctionDeclarationSyntaxNode node)
         {
             DefaultVisit(node);

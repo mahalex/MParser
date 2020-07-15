@@ -13,6 +13,7 @@ namespace Parser.Binding
         // Statements
         
         AbstractMethodDeclaration,
+        BlockStatement,
         ClassDeclaration,
         ConcreteMethodDeclaration,
         EmptyStatement,
@@ -144,6 +145,19 @@ namespace Parser.Binding
         public override BoundNodeKind Kind => BoundNodeKind.AbstractMethodDeclaration;
     }
 
+    public class BoundBlockStatement : BoundStatement
+    {
+        public BoundBlockStatement(SyntaxNode syntax, ImmutableArray<BoundStatement> statements)
+            : base(syntax)
+        {
+            Statements = statements;
+        }
+
+        public override BoundNodeKind Kind => BoundNodeKind.BlockStatement;
+
+        public ImmutableArray<BoundStatement> Statements { get; }
+    }
+
     public class BoundClassDeclaration : BoundStatement
     {
         public BoundClassDeclaration(SyntaxNode syntax)
@@ -209,7 +223,7 @@ namespace Parser.Binding
 
     public class BoundIfStatement : BoundStatement
     {
-        public BoundIfStatement(SyntaxNode syntax, BoundExpression condition, ImmutableArray<BoundStatement> body, IEnumerable<ElseifClause> elseIfClauses, BoundElseClause? elseClause)
+        public BoundIfStatement(SyntaxNode syntax, BoundExpression condition, BoundBlockStatement body, IEnumerable<ElseifClause> elseIfClauses, BoundElseClause? elseClause)
             : base(syntax)
         {
             Condition = condition;
@@ -219,7 +233,7 @@ namespace Parser.Binding
         }
 
         public BoundExpression Condition { get; }
-        public ImmutableArray<BoundStatement> Body { get; }
+        public BoundBlockStatement Body { get; }
         public IEnumerable<ElseifClause> ElseIfClauses { get; }
         public BoundElseClause? ElseClause { get; }
 
@@ -511,7 +525,7 @@ namespace Parser.Binding
 
     public class BoundElseIfClause : BoundNode
     {
-        public BoundElseIfClause(SyntaxNode syntax, BoundExpression condition, ImmutableArray<BoundStatement> body)
+        public BoundElseIfClause(SyntaxNode syntax, BoundExpression condition, BoundBlockStatement body)
             : base(syntax)
         {
             Condition = condition;
@@ -519,19 +533,19 @@ namespace Parser.Binding
         }
 
         public BoundExpression Condition { get; }
-        public ImmutableArray<BoundStatement> Body { get; }
+        public BoundBlockStatement Body { get; }
         public override BoundNodeKind Kind => BoundNodeKind.ElseIfClause;
     }
 
     public class BoundElseClause : BoundNode
     {
-        public BoundElseClause(SyntaxNode syntax, ImmutableArray<BoundStatement> body)
+        public BoundElseClause(SyntaxNode syntax, BoundBlockStatement body)
             : base(syntax)
         {
             Body = body;
         }
 
-        public ImmutableArray<BoundStatement> Body { get; }
+        public BoundBlockStatement Body { get; }
         public override BoundNodeKind Kind => BoundNodeKind.ElseClause;
     }
 

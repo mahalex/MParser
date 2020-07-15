@@ -70,7 +70,7 @@ namespace Parser.Binding
         private BoundIfStatement BindIfStatement(IfStatementSyntaxNode node)
         {
             var condition = BindExpression(node.Condition);
-            var body = BindStatementList(node.Body);
+            var body = BindBlockStatement(node.Body);
             var elseIfClauses = node.ElseifClauses
                 .Where(n => n.IsNode)
                 .Select(n => (ElseifClause)n.AsNode()!);
@@ -91,8 +91,14 @@ namespace Parser.Binding
 
         private BoundElseClause BindElseClause(ElseClause node)
         {
-            var body = BindStatementList(node.Body);
+            var body = BindBlockStatement(node.Body);
             return new BoundElseClause(node, body);
+        }
+
+        private BoundBlockStatement BindBlockStatement(BlockStatementSyntaxNode node)
+        {
+            var boundStatements = BindStatementList(node.Statements);
+            return new BoundBlockStatement(node, boundStatements);
         }
 
         private ImmutableArray<BoundStatement> BindStatementList(SyntaxNodeOrTokenList list)
@@ -124,7 +130,7 @@ namespace Parser.Binding
         private BoundElseIfClause BindElseIfClause(ElseifClause node)
         {
             var condition = BindExpression(node.Condition);
-            var body = BindStatementList(node.Body);
+            var body = BindBlockStatement(node.Body);
             return new BoundElseIfClause(node, condition, body);
         }
 

@@ -41,6 +41,38 @@ namespace Parser
         }
     }
 
+    public class BlockStatementSyntaxNode : StatementSyntaxNode
+    {
+        private SyntaxNode? _statements;
+        internal BlockStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        {
+        }
+
+        public SyntaxNodeOrTokenList Statements
+        {
+            get
+            {
+                var red = this.GetRed(ref this._statements!, 0);
+                return red is null ? throw new System.Exception("statements cannot be null.") : (SyntaxNodeOrTokenList)red;
+            }
+        }
+
+        internal override SyntaxNode? GetNode(int i)
+        {
+            return i switch
+            {
+            0 => GetRed(ref _statements!, 0), _ => null
+            }
+
+            ;
+        }
+
+        public override void Accept(SyntaxVisitor visitor)
+        {
+            visitor.VisitBlockStatement(this);
+        }
+    }
+
     public class FunctionDeclarationSyntaxNode : StatementSyntaxNode
     {
         private SyntaxNode? _outputDescription;
@@ -95,12 +127,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 5);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -320,12 +352,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -388,12 +420,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -448,12 +480,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -488,12 +520,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 1);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -558,12 +590,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -644,12 +676,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -783,12 +815,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList TryBody
+        public BlockStatementSyntaxNode TryBody
         {
             get
             {
                 var red = this.GetRed(ref this._tryBody!, 1);
-                return red is null ? throw new System.Exception("tryBody cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("tryBody cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -1935,12 +1967,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public BlockStatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 5);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 

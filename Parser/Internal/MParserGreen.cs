@@ -212,7 +212,7 @@ namespace Parser.Internal
             var name = EatToken(TokenKind.IdentifierToken);
             var inputDescription = ParseFunctionInputDescription();
             var commas = ParseOptionalCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             var endKeyword = ParseEndKeyword();
             //var endKeyword = 
             return Factory.FunctionDeclarationSyntax(
@@ -685,8 +685,8 @@ namespace Parser.Internal
                 throw new Exception("Case label cannot be empty.");
             }
             var commas = ParseOptionalCommas();
-            var statementList = ParseStatementList();
-            return Factory.SwitchCaseSyntax(caseKeyword, caseId, commas, statementList);
+            var body = ParseBlockStatement();
+            return Factory.SwitchCaseSyntax(caseKeyword, caseId, commas, body);
         }
 
         private SwitchStatementSyntaxNode ParseSwitchStatement()
@@ -722,7 +722,7 @@ namespace Parser.Internal
             }
 
             var commas = ParseOptionalCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             var endKeyword = EatIdentifier("end");
             return Factory.WhileStatementSyntax(
                 whileKeyword,
@@ -741,14 +741,14 @@ namespace Parser.Internal
                 throw new Exception("Condition in elseif clause cannot be empty.");
             }
             var commas = ParseOptionalCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             return Factory.ElseifClause(elseifKeyword, condition, commas, body);
         }
 
         private ElseClause ParseElseClause()
         {
             var elseKeyword = EatIdentifier("else");
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             return Factory.ElseClause(elseKeyword, body);
         }
 
@@ -761,7 +761,7 @@ namespace Parser.Internal
                 throw new Exception("Condition in if statement cannot be empty.");
             }
             var commas = ParseOptionalSemicolonsOrCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             var elseifClauses = new SyntaxListBuilder<ElseifClause>();
             ElseClause? elseClause = null;
             while (true)
@@ -804,7 +804,7 @@ namespace Parser.Internal
 
             var forAssignment = (AssignmentExpressionSyntaxNode) expression;
             var commas = ParseOptionalSemicolonsOrCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             var endKeyword = EatIdentifier("end");
             return Factory.ForStatementSyntax(
                 forKeyword,
@@ -831,7 +831,7 @@ namespace Parser.Internal
         private TryCatchStatementSyntaxNode ParseTryCatchStatement()
         {
             var tryKeyword = EatIdentifier("try");
-            var tryBody = ParseStatementList();
+            var tryBody = ParseBlockStatement();
             var catchClause = ParseCatchClause();
             var endKeyword = EatIdentifier("end");
             return Factory.TryCatchStatementSyntax(tryKeyword, tryBody, catchClause, endKeyword);
@@ -927,7 +927,7 @@ namespace Parser.Internal
             var name = ParseCompoundName();
             var inputDescription = ParseFunctionInputDescription();
             var commas = ParseOptionalCommas();
-            var body = ParseStatementList();
+            var body = ParseBlockStatement();
             var endKeyword = ParseEndKeyword();
             return Factory.ConcreteMethodDeclarationSyntax(
                 functionKeyword,
@@ -1189,6 +1189,12 @@ namespace Parser.Internal
                 return Factory.EmptyStatementSyntax(EatToken());
             }
             return ParseExpressionStatement();
+        }
+
+        private BlockStatementSyntaxNode ParseBlockStatement()
+        {
+            var statements = ParseStatementList();
+            return Factory.BlockStatementSyntax(statements);
         }
         
         private SyntaxList ParseStatementList()

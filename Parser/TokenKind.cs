@@ -142,6 +142,10 @@
         // result = abstractMethod(object)
         AbstractMethodDeclaration,
 
+        // statement1
+        // statement2;
+        BlockStatement,
+
         // classdef MyClass < BaseClass, AnotherBaseClass
         //     properties
         //         y

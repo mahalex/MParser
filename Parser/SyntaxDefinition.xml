@@ -4,13 +4,16 @@
         <Field Type="SyntaxList" Name="statementList" />
         <Field Type="SyntaxToken" Name="endOfFile" />
     </Class>
+    <Class Name="BlockStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="BlockStatement">
+        <Field Type="SyntaxList" Name="statements" />
+    </Class>
     <Class Name="FunctionDeclarationSyntaxNode" BaseClass="StatementSyntaxNode" Kind="FunctionDeclaration">
         <Field Type="SyntaxToken" Name="functionKeyword" />
         <Field Type="FunctionOutputDescriptionSyntaxNode" Name="outputDescription" Nullable="true" />
         <Field Type="SyntaxToken" Name="name" />
         <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
         <Field Type="EndKeywordSyntaxNode" Name="endKeyword" Nullable="true"/>
     </Class>
     <Class Name="FunctionOutputDescriptionSyntaxNode" BaseClass="SyntaxNode" Kind="FunctionOutputDescription">
@@ -33,30 +36,30 @@
         <Field Type="SyntaxToken" Name="caseKeyword" />
         <Field Type="ExpressionSyntaxNode" Name="caseIdentifier" />
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
     </Class>
     <Class Name="WhileStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="WhileStatement">
         <Field Type="SyntaxToken" Name="whileKeyword" />
         <Field Type="ExpressionSyntaxNode" Name="condition" />
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="ElseifClause" BaseClass="SyntaxNode" Kind="ElseifClause">
         <Field Type="SyntaxToken" Name="elseifKeyword" />
         <Field Type="ExpressionSyntaxNode" Name="condition" />
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
     </Class>
     <Class Name="ElseClause" BaseClass="SyntaxNode" Kind="ElseClause">
         <Field Type="SyntaxToken" Name="elseKeyword" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
     </Class>
     <Class Name="IfStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="IfStatement">
         <Field Type="SyntaxToken" Name="ifKeyword" />
         <Field Type="ExpressionSyntaxNode" Name="condition" />
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
         <Field Type="SyntaxList&lt;ElseifClause&gt;" Name="elseifClauses" />
         <Field Type="ElseClause" Name="elseClause" Nullable="true" />
         <Field Type="SyntaxToken" Name="endKeyword" />
@@ -65,7 +68,7 @@
         <Field Type="SyntaxToken" Name="forKeyword" />
         <Field Type="AssignmentExpressionSyntaxNode" Name="assignment" />
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="optionalCommas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
     <Class Name="AssignmentExpressionSyntaxNode" BaseClass="ExpressionSyntaxNode" Kind="AssignmentExpression">
@@ -79,7 +82,7 @@
     </Class>
     <Class Name="TryCatchStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="TryCatchStatement">
         <Field Type="SyntaxToken" Name="tryKeyword" />
-        <Field Type="SyntaxList" Name="tryBody" />
+        <Field Type="BlockStatementSyntaxNode" Name="tryBody" />
         <Field Type="CatchClauseSyntaxNode" Name="catchClause" Nullable="true" />
         <Field Type="SyntaxToken" Name="endKeyword" />
     </Class>
@@ -196,7 +199,7 @@
         <Field Type="CompoundNameExpressionSyntaxNode" Name="name" />
         <Field Type="FunctionInputDescriptionSyntaxNode" Name="inputDescription" Nullable="true"/>
         <Field Type="SyntaxList&lt;SyntaxToken&gt;" Name="commas" />
-        <Field Type="SyntaxList" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" />
         <Field Type="EndKeywordSyntaxNode" Name="endKeyword" Nullable="true" />
     </Class>
     <Class Name="AbstractMethodDeclarationSyntaxNode" BaseClass="MethodDeclarationSyntaxNode" Kind="AbstractMethodDeclaration">
