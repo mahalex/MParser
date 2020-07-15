@@ -3,9 +3,9 @@ namespace Parser.Internal
 {
     internal partial class SyntaxFactory
     {
-        public FileSyntaxNode FileSyntax(SyntaxList statementList, SyntaxToken endOfFile)
+        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode body, SyntaxToken endOfFile)
         {
-            return new FileSyntaxNode(statementList, endOfFile);
+            return new FileSyntaxNode(body, endOfFile);
         }
 
         public BlockStatementSyntaxNode BlockStatementSyntax(SyntaxList statements)

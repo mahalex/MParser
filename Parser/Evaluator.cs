@@ -5,7 +5,6 @@ using Parser.Objects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Parser
 {
@@ -33,13 +32,67 @@ namespace Parser
 
         private MObject? EvaluateFile(BoundFile root)
         {
-            MObject? lastResult = null;
-            foreach (var statement in root.Statements)
+            return EvaluateStatement(root.Body);
+        }
+
+        private MObject? EvaluateBlockStatement(BoundBlockStatement node)
+        {
+            var labelToIndex = new Dictionary<BoundLabel, int>();
+            for (var i = 0; i < node.Statements.Length; i++)
             {
-                lastResult = EvaluateStatement(statement) ?? lastResult;
+                var statement = node.Statements[i];
+                if (statement.Kind == BoundNodeKind.LabelStatement)
+                {
+                    labelToIndex[((BoundLabelStatement)statement).Label] = i;
+                }
+            }
+
+            MObject? lastResult = null;
+            var index = 0;
+            while (index < node.Statements.Length)
+            {
+                var statement = node.Statements[index];
+                switch (statement.Kind)
+                {
+                    case BoundNodeKind.GotoStatement:
+                        var gs = (BoundGotoStatement)statement;
+                        index = labelToIndex[gs.Label];
+                        break;
+                    case BoundNodeKind.ConditionalGotoStatement:
+                        var cgs = (BoundConditionalGotoStatement)statement;
+                        var value = EvaluateExpression(cgs.Condition);
+                        var truth = IsTruthyValue(value);
+                        if ((cgs.GotoIfTrue && truth) ||
+                            (!cgs.GotoIfTrue && !truth))
+                        {
+                            index = labelToIndex[cgs.Label];
+                        }
+                        else
+                        {
+                            index++;
+                        }
+                        break;
+                    case BoundNodeKind.LabelStatement:
+                        index++;
+                        break;
+                    default:
+                        lastResult = EvaluateStatement(statement) ?? lastResult;
+                        index++;
+                        break;
+                }
             }
 
             return lastResult;
+        }
+
+        private bool IsTruthyValue(MObject? expression)
+        {
+            if (expression is MLogical { Value: true })
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private MObject? EvaluateStatement(BoundStatement node)
@@ -48,6 +101,8 @@ namespace Parser
             {
                 BoundNodeKind.AbstractMethodDeclaration =>
                     EvaluateAbstractMethodDeclaration((BoundAbstractMethodDeclaration)node),
+                BoundNodeKind.BlockStatement =>
+                    EvaluateBlockStatement((BoundBlockStatement)node),
                 BoundNodeKind.ClassDeclaration =>
                     EvaluateClassDeclaration((BoundClassDeclaration)node),
                 BoundNodeKind.EmptyStatement =>
@@ -165,23 +220,14 @@ namespace Parser
                     EvaluateNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
                 BoundNodeKind.NumberLiteralExpression =>
                     EvaluateNumberLiteralExpression((BoundNumberLiteralExpression)node),
-                BoundNodeKind.ParenthesizedExpression =>
-                    EvaluateParenthesizedExpression((BoundParenthesizedExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     EvaluateStringLiteralExpression((BoundStringLiteralExpression)node),
-                BoundNodeKind.UnaryPrefixOperationExpression =>
-                    EvaluateUnaryPrefixOperationExpression((BoundUnaryPrefixOperationExpression)node),
-                BoundNodeKind.UnaryPostfixOperationExpression =>
-                    EvaluateUnaryPostfixOperationExpression((BoundUnaryPostfixOperationExpression)node),
+                BoundNodeKind.UnaryOperationExpression =>
+                    EvaluateUnaryOperationExpression((BoundUnaryOperationExpression)node),
                 BoundNodeKind.UnquotedStringLiteralExpression =>
                     EvaluateUnquotedStringLiteralExpression((BoundUnquotedStringLiteralExpression)node),
                 _ => throw new NotImplementedException($"Invalid expression kind '{node.Kind}'."),
             };
-        }
-
-        private MObject? EvaluateParenthesizedExpression(BoundParenthesizedExpression node)
-        {
-            return EvaluateExpression(node.Expression);
         }
 
         private MObject? EvaluateClassInvokation(BoundClassInvokationExpression node)
@@ -195,11 +241,6 @@ namespace Parser
         }
 
         private MObject? EvaluateIndirectMemberAccess(BoundIndirectMemberAccessExpression node)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MObject? EvaluateUnaryPostfixOperationExpression(BoundUnaryPostfixOperationExpression node)
         {
             throw new NotImplementedException();
         }
@@ -338,6 +379,10 @@ namespace Parser
                 BoundBinaryOperatorKind.Minus => MOperations.Minus(left, right),
                 BoundBinaryOperatorKind.Star => MOperations.Star(left, right),
                 BoundBinaryOperatorKind.Slash => MOperations.Slash(left, right),
+                BoundBinaryOperatorKind.Greater => MOperations.Greater(left, right),
+                BoundBinaryOperatorKind.GreaterOrEquals => MOperations.GreaterOrEquals(left, right),
+                BoundBinaryOperatorKind.Less => MOperations.Less(left, right),
+                BoundBinaryOperatorKind.LessOrEquals => MOperations.LessOrEquals(left, right),
                 _ => throw new NotImplementedException($"Binary operation {node.Op.Kind} is not implemented."),
             };
         }
@@ -347,9 +392,19 @@ namespace Parser
             throw new NotImplementedException();
         }
 
-        private MObject? EvaluateUnaryPrefixOperationExpression(BoundUnaryPrefixOperationExpression node)
+        private MObject? EvaluateUnaryOperationExpression(BoundUnaryOperationExpression node)
         {
-            throw new NotImplementedException();
+            var operand = EvaluateExpression(node.Operand);
+            if (operand is null)
+            {
+                return null;
+            }
+
+            return node.Op.Kind switch
+            {
+                BoundUnaryOperatorKind.Minus => MOperations.Minus(operand),
+                _ => throw new NotImplementedException($"Unary operation {node.Op.Kind} is not implemented."),
+            };
         }
 
         private MObject? EvaluateEmptyExpression(BoundEmptyExpression node)

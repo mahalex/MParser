@@ -3,22 +3,22 @@ namespace Parser.Internal
 {
     internal class FileSyntaxNode : SyntaxNode
     {
-        internal readonly SyntaxList _statementList;
+        internal readonly BlockStatementSyntaxNode _body;
         internal readonly SyntaxToken _endOfFile;
-        internal FileSyntaxNode(SyntaxList statementList, SyntaxToken endOfFile): base(TokenKind.File)
+        internal FileSyntaxNode(BlockStatementSyntaxNode body, SyntaxToken endOfFile): base(TokenKind.File)
         {
             Slots = 2;
-            this.AdjustWidth(statementList);
-            _statementList = statementList;
+            this.AdjustWidth(body);
+            _body = body;
             this.AdjustWidth(endOfFile);
             _endOfFile = endOfFile;
         }
 
-        internal FileSyntaxNode(SyntaxList statementList, SyntaxToken endOfFile, TokenDiagnostic[] diagnostics): base(TokenKind.File, diagnostics)
+        internal FileSyntaxNode(BlockStatementSyntaxNode body, SyntaxToken endOfFile, TokenDiagnostic[] diagnostics): base(TokenKind.File, diagnostics)
         {
             Slots = 2;
-            this.AdjustWidth(statementList);
-            _statementList = statementList;
+            this.AdjustWidth(body);
+            _body = body;
             this.AdjustWidth(endOfFile);
             _endOfFile = endOfFile;
         }
@@ -30,14 +30,14 @@ namespace Parser.Internal
 
         public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
         {
-            return new FileSyntaxNode(_statementList, _endOfFile, diagnostics);
+            return new FileSyntaxNode(_body, _endOfFile, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
         {
             return i switch
             {
-            0 => _statementList, 1 => _endOfFile, _ => null
+            0 => _body, 1 => _endOfFile, _ => null
             }
 
             ;

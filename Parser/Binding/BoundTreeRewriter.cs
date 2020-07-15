@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using static Parser.Binding.BoundNodeFactory;
 
 namespace Parser.Binding
 {
@@ -17,6 +18,8 @@ namespace Parser.Binding
                     RewriteClassDeclaration((BoundClassDeclaration)node),
                 BoundNodeKind.ConcreteMethodDeclaration =>
                     RewriteConcreteMethodDeclaration((BoundConcreteMethodDeclaration)node),
+                BoundNodeKind.ConditionalGotoStatement =>
+                    RewriteConditionalGotoStatement((BoundConditionalGotoStatement)node),
                 BoundNodeKind.EmptyStatement =>
                     RewriteEmptyStatement((BoundEmptyStatement)node),
                 BoundNodeKind.ExpressionStatement =>
@@ -25,8 +28,12 @@ namespace Parser.Binding
                     RewriteForStatement((BoundForStatement)node),
                 BoundNodeKind.FunctionDeclaration =>
                     RewriteFunctionDeclaration((BoundFunctionDeclaration)node),
+                BoundNodeKind.GotoStatement =>
+                    RewriteGotoStatement((BoundGotoStatement)node),
                 BoundNodeKind.IfStatement =>
                     RewriteIfStatement((BoundIfStatement)node),
+                BoundNodeKind.LabelStatement =>
+                    RewriteLabelStatement((BoundLabelStatement)node),
                 BoundNodeKind.SwitchStatement =>
                     RewriteSwitchStatement((BoundSwitchStatement)node),
                 BoundNodeKind.TryCatchStatement =>
@@ -36,6 +43,22 @@ namespace Parser.Binding
                 _ =>
                     throw new Exception($"Invalid statement kind {node.Kind}."),
             };
+        }
+
+        public virtual BoundStatement RewriteGotoStatement(BoundGotoStatement node)
+        {
+            return node;
+        }
+
+        public virtual BoundStatement RewriteConditionalGotoStatement(BoundConditionalGotoStatement node)
+        {
+            var condition = RewriteExpression(node.Condition);
+            if (condition == node.Condition)
+            {
+                return node;
+            }
+
+            return ConditionalGoto(node.Syntax, condition, node.Label, node.GotoIfTrue);
         }
 
         public virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)
@@ -53,6 +76,11 @@ namespace Parser.Binding
             throw new NotImplementedException();
         }
 
+        public virtual BoundStatement RewriteLabelStatement(BoundLabelStatement node)
+        {
+            return node;
+        }
+
         public virtual BoundStatement RewriteIfStatement(BoundIfStatement node)
         {
             var condition = RewriteExpression(node.Condition);
@@ -65,7 +93,7 @@ namespace Parser.Binding
                 if (oldClause != newClause && builder is null)
                 {
                     builder = ImmutableArray.CreateBuilder<BoundElseifClause>(node.ElseifClauses.Length);
-                    for (var j = 0; j < i; i++)
+                    for (var j = 0; j < i; j++)
                     {
                         builder.Add(node.ElseifClauses[j]);
                     }
@@ -74,11 +102,10 @@ namespace Parser.Binding
                 {
                     builder.Add(newClause);
                 }
-
             }
 
             var elseIfClauses = builder is null ? node.ElseifClauses : builder.MoveToImmutable();
-            var elseClause = node.ElseClause is null ? null : RewriteElseifClause(node.ElseClause);
+            var elseClause = node.ElseClause is null ? null : RewriteStatement(node.ElseClause);
             if (condition == node.Condition &&
                 body == node.Body &&
                 elseIfClauses == node.ElseifClauses &&
@@ -87,18 +114,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundIfStatement(node.Syntax, condition, body, elseIfClauses, elseClause);
-        }
-
-        public virtual BoundElseClause RewriteElseifClause(BoundElseClause node)
-        {
-            var body = RewriteStatement(node.Body);
-            if (body == node.Body)
-            {
-                return node;
-            }
-
-            return new BoundElseClause(node.Syntax, body);
+            return IfStatement(node.Syntax, condition, body, elseIfClauses, elseClause);
         }
 
         public virtual BoundElseifClause RewriteElseifClause(BoundElseifClause node)
@@ -110,7 +126,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundElseifClause(node.Syntax, condition, body);
+            return ElseifClause(node.Syntax, condition, body);
         }
 
         public virtual BoundStatement RewriteFunctionDeclaration(BoundFunctionDeclaration node)
@@ -131,7 +147,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundExpressionStatement(node.Syntax, expression);
+            return ExpressionStatement(node.Syntax, expression);
         }
 
         public virtual BoundStatement RewriteEmptyStatement(BoundEmptyStatement node)
@@ -159,7 +175,7 @@ namespace Parser.Binding
                 if (oldStatement != newStatement && builder is null)
                 {
                     builder = ImmutableArray.CreateBuilder<BoundStatement>(node.Statements.Length);
-                    for (var j = 0; j < i; i++)
+                    for (var j = 0; j < i; j++)
                     {
                         builder.Add(node.Statements[j]);
                     }
@@ -176,7 +192,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundBlockStatement(node.Syntax, builder.MoveToImmutable());
+            return Block(node.Syntax, builder.MoveToImmutable());
         }
 
         public virtual BoundStatement RewriteAbstractMethodDeclaration(BoundAbstractMethodDeclaration node)
@@ -222,14 +238,10 @@ namespace Parser.Binding
                     RewriteNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
                 BoundNodeKind.NumberLiteralExpression =>
                     RewriteNumberLiteralExpression((BoundNumberLiteralExpression)node),
-                BoundNodeKind.ParenthesizedExpression =>
-                    RewriteParenthesizedExpression((BoundParenthesizedExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     RewriteStringLiteralExpression((BoundStringLiteralExpression)node),
-                BoundNodeKind.UnaryPrefixOperationExpression =>
-                    RewriteUnaryPrefixOperationExpression((BoundUnaryPrefixOperationExpression)node),
-                BoundNodeKind.UnaryPostfixOperationExpression =>
-                    RewriteUnaryPostfixOperationExpression((BoundUnaryPostfixOperationExpression)node),
+                BoundNodeKind.UnaryOperationExpression =>
+                    RewriteUnaryOperationExpression((BoundUnaryOperationExpression)node),
                 BoundNodeKind.UnquotedStringLiteralExpression =>
                     RewriteUnquotedStringLiteralExpression((BoundUnquotedStringLiteralExpression)node),
                 _ =>
@@ -242,30 +254,15 @@ namespace Parser.Binding
             throw new NotImplementedException();
         }
 
-        public virtual BoundExpression RewriteUnaryPostfixOperationExpression(BoundUnaryPostfixOperationExpression node)
+        public virtual BoundExpression RewriteUnaryOperationExpression(BoundUnaryOperationExpression node)
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual BoundExpression RewriteUnaryPrefixOperationExpression(BoundUnaryPrefixOperationExpression node)
-        {
-            throw new NotImplementedException();
+            var operand = RewriteExpression(node.Operand);
+            return new BoundUnaryOperationExpression(node.Syntax, node.Op, operand);
         }
 
         public virtual BoundExpression RewriteStringLiteralExpression(BoundStringLiteralExpression node)
         {
             return node;
-        }
-
-        public virtual BoundExpression RewriteParenthesizedExpression(BoundParenthesizedExpression node)
-        {
-            var expression = RewriteExpression(node.Expression);
-            if (expression == node.Expression)
-            {
-                return node;
-            }
-
-            return new BoundParenthesizedExpression(node.Syntax, expression);
         }
 
         public virtual BoundExpression RewriteNumberLiteralExpression(BoundNumberLiteralExpression node)
@@ -309,7 +306,7 @@ namespace Parser.Binding
                 if (oldArgument != newArgument && builder is null)
                 {
                     builder = ImmutableArray.CreateBuilder<BoundExpression>(node.Arguments.Length);
-                    for (var j = 0; j < i; i++)
+                    for (var j = 0; j < i; j++)
                     {
                         builder.Add(node.Arguments[j]);
                     }
@@ -326,7 +323,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundFunctionCallExpression(node.Syntax, node.Name, builder.MoveToImmutable());
+            return FunctionCall(node.Syntax, node.Name, builder.MoveToImmutable());
         }
 
         public virtual BoundExpression RewriteEmptyExpression(BoundEmptyExpression node)
@@ -385,7 +382,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return new BoundAssignmentExpression(node.Syntax, left, right);
+            return Assignment(node.Syntax, left, right);
         }
 
         public virtual BoundExpression RewriteArrayLiteralExpression(BoundArrayLiteralExpression node)

@@ -3,7 +3,7 @@ namespace Parser
 {
     public class FileSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _statementList;
+        private SyntaxNode? _body;
         internal FileSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
@@ -16,12 +16,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList StatementList
+        public BlockStatementSyntaxNode Body
         {
             get
             {
-                var red = this.GetRed(ref this._statementList!, 0);
-                return red is null ? throw new System.Exception("statementList cannot be null.") : (SyntaxNodeOrTokenList)red;
+                var red = this.GetRed(ref this._body!, 0);
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -29,7 +29,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _statementList!, 0), _ => null
+            0 => GetRed(ref _body!, 0), _ => null
             }
 
             ;

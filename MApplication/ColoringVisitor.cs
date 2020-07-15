@@ -75,7 +75,7 @@ namespace MApplication
 
         public override void VisitFile(FileSyntaxNode node)
         {
-            Visit(node.StatementList);
+            Visit(node.Body.Statements);
             AddToken(node.EndOfFile, _scheme.Keyword);
         }
 

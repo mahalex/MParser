@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace Parser.Binding
 {
@@ -18,13 +17,13 @@ namespace Parser.Binding
 
     public class BoundFile : BoundNode
     {
-        public BoundFile(SyntaxNode syntax, ImmutableArray<BoundStatement> statements)
+        public BoundFile(SyntaxNode syntax, BoundStatement body)
             : base(syntax)
         {
-            Statements = statements;
+            Body = body;
         }
 
-        public ImmutableArray<BoundStatement> Statements { get; }
+        public BoundStatement Body { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.File;
     }
@@ -88,6 +87,25 @@ namespace Parser.Binding
         public override BoundNodeKind Kind => BoundNodeKind.ConcreteMethodDeclaration;
     }
 
+    public class BoundConditionalGotoStatement : BoundStatement
+    {
+        public BoundConditionalGotoStatement(SyntaxNode syntax, BoundExpression condition, BoundLabel label, bool gotoIfTrue = true)
+            : base(syntax)
+        {
+            Condition = condition;
+            Label = label;
+            GotoIfTrue = gotoIfTrue;
+        }
+
+        public BoundExpression Condition { get; }
+
+        public BoundLabel Label { get; }
+
+        public bool GotoIfTrue { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.ConditionalGotoStatement;
+    }
+
     public class BoundEmptyStatement : BoundStatement
     {
         public BoundEmptyStatement(SyntaxNode syntax)
@@ -131,9 +149,22 @@ namespace Parser.Binding
         public override BoundNodeKind Kind => BoundNodeKind.FunctionDeclaration;
     }
 
+    public class BoundGotoStatement : BoundStatement
+    {
+        public BoundGotoStatement(SyntaxNode syntax, BoundLabel label)
+            : base(syntax)
+        {
+            Label = label;
+        }
+
+        public BoundLabel Label { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.GotoStatement;
+    }
+
     public class BoundIfStatement : BoundStatement
     {
-        public BoundIfStatement(SyntaxNode syntax, BoundExpression condition, BoundStatement body, ImmutableArray<BoundElseifClause> elseifClauses, BoundElseClause? elseClause)
+        public BoundIfStatement(SyntaxNode syntax, BoundExpression condition, BoundStatement body, ImmutableArray<BoundElseifClause> elseifClauses, BoundStatement? elseClause)
             : base(syntax)
         {
             Condition = condition;
@@ -145,9 +176,22 @@ namespace Parser.Binding
         public BoundExpression Condition { get; }
         public BoundStatement Body { get; }
         public ImmutableArray<BoundElseifClause> ElseifClauses { get; }
-        public BoundElseClause? ElseClause { get; }
+        public BoundStatement? ElseClause { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.IfStatement;
+    }
+
+    public class BoundLabelStatement : BoundStatement
+    {
+        public BoundLabelStatement(SyntaxNode syntax, BoundLabel label)
+            : base(syntax)
+        {
+            Label = label;
+        }
+
+        public BoundLabel Label { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.LabelStatement;
     }
 
     public class BoundSwitchStatement : BoundStatement
@@ -378,19 +422,6 @@ namespace Parser.Binding
         public override BoundNodeKind Kind => BoundNodeKind.NumberLiteralExpression;
     }
 
-    public class BoundParenthesizedExpression : BoundExpression
-    {
-        public BoundParenthesizedExpression(SyntaxNode syntax, BoundExpression expression)
-            : base(syntax)
-        {
-            Expression = expression;
-        }
-
-        public override BoundNodeKind Kind => BoundNodeKind.ParenthesizedExpression;
-
-        public BoundExpression Expression { get; }
-    }
-
     public class BoundStringLiteralExpression : BoundExpression
     {
         public BoundStringLiteralExpression(SyntaxNode syntax, string value)
@@ -403,24 +434,19 @@ namespace Parser.Binding
         public override BoundNodeKind Kind => BoundNodeKind.StringLiteralExpression;
     }
 
-    public class BoundUnaryPrefixOperationExpression : BoundExpression
+    public class BoundUnaryOperationExpression : BoundExpression
     {
-        public BoundUnaryPrefixOperationExpression(SyntaxNode syntax)
+        public BoundUnaryOperationExpression(SyntaxNode syntax, BoundUnaryOperator op, BoundExpression operand)
             : base(syntax)
         {
+            Op = op;
+            Operand = operand;
         }
 
-        public override BoundNodeKind Kind => BoundNodeKind.UnaryPrefixOperationExpression;
-    }
+        public override BoundNodeKind Kind => BoundNodeKind.UnaryOperationExpression;
 
-    public class BoundUnaryPostfixOperationExpression : BoundExpression
-    {
-        public BoundUnaryPostfixOperationExpression(SyntaxNode syntax)
-            : base(syntax)
-        {
-        }
-
-        public override BoundNodeKind Kind => BoundNodeKind.UnaryPostfixOperationExpression;
+        public BoundUnaryOperator Op { get; }
+        public BoundExpression Operand { get; }
     }
 
     public class BoundUnquotedStringLiteralExpression : BoundExpression
@@ -445,17 +471,5 @@ namespace Parser.Binding
         public BoundExpression Condition { get; }
         public BoundStatement Body { get; }
         public override BoundNodeKind Kind => BoundNodeKind.ElseIfClause;
-    }
-
-    public class BoundElseClause : BoundNode
-    {
-        public BoundElseClause(SyntaxNode syntax, BoundStatement body)
-            : base(syntax)
-        {
-            Body = body;
-        }
-
-        public BoundStatement Body { get; }
-        public override BoundNodeKind Kind => BoundNodeKind.ElseClause;
     }
 }

@@ -1220,7 +1220,7 @@ namespace Parser.Internal
         
         public FileSyntaxNode ParseFile()
         {
-            var statementList = ParseStatementList();
+            var statementList = ParseBlockStatement();
             var endOfFileToken = EatToken();
             return Factory.FileSyntax(statementList, endOfFileToken);
         }

@@ -72,7 +72,7 @@ namespace ConsoleDemo
         public override void VisitFile(FileSyntaxNode node)
         {
             _methodAssignments = new MethodAssignments();
-            foreach (var nodeOrToken in node.StatementList)
+            foreach (var nodeOrToken in node.Body.Statements)
             {
                 if (nodeOrToken.IsToken)
                 {

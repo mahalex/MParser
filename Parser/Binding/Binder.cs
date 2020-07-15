@@ -1,7 +1,11 @@
 ﻿using Parser.Internal;
+using Parser.Lowering;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+
+using static Parser.Binding.BoundNodeFactory;
 
 namespace Parser.Binding
 {
@@ -9,16 +13,27 @@ namespace Parser.Binding
     {
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
 
+        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
+        {
+            var binder = new Binder();
+            var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
+            var loweredStatement = Lowerer.Lower(boundRoot.File.Body);
+            var newRoot = Root(
+                boundRoot.Syntax,
+                File(boundRoot.File.Syntax, loweredStatement));
+            return new BoundProgram(newRoot, binder._diagnostics.ToImmutableArray());
+        }
+
         private BoundRoot BindRoot(RootSyntaxNode node)
         {
             var boundFile = BindFile(node.File);
-            return new BoundRoot(node, boundFile);
+            return Root(node, boundFile);
         }
 
         private BoundFile BindFile(FileSyntaxNode node)
         {
-            var statements = BindStatementList(node.StatementList);
-            return new BoundFile(node, statements);
+            var body = BindBlockStatement(node.Body);
+            return File(node, body);
         }
 
         private BoundStatement BindStatement(StatementSyntaxNode node)
@@ -27,6 +42,8 @@ namespace Parser.Binding
             {
                 TokenKind.AbstractMethodDeclaration =>
                     BindAbstractMethodDeclaration((AbstractMethodDeclarationSyntaxNode)node),
+                TokenKind.BlockStatement =>
+                    BindBlockStatement((BlockStatementSyntaxNode)node),
                 TokenKind.ClassDeclaration =>
                     BindClassDeclaration((ClassDeclarationSyntaxNode)node),
                 TokenKind.ConcreteMethodDeclaration =>
@@ -86,32 +103,27 @@ namespace Parser.Binding
                 _ => null,
             };
 
-            return new BoundIfStatement(node, condition, body, builder.ToImmutable(), maybeElseClause);
+            return IfStatement(node, condition, body, builder.ToImmutable(), maybeElseClause);
         }
 
-        private BoundElseClause BindElseClause(ElseClause node)
+        private BoundStatement BindElseClause(ElseClause node)
         {
-            var body = BindStatement(node.Body);
-            return new BoundElseClause(node, body);
+            return BindStatement(node.Body);
         }
 
         private BoundBlockStatement BindBlockStatement(BlockStatementSyntaxNode node)
         {
             var boundStatements = BindStatementList(node.Statements);
-            return new BoundBlockStatement(node, boundStatements);
+            return Block(node, boundStatements.ToArray());
         }
 
-        private ImmutableArray<BoundStatement> BindStatementList(SyntaxNodeOrTokenList list)
+        private IEnumerable<BoundStatement> BindStatementList(SyntaxNodeOrTokenList list)
         {
-            var builder = ImmutableArray.CreateBuilder<BoundStatement>();
             var statements = list.Where(s => s.IsNode).Select(s => (StatementSyntaxNode)s.AsNode()!);
             foreach (var statement in statements)
             {
-                var boundStatement = BindStatement(statement);
-                builder.Add(boundStatement);
+                yield return BindStatement(statement);
             }
-
-            return builder.ToImmutable();
         }
 
         private ImmutableArray<BoundExpression> BindExpressionList(SyntaxNodeOrTokenList list)
@@ -131,7 +143,7 @@ namespace Parser.Binding
         {
             var condition = BindExpression(node.Condition);
             var body = BindStatement(node.Body);
-            return new BoundElseifClause(node, condition, body);
+            return ElseifClause(node, condition, body);
         }
 
         private BoundFunctionDeclaration BindFunctionDeclaration(FunctionDeclarationSyntaxNode node)
@@ -147,7 +159,7 @@ namespace Parser.Binding
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntaxNode node)
         {
             var expression = BindExpression(node.Expression);
-            return new BoundExpressionStatement(node, expression);
+            return ExpressionStatement(node, expression);
         }
 
         private BoundExpression BindExpression(ExpressionSyntaxNode node)
@@ -212,21 +224,14 @@ namespace Parser.Binding
         {
             var left = BindExpression(node.Lhs);
             var right = BindExpression(node.Rhs);
-            return new BoundAssignmentExpression(node, left, right);
+            return Assignment(node, left, right);
         }
 
         private BoundBinaryOperationExpression BindBinaryOperationExpression(BinaryOperationExpressionSyntaxNode node)
         {
             var left = BindExpression(node.Lhs);
             var right = BindExpression(node.Rhs);
-            var op = BindBinaryOperator(node.Operation);
-            return new BoundBinaryOperationExpression(node, left, op, right);
-        }
-
-        private BoundBinaryOperator BindBinaryOperator(SyntaxToken token)
-        {
-            return BoundBinaryOperator.GetOperator(token.Kind)
-                ?? throw new Exception($"Unexpected binary operator kind {token.Kind}.");
+            return BinaryOperation(node, left, node.Operation.Kind, right);
         }
 
         private BoundCellArrayElementAccessExpression BindCellArrayElementAccessExpression(CellArrayElementAccessExpressionSyntaxNode node)
@@ -268,7 +273,7 @@ namespace Parser.Binding
         {
             var name = BindExpression(node.FunctionName);
             var arguments = BindExpressionList(node.Nodes);
-            return new BoundFunctionCallExpression(node, name, arguments);
+            return FunctionCall(node, name, arguments);
         }
 
         private BoundIdentifierNameExpression BindIdentifierNameExpression(IdentifierNameExpressionSyntaxNode node)
@@ -299,27 +304,27 @@ namespace Parser.Binding
         private BoundNumberLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             var value = (double)node.Number.Value!;
-            return new BoundNumberLiteralExpression(node, value);
+            return NumberLiteral(node, value);
         }
 
-        private BoundParenthesizedExpression BindParenthesizedExpression(ParenthesizedExpressionSyntaxNode node)
+        private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntaxNode node)
         {
-            var expression = BindExpression(node.Expression);
-            return new BoundParenthesizedExpression(node, expression);
+            return BindExpression(node.Expression);
         }
 
         private BoundStringLiteralExpression BindStringLiteralExpression(StringLiteralExpressionSyntaxNode node)
         {
             var value = (string)node.StringToken.Value!;
-            return new BoundStringLiteralExpression(node, value);
+            return StringLiteral(node, value);
         }
 
-        private BoundUnaryPrefixOperationExpression BindUnaryPrefixOperationExpression(UnaryPrefixOperationExpressionSyntaxNode node)
+        private BoundUnaryOperationExpression BindUnaryPrefixOperationExpression(UnaryPrefixOperationExpressionSyntaxNode node)
         {
-            throw new NotImplementedException();
+            var operand = BindExpression(node.Operand);
+            return UnaryOperation(node, node.Operation.Kind, operand);
         }
 
-        private BoundUnaryPostfixOperationExpression BindUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)
+        private BoundUnaryOperationExpression BindUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)
         {
             throw new NotImplementedException();
         }
@@ -347,13 +352,6 @@ namespace Parser.Binding
         private BoundAbstractMethodDeclaration BindAbstractMethodDeclaration(AbstractMethodDeclarationSyntaxNode node)
         {
             throw new NotImplementedException();
-        }
-
-        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
-        {
-            var binder = new Binder();
-            var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
-            return new BoundProgram(boundRoot, binder._diagnostics.ToImmutableArray());
         }
     }
 }

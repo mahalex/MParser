@@ -4,19 +4,26 @@ using System.IO;
 
 namespace cmi
 {
+
     class Program
     {
         static void Main(string[] args)
         {
+            string fileName;
             if (args.Length != 1)
             {
                 Console.Error.WriteLine("Usage: cmi <file.m>");
+                fileName = @"C:\repos\MParser\examples\helloworld\hello.m";
             }
-
-            var fileName = args[0];
+            else
+            {
+                fileName = args[0];
+            }
+            
             var text = File.ReadAllText(fileName);
             var tree = SyntaxTree.Parse(text);
             var compilation = Compilation.Create(tree);
+            TreeRenderer.RenderTree(tree);
             if (tree.Diagnostics.Diagnostics.Count > 0)
             {
                 foreach (var diagnostic in tree.Diagnostics.Diagnostics)
@@ -24,6 +31,7 @@ namespace cmi
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine($"{diagnostic.Span}: {diagnostic.Message}");
                     Console.ResetColor();
+                    return;
                 }
             }
 

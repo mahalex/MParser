@@ -8,7 +8,7 @@ namespace ProjectConsole
     {
         public override void VisitFile(FileSyntaxNode node)
         {
-            Visit(node.StatementList);
+            Visit(node.Body.Statements);
             OutputKeyword(node.EndOfFile);
         }
 
