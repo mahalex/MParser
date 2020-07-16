@@ -141,12 +141,21 @@ namespace Parser.Binding
 
     public class BoundFunctionDeclaration : BoundStatement
     {
-        public BoundFunctionDeclaration(SyntaxNode syntax)
+        public BoundFunctionDeclaration(SyntaxNode syntax, string name, ImmutableArray<ParameterSymbol> inputDescription, ImmutableArray<ParameterSymbol> outputDescription, BoundStatement body)
             : base(syntax)
         {
+            Name = name;
+            InputDescription = inputDescription;
+            OutputDescription = outputDescription;
+            Body = body;
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.FunctionDeclaration;
+
+        public string Name { get; }
+        public ImmutableArray<ParameterSymbol> InputDescription { get; }
+        public ImmutableArray<ParameterSymbol> OutputDescription { get; }
+        public BoundStatement Body { get; }
     }
 
     public class BoundGotoStatement : BoundStatement

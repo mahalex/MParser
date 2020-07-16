@@ -38,6 +38,11 @@ namespace Parser.Internal
             Report(span, "Unexpected end of file.");
         }
 
+        internal void ReportNotEnoughInputs(TextSpan span, string functionName)
+        {
+            Report(span, $"Not enough inputs for function '{functionName}'.");
+        }
+
         internal void ReportUnexpectedCharacterWhileParsingNumber(TextSpan span, char c)
         {
             Report(span, $"Unexpected character '{c}' while parsing a number.");

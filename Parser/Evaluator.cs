@@ -26,8 +26,30 @@ namespace Parser
 
         internal EvaluationResult Evaluate()
         {
-            var result = EvaluateFile(_program.Root);
-            return new EvaluationResult(result, _diagnostics.ToImmutableArray());
+            if (_program.MainFunction is { } mainFunction)
+            {
+                if (mainFunction.Parameters.Length > 0)
+                {
+                    _diagnostics.ReportNotEnoughInputs(
+                        new TextSpan(mainFunction.Declaration.Position, mainFunction.Declaration.Position + mainFunction.Declaration.FullWidth),
+                        mainFunction.Name);
+                    return new EvaluationResult(null, _diagnostics.ToImmutableArray());
+                }
+                else
+                {
+                    var result = EvaluateBlockStatement(_program.Functions[mainFunction]);
+                    return new EvaluationResult(result, _diagnostics.ToImmutableArray());
+                }
+            }
+            else if (_program.ScriptFunction is { } scriptFunction)
+            {
+                var result = EvaluateBlockStatement(_program.Functions[scriptFunction]);
+                return new EvaluationResult(result, _diagnostics.ToImmutableArray());
+            }
+            else
+            {
+                return new EvaluationResult(null, _diagnostics.ToImmutableArray());
+            }
         }
 
         private MObject? EvaluateFile(BoundFile root)

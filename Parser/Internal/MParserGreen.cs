@@ -175,7 +175,7 @@ namespace Parser.Internal
                 if (CurrentToken.Kind == TokenKind.TildeToken)
                 {
                     var notToken = EatToken();
-                    builder.Add(notToken);
+                    builder.Add(Factory.IdentifierNameExpressionSyntax(notToken));
                 }
                 else
                 {

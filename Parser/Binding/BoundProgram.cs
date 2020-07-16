@@ -5,16 +5,33 @@ namespace Parser.Binding
 {
     public class BoundProgram
     {
-        public BoundProgram(BoundRoot nullRoot, ImmutableArray<Diagnostic> diagnostics)
+        public BoundProgram(
+            ImmutableArray<Diagnostic> diagnostics,
+            FunctionSymbol? mainFunction,
+            FunctionSymbol? scriptFunction,
+            ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functions)
         {
-            NullRoot = nullRoot;
             Diagnostics = diagnostics;
+            MainFunction = mainFunction;
+            ScriptFunction = scriptFunction;
+            Functions = functions;
         }
 
         public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-        public BoundRoot NullRoot { get; }
+        /// <summary>
+        /// A "main" function (first in a file without any global statements).
+        /// </summary>
+        public FunctionSymbol? MainFunction { get; }
 
-        public BoundFile Root => NullRoot.File;
+        /// <summary>
+        /// A "script" function (generated from all global statements in a file if there are any).
+        /// </summary>
+        public FunctionSymbol? ScriptFunction { get; }
+
+        /// <summary>
+        /// So-called "local" functions.
+        /// </summary>
+        public ImmutableDictionary<FunctionSymbol, BoundBlockStatement> Functions { get; }
     }
 }

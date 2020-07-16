@@ -17,11 +17,49 @@ namespace Parser.Binding
         {
             var binder = new Binder();
             var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
-            var loweredStatement = Lowerer.Lower(boundRoot.File.Body);
-            var newRoot = Root(
-                boundRoot.Syntax,
-                File(boundRoot.File.Syntax, loweredStatement));
-            return new BoundProgram(newRoot, binder._diagnostics.ToImmutableArray());
+            var statements = ((BoundBlockStatement)boundRoot.File.Body).Statements;
+            var functionsBuilder = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
+            var globalStatements = statements.Where(s => s.Kind != BoundNodeKind.FunctionDeclaration).ToArray();
+            var mainFunction = (FunctionSymbol?)null;
+            var scriptFunction = (FunctionSymbol?)null;
+            if (globalStatements.Length > 0)
+            {
+                // we have to gather all bound expression statements into a "script" function.
+                scriptFunction = new FunctionSymbol(
+                    name: "%script",
+                    parameters: ImmutableArray<ParameterSymbol>.Empty,
+                    declaration: null);
+                var body = Block(globalStatements[0].Syntax, globalStatements);
+                var loweredBody = Lowerer.Lower(body);
+                functionsBuilder.Add(scriptFunction, loweredBody);
+            }
+            else
+            {
+            }
+
+            var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
+            var first = true;
+            foreach (var function in functions)
+            {
+                var functionSymbol = new FunctionSymbol(
+                    name: function.Name,
+                    parameters: function.InputDescription,
+                    declaration: (FunctionDeclarationSyntaxNode)function.Syntax);
+                var loweredBody = Lowerer.Lower(function.Body);
+                functionsBuilder.Add(functionSymbol, loweredBody);
+                if (first && globalStatements.Length == 0)
+                {
+                    // the first function in a file will become "main".
+                    first = false;
+                    mainFunction = functionSymbol;
+                }
+            }
+
+            return new BoundProgram(
+                binder._diagnostics.ToImmutableArray(),
+                mainFunction,
+                scriptFunction,
+                functionsBuilder.ToImmutable());
         }
 
         private BoundRoot BindRoot(RootSyntaxNode node)
@@ -148,7 +186,58 @@ namespace Parser.Binding
 
         private BoundFunctionDeclaration BindFunctionDeclaration(FunctionDeclarationSyntaxNode node)
         {
-            throw new NotImplementedException();
+            var inputDescription = BindInputDescription(node.InputDescription);
+            var outputDescription = BindOutputDescription(node.OutputDescription);
+            var body = BindStatement(node.Body);
+            return new BoundFunctionDeclaration(node, node.Name.Text, inputDescription, outputDescription, body);
+        }
+
+        private ImmutableArray<ParameterSymbol> BindOutputDescription(FunctionOutputDescriptionSyntaxNode? node)
+        {
+            if (node is null)
+            {
+                return ImmutableArray<ParameterSymbol>.Empty;
+            }
+            var outputs = node.OutputList.Where(p => p.IsNode).Select(p => p.AsNode()!);
+            var builder = ImmutableArray.CreateBuilder<ParameterSymbol>();
+            foreach (var output in outputs)
+            {
+                if (output.Kind != TokenKind.IdentifierNameExpression)
+                {
+                    throw new Exception($"Invalid function output kind {output.Kind}.");
+                }
+
+                builder.Add(BindParameterSymbol((IdentifierNameExpressionSyntaxNode)output));
+            }
+
+            return builder.ToImmutable();
+        }
+
+        private ImmutableArray<ParameterSymbol> BindInputDescription(FunctionInputDescriptionSyntaxNode? node)
+        {
+            if (node is null)
+            {
+                return ImmutableArray<ParameterSymbol>.Empty;
+            }
+
+            var parameters = node.ParameterList.Where(p => p.IsNode).Select(p => p.AsNode()!);
+            var builder = ImmutableArray.CreateBuilder<ParameterSymbol>();
+            foreach (var parameter in parameters)
+            {
+                if (parameter.Kind != TokenKind.IdentifierNameExpression)
+                {
+                    throw new Exception($"Invalid function parameter kind {parameter.Kind}.");
+                }
+
+                builder.Add(BindParameterSymbol((IdentifierNameExpressionSyntaxNode)parameter));
+            }
+
+            return builder.ToImmutable();
+        }
+
+        private ParameterSymbol BindParameterSymbol(IdentifierNameExpressionSyntaxNode parameter)
+        {
+            return new ParameterSymbol(parameter.Text);
         }
 
         private BoundForStatement BindForStatement(ForStatementSyntaxNode node)
