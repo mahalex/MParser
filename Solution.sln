@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repl", "Repl\Repl.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MApplication", "MApplication\MApplication.csproj", "{A7EE271C-8822-43EA-BA13-5D6D5DC5B581}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cmi", "cmi\cmi.csproj", "{C2447F0B-733D-4755-A104-5B82E24D3F47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cmi", "cmi\cmi.csproj", "{C2447F0B-733D-4755-A104-5B82E24D3F47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cmc", "cmc\cmc.csproj", "{4200B289-ED2B-4C6F-AFDF-EC91FB3837B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{C2447F0B-733D-4755-A104-5B82E24D3F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2447F0B-733D-4755-A104-5B82E24D3F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2447F0B-733D-4755-A104-5B82E24D3F47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4200B289-ED2B-4C6F-AFDF-EC91FB3837B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4200B289-ED2B-4C6F-AFDF-EC91FB3837B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4200B289-ED2B-4C6F-AFDF-EC91FB3837B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4200B289-ED2B-4C6F-AFDF-EC91FB3837B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

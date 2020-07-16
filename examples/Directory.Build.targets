@@ -1,0 +1,16 @@
+<Project>
+
+  <Target Name="CreateManifestResourceNames" />
+
+  <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)">
+      <ItemGroup>
+      <ReferencePath Remove="@(ReferencePath)"
+                     Condition="'%(FileName)' != 'System.Console' AND
+                                '%(FileName)' != 'System.Runtime'" />
+    </ItemGroup>
+    <Message Importance="high" Text="ReferencePath: @(ReferencePath)" />
+    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)\..\cmc\cmc.csproj&quot; -- @(Compile->'&quot;%(Identity)&quot;', ' ') /o &quot;@(IntermediateAssembly)&quot; @(ReferencePath->'/r &quot;%(Identity)&quot;', ' ')"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+</Project>
