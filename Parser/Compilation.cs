@@ -21,7 +21,7 @@ namespace Parser
             return Binder.BindProgram(_syntaxTree);
         }
 
-        public EvaluationResult Evaluate(CompilationContext context)
+        public EvaluationResult Evaluate(CompilationContext context, bool inRepl)
         {
             var program = GetBoundProgram();
             if (program.Diagnostics.Length > 0)
@@ -29,7 +29,7 @@ namespace Parser
                 return new EvaluationResult(null, program.Diagnostics);
             }
 
-            var evaluator = new Evaluator(program, context);
+            var evaluator = new Evaluator(program, context, inRepl);
             return evaluator.Evaluate();
         }
     }

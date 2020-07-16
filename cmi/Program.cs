@@ -36,7 +36,7 @@ namespace cmi
             }
 
             var context = new CompilationContext();
-            var evaluationResult = compilation.Evaluate(context);
+            var evaluationResult = compilation.Evaluate(context, inRepl: false);
 
             foreach (var diagnostic in evaluationResult.Diagnostics)
             {

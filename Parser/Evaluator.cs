@@ -13,15 +13,16 @@ namespace Parser
         private readonly BoundProgram _program;
         private readonly CompilationContext _context;
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
-        private bool _insideFunction = false;
+        private bool _inRepl = false;
         private readonly Stack<EvaluationScope> _scopeStack = new Stack<EvaluationScope>();
 
-        public Evaluator(BoundProgram program, CompilationContext context)
+        public Evaluator(BoundProgram program, CompilationContext context, bool inRepl)
         {
             _program = program;
             _context = context;
             var outerScope = new EvaluationScope();
             _scopeStack.Push(outerScope);
+            _inRepl = inRepl;
         }
 
         internal EvaluationResult Evaluate()
@@ -33,7 +34,7 @@ namespace Parser
                     _diagnostics.ReportNotEnoughInputs(
                         new TextSpan(mainFunction.Declaration.Position, mainFunction.Declaration.Position + mainFunction.Declaration.FullWidth),
                         mainFunction.Name);
-                    return new EvaluationResult(null, _diagnostics.ToImmutableArray());
+                return new EvaluationResult(null, _diagnostics.ToImmutableArray());
                 }
                 else
                 {
@@ -458,44 +459,27 @@ namespace Parser
 
         private MObject? GetVariableValue(string name)
         {
-            if (_insideFunction)
+            if (_inRepl)
             {
-                if (_context.Variables.TryGetValue(name, out var globalValue))
-                {
-                    return globalValue;
-                }
-
-                var currentScope = _scopeStack.Peek();
-                return currentScope.Variables.TryGetValue(name, out var localValue) ? globalValue : null;
+                return _context.Variables.TryGetValue(name, out var globalValue) ? globalValue : null;
             }
             else
             {
-                if (_context.Variables.TryGetValue(name, out var globalValue))
-                {
-                    return globalValue;
-                }
-
-                return null;
+                var currentScope = _scopeStack.Peek();
+                return currentScope.Variables.TryGetValue(name, out var localValue) ? localValue : null;
             }
         }
 
         private void SetVariableValue(string name, MObject value)
         {
-            if (_insideFunction)
+            if (_inRepl)
             {
-                if (_context.Variables.ContainsKey(name))
-                {
-                    _context.Variables[name] = value;
-                }
-                else
-                {
-                    var currentScope = _scopeStack.Peek();
-                    currentScope.Variables[name] = value;
-                }
+                _context.Variables[name] = value;
             }
             else
             {
-                _context.Variables[name] = value;
+                var currentScope = _scopeStack.Peek();
+                currentScope.Variables[name] = value;
             }
         }
 

@@ -65,7 +65,7 @@ namespace Repl
 
             TreeRenderer.RenderTree(tree);
             var compilation = Compilation.Create(tree);
-            var evaluationResult = compilation.Evaluate(_context);
+            var evaluationResult = compilation.Evaluate(_context, inRepl: true);
 
             foreach (var diagnostic in evaluationResult.Diagnostics)
             {
