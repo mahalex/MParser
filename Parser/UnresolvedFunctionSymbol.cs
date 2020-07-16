@@ -1,10 +1,10 @@
 ﻿namespace Parser
 {
-    internal class FunctionSymbol
+    internal class UnresolvedFunctionSymbol
     {
         public string Name { get; }
 
-        public FunctionSymbol(string name)
+        public UnresolvedFunctionSymbol(string name)
         {
             Name = name;
         }

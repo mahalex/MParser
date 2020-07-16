@@ -1,13 +1,11 @@
 x = 2;
-y = 3;
-disp(x + y * y);
-disp('Hello world!');
+f(x);
+f(x);
 
-x = 2 * 3;
-if x > 5
-    y = 'Greater than 5';
-elseif x > 0
-    y = 10;
+function f(x)
+    disp('X was');
+    disp(x);
+    x = x + 1;
+    disp('X is')
+    disp(x);
 end
-
-disp(y);

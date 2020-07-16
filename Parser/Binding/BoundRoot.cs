@@ -156,6 +156,21 @@ namespace Parser.Binding
         public ImmutableArray<ParameterSymbol> InputDescription { get; }
         public ImmutableArray<ParameterSymbol> OutputDescription { get; }
         public BoundStatement Body { get; }
+
+        public BoundFunctionDeclaration WithBody(BoundStatement body)
+        {
+            if (body == Body)
+            {
+                return this;
+            }
+
+            return new BoundFunctionDeclaration(
+                Syntax,
+                Name,
+                InputDescription,
+                OutputDescription,
+                body);
+        }
     }
 
     public class BoundGotoStatement : BoundStatement

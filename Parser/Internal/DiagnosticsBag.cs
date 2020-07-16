@@ -92,5 +92,15 @@ namespace Parser.Internal
         {
             Report(span, $"Variable '{variableName}' not found.");
         }
+
+        internal void ReportFunctionNotFound(TextSpan span, string functionName)
+        {
+            Report(span, $"Function '{functionName}' not found.");
+        }
+
+        internal void ReportTooManyInputs(TextSpan span, string functionName)
+        {
+            Report(span, $"Too many inputs in the call to '{functionName}'.");
+        }
     }
 }

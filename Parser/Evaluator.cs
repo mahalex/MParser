@@ -5,6 +5,7 @@ using Parser.Objects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Parser
 {
@@ -15,6 +16,7 @@ namespace Parser
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
         private bool _inRepl = false;
         private readonly Stack<EvaluationScope> _scopeStack = new Stack<EvaluationScope>();
+        private readonly Dictionary<FunctionSymbol, LoweredFunction> _functions = new Dictionary<FunctionSymbol, LoweredFunction>();
 
         public Evaluator(BoundProgram program, CompilationContext context, bool inRepl)
         {
@@ -23,28 +25,34 @@ namespace Parser
             var outerScope = new EvaluationScope();
             _scopeStack.Push(outerScope);
             _inRepl = inRepl;
+            foreach (var pair in program.Functions)
+            {
+                _functions[pair.Key] = pair.Value;
+            }
         }
 
         internal EvaluationResult Evaluate()
         {
-            if (_program.MainFunction is { } mainFunction)
+            if (_program.MainFunction is { } mainFunctionSymbol)
             {
-                if (mainFunction.Parameters.Length > 0)
+                var mainFunction = _program.Functions[mainFunctionSymbol];
+                if (mainFunction.InputDescription.Length > 0)
                 {
                     _diagnostics.ReportNotEnoughInputs(
-                        new TextSpan(mainFunction.Declaration.Position, mainFunction.Declaration.Position + mainFunction.Declaration.FullWidth),
+                        new TextSpan(mainFunction.Body.Syntax.Position, mainFunction.Body.Syntax.Position + mainFunction.Body.Syntax.FullWidth),
                         mainFunction.Name);
                 return new EvaluationResult(null, _diagnostics.ToImmutableArray());
                 }
                 else
                 {
-                    var result = EvaluateBlockStatement(_program.Functions[mainFunction]);
+                    var result = EvaluateBlockStatement(mainFunction.Body);
                     return new EvaluationResult(result, _diagnostics.ToImmutableArray());
                 }
             }
-            else if (_program.ScriptFunction is { } scriptFunction)
+            else if (_program.ScriptFunction is { } scriptFunctionSymbol)
             {
-                var result = EvaluateBlockStatement(_program.Functions[scriptFunction]);
+                var scriptFunction = _program.Functions[scriptFunctionSymbol];
+                var result = EvaluateBlockStatement(scriptFunction.Body);
                 return new EvaluationResult(result, _diagnostics.ToImmutableArray());
             }
             else
@@ -304,8 +312,56 @@ namespace Parser
             }
             else
             {
-                throw new NotImplementedException("Functions are not supported.");
+                var resolvedFunction = ResolveFunction(function);
+                if (resolvedFunction is null)
+                {
+                    _diagnostics.ReportFunctionNotFound(
+                        new TextSpan(
+                            node.Name.Syntax.Position,
+                            node.Name.Syntax.Position + node.Name.Syntax.FullWidth),
+                        function.Name);
+                    return null;
+                }
+                else
+                {
+                    // bring arguments into context
+                    var newScope = new EvaluationScope();
+                    var counter = 0;
+                    foreach (var expectedArgument in resolvedFunction.InputDescription)
+                    {
+                        if (counter >= arguments.Count)
+                        {
+                            break;
+                        }
+                        newScope.Variables.Add(expectedArgument.Name, arguments[counter]);
+                        counter++;
+                    }
+
+                    if (counter < arguments.Count)
+                    {
+                        _diagnostics.ReportTooManyInputs(
+                            new TextSpan(
+                                node.Arguments[counter].Syntax.Position,
+                                node.Arguments[counter].Syntax.Position + node.Arguments[counter].Syntax.FullWidth),
+                        function.Name);
+                        return null;
+                    }
+                    _scopeStack.Push(newScope);
+                    var result = EvaluateBlockStatement(resolvedFunction.Body);
+                    _scopeStack.Pop();
+                    return result;
+                }
             }
+        }
+
+        private LoweredFunction? ResolveFunction(UnresolvedFunctionSymbol functionSymbol)
+        {
+            var maybeKey = _functions.Keys.FirstOrDefault(k => k.Name == functionSymbol.Name);
+            return maybeKey switch
+            {
+                { } key => _functions[key],
+                _ => null,
+            };
         }
 
         private MObject? EvaluateDisp(List<MObject> arguments)
@@ -319,11 +375,11 @@ namespace Parser
             return arguments[0];
         }
 
-        private FunctionSymbol GetFunctionSymbol(BoundExpression functionName)
+        private UnresolvedFunctionSymbol GetFunctionSymbol(BoundExpression functionName)
         {
             if (functionName.Kind == BoundNodeKind.IdentifierNameExpression)
             {
-                return new FunctionSymbol(((BoundIdentifierNameExpression)functionName).Name);
+                return new UnresolvedFunctionSymbol(((BoundIdentifierNameExpression)functionName).Name);
             }
 
             throw new NotImplementedException($"Unknown function symbol '{functionName.Syntax.Text}'.");

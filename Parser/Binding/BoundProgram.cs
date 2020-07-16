@@ -9,7 +9,7 @@ namespace Parser.Binding
             ImmutableArray<Diagnostic> diagnostics,
             FunctionSymbol? mainFunction,
             FunctionSymbol? scriptFunction,
-            ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functions)
+            ImmutableDictionary<FunctionSymbol, LoweredFunction> functions)
         {
             Diagnostics = diagnostics;
             MainFunction = mainFunction;
@@ -32,6 +32,6 @@ namespace Parser.Binding
         /// <summary>
         /// So-called "local" functions.
         /// </summary>
-        public ImmutableDictionary<FunctionSymbol, BoundBlockStatement> Functions { get; }
+        public ImmutableDictionary<FunctionSymbol, LoweredFunction> Functions { get; }
     }
 }

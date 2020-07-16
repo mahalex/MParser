@@ -18,23 +18,24 @@ namespace Parser.Binding
             var binder = new Binder();
             var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
             var statements = ((BoundBlockStatement)boundRoot.File.Body).Statements;
-            var functionsBuilder = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
+            var functionsBuilder = ImmutableDictionary.CreateBuilder<FunctionSymbol, LoweredFunction>();
             var globalStatements = statements.Where(s => s.Kind != BoundNodeKind.FunctionDeclaration).ToArray();
             var mainFunction = (FunctionSymbol?)null;
             var scriptFunction = (FunctionSymbol?)null;
             if (globalStatements.Length > 0)
             {
                 // we have to gather all bound expression statements into a "script" function.
-                scriptFunction = new FunctionSymbol(
-                    name: "%script",
-                    parameters: ImmutableArray<ParameterSymbol>.Empty,
-                    declaration: null);
+                scriptFunction = new FunctionSymbol("%script");
                 var body = Block(globalStatements[0].Syntax, globalStatements);
                 var loweredBody = Lowerer.Lower(body);
-                functionsBuilder.Add(scriptFunction, loweredBody);
-            }
-            else
-            {
+                var declaration = new BoundFunctionDeclaration(
+                    syntax: globalStatements[0].Syntax,
+                    name: "%script",
+                    inputDescription: ImmutableArray<ParameterSymbol>.Empty,
+                    outputDescription: ImmutableArray<ParameterSymbol>.Empty,
+                    body: body);
+                var loweredFunction = LowerFunction(declaration);
+                functionsBuilder.Add(scriptFunction, loweredFunction);
             }
 
             var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
@@ -42,11 +43,9 @@ namespace Parser.Binding
             foreach (var function in functions)
             {
                 var functionSymbol = new FunctionSymbol(
-                    name: function.Name,
-                    parameters: function.InputDescription,
-                    declaration: (FunctionDeclarationSyntaxNode)function.Syntax);
-                var loweredBody = Lowerer.Lower(function.Body);
-                functionsBuilder.Add(functionSymbol, loweredBody);
+                    name: function.Name);
+                var loweredFunction = LowerFunction(function);
+                functionsBuilder.Add(functionSymbol, loweredFunction);
                 if (first && globalStatements.Length == 0)
                 {
                     // the first function in a file will become "main".
@@ -60,6 +59,17 @@ namespace Parser.Binding
                 mainFunction,
                 scriptFunction,
                 functionsBuilder.ToImmutable());
+        }
+
+        private static LoweredFunction LowerFunction(BoundFunctionDeclaration declaration)
+        {
+            var loweredBody = Lowerer.Lower(declaration.Body);
+            return new LoweredFunction(
+                declaration: declaration,
+                name: declaration.Name,
+                inputDescription: declaration.InputDescription,
+                outputDescription: declaration.OutputDescription,
+                body: loweredBody);
         }
 
         private BoundRoot BindRoot(RootSyntaxNode node)
