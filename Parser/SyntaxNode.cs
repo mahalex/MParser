@@ -141,9 +141,9 @@ namespace Parser
         }
     }
 
-    public abstract class FunctionHandleSyntaxNode : ExpressionSyntaxNode
+    public abstract class FunctionHandleExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal FunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
+        internal FunctionHandleExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position) : base(parent, green, position)
         {
         }
     }

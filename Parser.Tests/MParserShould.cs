@@ -19,7 +19,7 @@ namespace Parser.Tests
             var text = "a = b";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var assignment = actual.Root.StatementList[0].AsNode();
+            var assignment = actual.Root.Body.Statements[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
             if (assignment is null)
             {
@@ -35,7 +35,7 @@ namespace Parser.Tests
             var text = "2 + 3";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var statement = actual.Root.StatementList[0].AsNode();
+            var statement = actual.Root.Body.Statements[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(statement);
             if (statement is null)
             {
@@ -51,7 +51,7 @@ namespace Parser.Tests
             var text = "a = ";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var assignment = actual.Root.StatementList[0].AsNode();
+            var assignment = actual.Root.Body.Statements[0].AsNode();
             Assert.IsType<ExpressionStatementSyntaxNode>(assignment);
             if (assignment is null)
             {
@@ -77,7 +77,7 @@ namespace Parser.Tests
             var text = "2 + 3";
             var sut = GetSut(text);
             var actual = sut.Parse();
-            var statement = actual.Root.StatementList[0].AsNode() as ExpressionStatementSyntaxNode;
+            var statement = actual.Root.Body.Statements[0].AsNode() as ExpressionStatementSyntaxNode;
             var expression = statement!.Expression as BinaryOperationExpressionSyntaxNode;
             var lhs = expression!.Lhs;
             var operation = expression.Operation;

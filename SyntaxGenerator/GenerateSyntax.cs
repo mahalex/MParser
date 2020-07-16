@@ -844,7 +844,8 @@ namespace SyntaxGenerator
         public static void Input()
         {
             var serializer = new XmlSerializer(typeof(SyntaxDescription));
-            using var stream = new FileStream("input.xml", FileMode.Open);
+            var syntaxDefinitionFileName = Path.Combine(_outputPath, "SyntaxDefinition.xml");
+            using var stream = new FileStream(syntaxDefinitionFileName, FileMode.Open);
             if (!(serializer.Deserialize(stream) is SyntaxDescription syntax))
             {
                 Console.WriteLine("Couldn't deserialize syntax.");

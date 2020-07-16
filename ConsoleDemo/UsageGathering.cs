@@ -49,8 +49,8 @@ namespace ConsoleDemo
         {
             switch (lhs.Kind)
             {
-                case TokenKind.IdentifierName:
-                    var name = ((IdentifierNameSyntaxNode)lhs).Name.Text;
+                case TokenKind.IdentifierNameExpression:
+                    var name = ((IdentifierNameExpressionSyntaxNode)lhs).Name.Text;
                     Console.WriteLine($"Adding variable assignment for {name}");
                     _variableAssignments.Add(name, new Variable());
                     break;
@@ -72,7 +72,7 @@ namespace ConsoleDemo
         public override void VisitFile(FileSyntaxNode node)
         {
             _methodAssignments = new MethodAssignments();
-            foreach (var nodeOrToken in node.StatementList)
+            foreach (var nodeOrToken in node.Body.Statements)
             {
                 if (nodeOrToken.IsToken)
                 {
@@ -100,7 +100,7 @@ namespace ConsoleDemo
                 {
                     var parameterAsNode = parameter.AsNode();
                     Console.WriteLine($"Parameter node: {parameterAsNode}");
-                    if (parameterAsNode.Kind == TokenKind.IdentifierName)
+                    if (parameterAsNode.Kind == TokenKind.IdentifierNameExpression)
                     {
                         Console.WriteLine($"Adding variable assignment for {parameterAsNode.Text}");
                         _variableAssignments.Add(parameterAsNode.Text, new Variable());
@@ -120,7 +120,7 @@ namespace ConsoleDemo
             _insideFunction = false;
         }
 
-        public override void VisitMethodDefinition(MethodDefinitionSyntaxNode node)
+        public override void VisitConcreteMethodDeclaration(ConcreteMethodDeclarationSyntaxNode node)
         {
             _insideMethod = true;
             _variableAssignments = new VariableAssignments();
@@ -131,7 +131,7 @@ namespace ConsoleDemo
                 {
                     var parameterAsNode = parameter.AsNode();
                     Console.WriteLine($"Parameter node: {parameterAsNode}");
-                    if (parameterAsNode.Kind == TokenKind.IdentifierName)
+                    if (parameterAsNode.Kind == TokenKind.IdentifierNameExpression)
                     {
                         Console.WriteLine($"Adding variable assignment for {parameterAsNode.Text}");
                         _variableAssignments.Add(parameterAsNode.Text, new Variable());
@@ -146,7 +146,7 @@ namespace ConsoleDemo
                     Console.WriteLine($"Parameter token: {parameter.AsToken()}");
                 }
             }
-            base.VisitMethodDefinition(node);
+            base.VisitConcreteMethodDeclaration(node);
             _variableAssignments = null;
             _insideMethod = false;
         }

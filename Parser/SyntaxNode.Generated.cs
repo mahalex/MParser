@@ -3,7 +3,7 @@ namespace Parser
 {
     public class FileSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _statementList;
+        private SyntaxNode? _body;
         internal FileSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
@@ -16,12 +16,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList StatementList
+        public BlockStatementSyntaxNode Body
         {
             get
             {
-                var red = this.GetRed(ref this._statementList!, 0);
-                return red is null ? throw new System.Exception("statementList cannot be null.") : (SyntaxNodeOrTokenList)red;
+                var red = this.GetRed(ref this._body!, 0);
+                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -29,7 +29,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _statementList!, 0), _ => null
+            0 => GetRed(ref _body!, 0), _ => null
             }
 
             ;
@@ -38,6 +38,38 @@ namespace Parser
         public override void Accept(SyntaxVisitor visitor)
         {
             visitor.VisitFile(this);
+        }
+    }
+
+    public class BlockStatementSyntaxNode : StatementSyntaxNode
+    {
+        private SyntaxNode? _statements;
+        internal BlockStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        {
+        }
+
+        public SyntaxNodeOrTokenList Statements
+        {
+            get
+            {
+                var red = this.GetRed(ref this._statements!, 0);
+                return red is null ? throw new System.Exception("statements cannot be null.") : (SyntaxNodeOrTokenList)red;
+            }
+        }
+
+        internal override SyntaxNode? GetNode(int i)
+        {
+            return i switch
+            {
+            0 => GetRed(ref _statements!, 0), _ => null
+            }
+
+            ;
+        }
+
+        public override void Accept(SyntaxVisitor visitor)
+        {
+            visitor.VisitBlockStatement(this);
         }
     }
 
@@ -95,12 +127,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 5);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -320,12 +352,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -388,12 +420,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -448,12 +480,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -488,12 +520,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 1);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -558,12 +590,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -644,12 +676,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 3);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -783,12 +815,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList TryBody
+        public StatementSyntaxNode TryBody
         {
             get
             {
                 var red = this.GetRed(ref this._tryBody!, 1);
-                return red is null ? throw new System.Exception("tryBody cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("tryBody cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -941,10 +973,10 @@ namespace Parser
         }
     }
 
-    public class CompoundNameSyntaxNode : ExpressionSyntaxNode
+    public class CompoundNameExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _nodes;
-        internal CompoundNameSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal CompoundNameExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -969,14 +1001,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitCompoundName(this);
+            visitor.VisitCompoundNameExpression(this);
         }
     }
 
-    public class NamedFunctionHandleSyntaxNode : FunctionHandleSyntaxNode
+    public class NamedFunctionHandleExpressionSyntaxNode : FunctionHandleExpressionSyntaxNode
     {
         private SyntaxNode? _functionName;
-        internal NamedFunctionHandleSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal NamedFunctionHandleExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -984,16 +1016,16 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.NamedFunctionHandleSyntaxNode)_green)._atSign, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.NamedFunctionHandleExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(0));
             }
         }
 
-        public CompoundNameSyntaxNode FunctionName
+        public CompoundNameExpressionSyntaxNode FunctionName
         {
             get
             {
                 var red = this.GetRed(ref this._functionName!, 1);
-                return red is null ? throw new System.Exception("functionName cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("functionName cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1009,15 +1041,15 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitNamedFunctionHandle(this);
+            visitor.VisitNamedFunctionHandleExpression(this);
         }
     }
 
-    public class LambdaSyntaxNode : FunctionHandleSyntaxNode
+    public class LambdaExpressionSyntaxNode : FunctionHandleExpressionSyntaxNode
     {
         private SyntaxNode? _input;
         private SyntaxNode? _body;
-        internal LambdaSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal LambdaExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1025,7 +1057,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.LambdaSyntaxNode)_green)._atSign, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.LambdaExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(0));
             }
         }
 
@@ -1059,7 +1091,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitLambda(this);
+            visitor.VisitLambdaExpression(this);
         }
     }
 
@@ -1113,9 +1145,9 @@ namespace Parser
         }
     }
 
-    public class IdentifierNameSyntaxNode : ExpressionSyntaxNode
+    public class IdentifierNameExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal IdentifierNameSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal IdentifierNameExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1123,7 +1155,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IdentifierNameSyntaxNode)_green)._name, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.IdentifierNameExpressionSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -1139,13 +1171,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitIdentifierName(this);
+            visitor.VisitIdentifierNameExpression(this);
         }
     }
 
-    public class NumberLiteralSyntaxNode : ExpressionSyntaxNode
+    public class NumberLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal NumberLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal NumberLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1153,7 +1185,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.NumberLiteralSyntaxNode)_green)._number, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.NumberLiteralExpressionSyntaxNode)_green)._number, this.GetChildPosition(0));
             }
         }
 
@@ -1169,13 +1201,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitNumberLiteral(this);
+            visitor.VisitNumberLiteralExpression(this);
         }
     }
 
-    public class StringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class StringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal StringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal StringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1183,7 +1215,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.StringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.StringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1199,13 +1231,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitStringLiteral(this);
+            visitor.VisitStringLiteralExpression(this);
         }
     }
 
-    public class DoubleQuotedStringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class DoubleQuotedStringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal DoubleQuotedStringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal DoubleQuotedStringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1213,7 +1245,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.DoubleQuotedStringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.DoubleQuotedStringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1229,13 +1261,13 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitDoubleQuotedStringLiteral(this);
+            visitor.VisitDoubleQuotedStringLiteralExpression(this);
         }
     }
 
-    public class UnquotedStringLiteralSyntaxNode : ExpressionSyntaxNode
+    public class UnquotedStringLiteralExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        internal UnquotedStringLiteralSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal UnquotedStringLiteralExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1243,7 +1275,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.UnquotedStringLiteralSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.UnquotedStringLiteralExpressionSyntaxNode)_green)._stringToken, this.GetChildPosition(0));
             }
         }
 
@@ -1259,7 +1291,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitUnquotedStringLiteral(this);
+            visitor.VisitUnquotedStringLiteralExpression(this);
         }
     }
 
@@ -1523,11 +1555,11 @@ namespace Parser
         }
     }
 
-    public class MemberAccessSyntaxNode : ExpressionSyntaxNode
+    public class MemberAccessExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _leftOperand;
         private SyntaxNode? _rightOperand;
-        internal MemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal MemberAccessExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1535,7 +1567,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.MemberAccessSyntaxNode)_green)._dot, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.MemberAccessExpressionSyntaxNode)_green)._dot, this.GetChildPosition(1));
             }
         }
 
@@ -1569,14 +1601,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitMemberAccess(this);
+            visitor.VisitMemberAccessExpression(this);
         }
     }
 
-    public class UnaryPostixOperationExpressionSyntaxNode : ExpressionSyntaxNode
+    public class UnaryPostfixOperationExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _operand;
-        internal UnaryPostixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal UnaryPostfixOperationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1584,7 +1616,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.UnaryPostixOperationExpressionSyntaxNode)_green)._operation, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.UnaryPostfixOperationExpressionSyntaxNode)_green)._operation, this.GetChildPosition(1));
             }
         }
 
@@ -1609,14 +1641,14 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitUnaryPostixOperationExpression(this);
+            visitor.VisitUnaryPostfixOperationExpression(this);
         }
     }
 
-    public class IndirectMemberAccessSyntaxNode : ExpressionSyntaxNode
+    public class IndirectMemberAccessExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _expression;
-        internal IndirectMemberAccessSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal IndirectMemberAccessExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1624,7 +1656,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessSyntaxNode)_green)._openingBracket, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessExpressionSyntaxNode)_green)._openingBracket, this.GetChildPosition(0));
             }
         }
 
@@ -1632,7 +1664,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessSyntaxNode)_green)._closingBracket, this.GetChildPosition(2));
+                return new SyntaxToken(this, ((Parser.Internal.IndirectMemberAccessExpressionSyntaxNode)_green)._closingBracket, this.GetChildPosition(2));
             }
         }
 
@@ -1657,24 +1689,22 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitIndirectMemberAccess(this);
+            visitor.VisitIndirectMemberAccessExpression(this);
         }
     }
 
     public class CommandExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        private SyntaxNode? _commandName;
         private SyntaxNode? _arguments;
         internal CommandExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameSyntaxNode CommandName
+        public SyntaxToken CommandName
         {
             get
             {
-                var red = this.GetRed(ref this._commandName!, 0);
-                return red is null ? throw new System.Exception("commandName cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.CommandExpressionSyntaxNode)_green)._commandName, this.GetChildPosition(0));
             }
         }
 
@@ -1691,7 +1721,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _commandName!, 0), 1 => GetRed(ref _arguments!, 1), _ => null
+            1 => GetRed(ref _arguments!, 1), _ => null
             }
 
             ;
@@ -1703,11 +1733,11 @@ namespace Parser
         }
     }
 
-    public class BaseClassInvokationSyntaxNode : ExpressionSyntaxNode
+    public class ClassInvokationExpressionSyntaxNode : ExpressionSyntaxNode
     {
         private SyntaxNode? _methodName;
         private SyntaxNode? _baseClassNameAndArguments;
-        internal BaseClassInvokationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal ClassInvokationExpressionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1715,7 +1745,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.BaseClassInvokationSyntaxNode)_green)._atSign, this.GetChildPosition(1));
+                return new SyntaxToken(this, ((Parser.Internal.ClassInvokationExpressionSyntaxNode)_green)._atSign, this.GetChildPosition(1));
             }
         }
 
@@ -1749,7 +1779,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitBaseClassInvokation(this);
+            visitor.VisitClassInvokationExpression(this);
         }
     }
 
@@ -1795,18 +1825,16 @@ namespace Parser
 
     public class AttributeSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _name;
         private SyntaxNode? _assignment;
         internal AttributeSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameSyntaxNode Name
+        public SyntaxToken Name
         {
             get
             {
-                var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.AttributeSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -1823,7 +1851,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _name!, 0), 1 => GetRed(ref _assignment, 1), _ => null
+            1 => GetRed(ref _assignment, 1), _ => null
             }
 
             ;
@@ -1883,7 +1911,7 @@ namespace Parser
         }
     }
 
-    public class MethodDefinitionSyntaxNode : MethodDeclarationSyntaxNode
+    public class ConcreteMethodDeclarationSyntaxNode : MethodDeclarationSyntaxNode
     {
         private SyntaxNode? _outputDescription;
         private SyntaxNode? _name;
@@ -1891,7 +1919,7 @@ namespace Parser
         private SyntaxNode? _commas;
         private SyntaxNode? _body;
         private SyntaxNode? _endKeyword;
-        internal MethodDefinitionSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        internal ConcreteMethodDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
@@ -1899,7 +1927,7 @@ namespace Parser
         {
             get
             {
-                return new SyntaxToken(this, ((Parser.Internal.MethodDefinitionSyntaxNode)_green)._functionKeyword, this.GetChildPosition(0));
+                return new SyntaxToken(this, ((Parser.Internal.ConcreteMethodDeclarationSyntaxNode)_green)._functionKeyword, this.GetChildPosition(0));
             }
         }
 
@@ -1912,12 +1940,12 @@ namespace Parser
             }
         }
 
-        public CompoundNameSyntaxNode Name
+        public CompoundNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 2);
-                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -1939,12 +1967,12 @@ namespace Parser
             }
         }
 
-        public SyntaxNodeOrTokenList Body
+        public StatementSyntaxNode Body
         {
             get
             {
                 var red = this.GetRed(ref this._body!, 5);
-                return red is null ? throw new System.Exception("body cannot be null.") : (SyntaxNodeOrTokenList)red;
+                return red is null ? throw new System.Exception("body cannot be null.") : (StatementSyntaxNode)red;
             }
         }
 
@@ -1969,7 +1997,7 @@ namespace Parser
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            visitor.VisitMethodDefinition(this);
+            visitor.VisitConcreteMethodDeclaration(this);
         }
     }
 
@@ -1991,12 +2019,12 @@ namespace Parser
             }
         }
 
-        public CompoundNameSyntaxNode Name
+        public CompoundNameExpressionSyntaxNode Name
         {
             get
             {
                 var red = this.GetRed(ref this._name!, 1);
-                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameSyntaxNode)red;
+                return red is null ? throw new System.Exception("name cannot be null.") : (CompoundNameExpressionSyntaxNode)red;
             }
         }
 
@@ -2184,7 +2212,6 @@ namespace Parser
     public class ClassDeclarationSyntaxNode : StatementSyntaxNode
     {
         private SyntaxNode? _attributes;
-        private SyntaxNode? _className;
         private SyntaxNode? _baseClassList;
         private SyntaxNode? _nodes;
         internal ClassDeclarationSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
@@ -2196,6 +2223,14 @@ namespace Parser
             get
             {
                 return new SyntaxToken(this, ((Parser.Internal.ClassDeclarationSyntaxNode)_green)._classdefKeyword, this.GetChildPosition(0));
+            }
+        }
+
+        public SyntaxToken ClassName
+        {
+            get
+            {
+                return new SyntaxToken(this, ((Parser.Internal.ClassDeclarationSyntaxNode)_green)._className, this.GetChildPosition(2));
             }
         }
 
@@ -2213,15 +2248,6 @@ namespace Parser
             {
                 var red = this.GetRed(ref this._attributes, 1);
                 return red is null ? default : (AttributeListSyntaxNode)red;
-            }
-        }
-
-        public IdentifierNameSyntaxNode ClassName
-        {
-            get
-            {
-                var red = this.GetRed(ref this._className!, 2);
-                return red is null ? throw new System.Exception("className cannot be null.") : (IdentifierNameSyntaxNode)red;
             }
         }
 
@@ -2247,7 +2273,7 @@ namespace Parser
         {
             return i switch
             {
-            1 => GetRed(ref _attributes, 1), 2 => GetRed(ref _className!, 2), 3 => GetRed(ref _baseClassList, 3), 4 => GetRed(ref _nodes!, 4), _ => null
+            1 => GetRed(ref _attributes, 1), 3 => GetRed(ref _baseClassList, 3), 4 => GetRed(ref _nodes!, 4), _ => null
             }
 
             ;
@@ -2309,19 +2335,17 @@ namespace Parser
 
     public class EnumerationItemSyntaxNode : SyntaxNode
     {
-        private SyntaxNode? _name;
         private SyntaxNode? _values;
         private SyntaxNode? _commas;
         internal EnumerationItemSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
 
-        public IdentifierNameSyntaxNode Name
+        public SyntaxToken Name
         {
             get
             {
-                var red = this.GetRed(ref this._name!, 0);
-                return red is null ? throw new System.Exception("name cannot be null.") : (IdentifierNameSyntaxNode)red;
+                return new SyntaxToken(this, ((Parser.Internal.EnumerationItemSyntaxNode)_green)._name, this.GetChildPosition(0));
             }
         }
 
@@ -2347,7 +2371,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _name!, 0), 1 => GetRed(ref _values, 1), 2 => GetRed(ref _commas!, 2), _ => null
+            1 => GetRed(ref _values, 1), 2 => GetRed(ref _commas!, 2), _ => null
             }
 
             ;

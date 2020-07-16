@@ -7,7 +7,7 @@ namespace Semantics
 {
     public class GetClass
     {
-        private static MMethod MethodFromDefinition(MethodDefinitionSyntaxNode methodDefinition)
+        private static MMethod MethodFromDefinition(ConcreteMethodDeclarationSyntaxNode methodDefinition)
         {
             var name = methodDefinition.Name.Text;
             var description = "";
@@ -42,7 +42,7 @@ namespace Semantics
                     continue;
                 }
 
-                if (method.AsNode() is MethodDefinitionSyntaxNode methodDefinition)
+                if (method.AsNode() is ConcreteMethodDeclarationSyntaxNode methodDefinition)
                 {
                     result.Add(MethodFromDefinition(methodDefinition));
                 }
@@ -58,7 +58,7 @@ namespace Semantics
         
         public static MClass FromTree(FileSyntaxNode tree, string fileName)
         {
-            var classDeclaration = tree.StatementList[0].AsNode() as ClassDeclarationSyntaxNode;
+            var classDeclaration = tree.Body.Statements[0].AsNode() as ClassDeclarationSyntaxNode;
             if (classDeclaration == null)
             {
                 return null;

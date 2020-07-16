@@ -3,12 +3,17 @@ namespace Parser.Internal
 {
     internal partial class SyntaxFactory
     {
-        public FileSyntaxNode FileSyntax(SyntaxList statementList, SyntaxToken endOfFile)
+        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode body, SyntaxToken endOfFile)
         {
-            return new FileSyntaxNode(statementList, endOfFile);
+            return new FileSyntaxNode(body, endOfFile);
         }
 
-        public FunctionDeclarationSyntaxNode FunctionDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, SyntaxList body, EndKeywordSyntaxNode? endKeyword)
+        public BlockStatementSyntaxNode BlockStatementSyntax(SyntaxList statements)
+        {
+            return new BlockStatementSyntaxNode(statements);
+        }
+
+        public FunctionDeclarationSyntaxNode FunctionDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, SyntaxToken name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
         {
             return new FunctionDeclarationSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
         }
@@ -28,32 +33,32 @@ namespace Parser.Internal
             return new SwitchStatementSyntaxNode(switchKeyword, switchExpression, optionalCommas, cases, endKeyword);
         }
 
-        public SwitchCaseSyntaxNode SwitchCaseSyntax(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, SyntaxList body)
+        public SwitchCaseSyntaxNode SwitchCaseSyntax(SyntaxToken caseKeyword, ExpressionSyntaxNode caseIdentifier, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body)
         {
             return new SwitchCaseSyntaxNode(caseKeyword, caseIdentifier, optionalCommas, body);
         }
 
-        public WhileStatementSyntaxNode WhileStatementSyntax(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, SyntaxList body, SyntaxToken endKeyword)
+        public WhileStatementSyntaxNode WhileStatementSyntax(SyntaxToken whileKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword)
         {
             return new WhileStatementSyntaxNode(whileKeyword, condition, optionalCommas, body, endKeyword);
         }
 
-        public ElseifClause ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, SyntaxList body)
+        public ElseifClause ElseifClause(SyntaxToken elseifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body)
         {
             return new ElseifClause(elseifKeyword, condition, optionalCommas, body);
         }
 
-        public ElseClause ElseClause(SyntaxToken elseKeyword, SyntaxList body)
+        public ElseClause ElseClause(SyntaxToken elseKeyword, StatementSyntaxNode body)
         {
             return new ElseClause(elseKeyword, body);
         }
 
-        public IfStatementSyntaxNode IfStatementSyntax(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, SyntaxList body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword)
+        public IfStatementSyntaxNode IfStatementSyntax(SyntaxToken ifKeyword, ExpressionSyntaxNode condition, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxList<ElseifClause> elseifClauses, ElseClause? elseClause, SyntaxToken endKeyword)
         {
             return new IfStatementSyntaxNode(ifKeyword, condition, optionalCommas, body, elseifClauses, elseClause, endKeyword);
         }
 
-        public ForStatementSyntaxNode ForStatementSyntax(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, SyntaxList body, SyntaxToken endKeyword)
+        public ForStatementSyntaxNode ForStatementSyntax(SyntaxToken forKeyword, AssignmentExpressionSyntaxNode assignment, SyntaxList<SyntaxToken> optionalCommas, StatementSyntaxNode body, SyntaxToken endKeyword)
         {
             return new ForStatementSyntaxNode(forKeyword, assignment, optionalCommas, body, endKeyword);
         }
@@ -68,7 +73,7 @@ namespace Parser.Internal
             return new CatchClauseSyntaxNode(catchKeyword, catchBody);
         }
 
-        public TryCatchStatementSyntaxNode TryCatchStatementSyntax(SyntaxToken tryKeyword, SyntaxList tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword)
+        public TryCatchStatementSyntaxNode TryCatchStatementSyntax(SyntaxToken tryKeyword, StatementSyntaxNode tryBody, CatchClauseSyntaxNode? catchClause, SyntaxToken endKeyword)
         {
             return new TryCatchStatementSyntaxNode(tryKeyword, tryBody, catchClause, endKeyword);
         }
@@ -93,19 +98,19 @@ namespace Parser.Internal
             return new UnaryPrefixOperationExpressionSyntaxNode(operation, operand);
         }
 
-        public CompoundNameSyntaxNode CompoundNameSyntax(SyntaxList nodes)
+        public CompoundNameExpressionSyntaxNode CompoundNameExpressionSyntax(SyntaxList nodes)
         {
-            return new CompoundNameSyntaxNode(nodes);
+            return new CompoundNameExpressionSyntaxNode(nodes);
         }
 
-        public NamedFunctionHandleSyntaxNode NamedFunctionHandleSyntax(SyntaxToken atSign, CompoundNameSyntaxNode functionName)
+        public NamedFunctionHandleExpressionSyntaxNode NamedFunctionHandleExpressionSyntax(SyntaxToken atSign, CompoundNameExpressionSyntaxNode functionName)
         {
-            return new NamedFunctionHandleSyntaxNode(atSign, functionName);
+            return new NamedFunctionHandleExpressionSyntaxNode(atSign, functionName);
         }
 
-        public LambdaSyntaxNode LambdaSyntax(SyntaxToken atSign, FunctionInputDescriptionSyntaxNode input, ExpressionSyntaxNode body)
+        public LambdaExpressionSyntaxNode LambdaExpressionSyntax(SyntaxToken atSign, FunctionInputDescriptionSyntaxNode input, ExpressionSyntaxNode body)
         {
-            return new LambdaSyntaxNode(atSign, input, body);
+            return new LambdaExpressionSyntaxNode(atSign, input, body);
         }
 
         public BinaryOperationExpressionSyntaxNode BinaryOperationExpressionSyntax(ExpressionSyntaxNode lhs, SyntaxToken operation, ExpressionSyntaxNode rhs)
@@ -113,29 +118,29 @@ namespace Parser.Internal
             return new BinaryOperationExpressionSyntaxNode(lhs, operation, rhs);
         }
 
-        public IdentifierNameSyntaxNode IdentifierNameSyntax(SyntaxToken name)
+        public IdentifierNameExpressionSyntaxNode IdentifierNameExpressionSyntax(SyntaxToken name)
         {
-            return new IdentifierNameSyntaxNode(name);
+            return new IdentifierNameExpressionSyntaxNode(name);
         }
 
-        public NumberLiteralSyntaxNode NumberLiteralSyntax(SyntaxToken number)
+        public NumberLiteralExpressionSyntaxNode NumberLiteralExpressionSyntax(SyntaxToken number)
         {
-            return new NumberLiteralSyntaxNode(number);
+            return new NumberLiteralExpressionSyntaxNode(number);
         }
 
-        public StringLiteralSyntaxNode StringLiteralSyntax(SyntaxToken stringToken)
+        public StringLiteralExpressionSyntaxNode StringLiteralExpressionSyntax(SyntaxToken stringToken)
         {
-            return new StringLiteralSyntaxNode(stringToken);
+            return new StringLiteralExpressionSyntaxNode(stringToken);
         }
 
-        public DoubleQuotedStringLiteralSyntaxNode DoubleQuotedStringLiteralSyntax(SyntaxToken stringToken)
+        public DoubleQuotedStringLiteralExpressionSyntaxNode DoubleQuotedStringLiteralExpressionSyntax(SyntaxToken stringToken)
         {
-            return new DoubleQuotedStringLiteralSyntaxNode(stringToken);
+            return new DoubleQuotedStringLiteralExpressionSyntaxNode(stringToken);
         }
 
-        public UnquotedStringLiteralSyntaxNode UnquotedStringLiteralSyntax(SyntaxToken stringToken)
+        public UnquotedStringLiteralExpressionSyntaxNode UnquotedStringLiteralExpressionSyntax(SyntaxToken stringToken)
         {
-            return new UnquotedStringLiteralSyntaxNode(stringToken);
+            return new UnquotedStringLiteralExpressionSyntaxNode(stringToken);
         }
 
         public ArrayLiteralExpressionSyntaxNode ArrayLiteralExpressionSyntax(SyntaxToken openingSquareBracket, SyntaxList nodes, SyntaxToken closingSquareBracket)
@@ -163,29 +168,29 @@ namespace Parser.Internal
             return new FunctionCallExpressionSyntaxNode(functionName, openingBracket, nodes, closingBracket);
         }
 
-        public MemberAccessSyntaxNode MemberAccessSyntax(SyntaxNode leftOperand, SyntaxToken dot, SyntaxNode rightOperand)
+        public MemberAccessExpressionSyntaxNode MemberAccessExpressionSyntax(SyntaxNode leftOperand, SyntaxToken dot, SyntaxNode rightOperand)
         {
-            return new MemberAccessSyntaxNode(leftOperand, dot, rightOperand);
+            return new MemberAccessExpressionSyntaxNode(leftOperand, dot, rightOperand);
         }
 
-        public UnaryPostixOperationExpressionSyntaxNode UnaryPostixOperationExpressionSyntax(ExpressionSyntaxNode operand, SyntaxToken operation)
+        public UnaryPostfixOperationExpressionSyntaxNode UnaryPostfixOperationExpressionSyntax(ExpressionSyntaxNode operand, SyntaxToken operation)
         {
-            return new UnaryPostixOperationExpressionSyntaxNode(operand, operation);
+            return new UnaryPostfixOperationExpressionSyntaxNode(operand, operation);
         }
 
-        public IndirectMemberAccessSyntaxNode IndirectMemberAccessSyntax(SyntaxToken openingBracket, ExpressionSyntaxNode expression, SyntaxToken closingBracket)
+        public IndirectMemberAccessExpressionSyntaxNode IndirectMemberAccessExpressionSyntax(SyntaxToken openingBracket, ExpressionSyntaxNode expression, SyntaxToken closingBracket)
         {
-            return new IndirectMemberAccessSyntaxNode(openingBracket, expression, closingBracket);
+            return new IndirectMemberAccessExpressionSyntaxNode(openingBracket, expression, closingBracket);
         }
 
-        public CommandExpressionSyntaxNode CommandExpressionSyntax(IdentifierNameSyntaxNode commandName, SyntaxList<UnquotedStringLiteralSyntaxNode> arguments)
+        public CommandExpressionSyntaxNode CommandExpressionSyntax(SyntaxToken commandName, SyntaxList<UnquotedStringLiteralExpressionSyntaxNode> arguments)
         {
             return new CommandExpressionSyntaxNode(commandName, arguments);
         }
 
-        public BaseClassInvokationSyntaxNode BaseClassInvokationSyntax(ExpressionSyntaxNode methodName, SyntaxToken atSign, ExpressionSyntaxNode baseClassNameAndArguments)
+        public ClassInvokationExpressionSyntaxNode ClassInvokationExpressionSyntax(ExpressionSyntaxNode methodName, SyntaxToken atSign, ExpressionSyntaxNode baseClassNameAndArguments)
         {
-            return new BaseClassInvokationSyntaxNode(methodName, atSign, baseClassNameAndArguments);
+            return new ClassInvokationExpressionSyntaxNode(methodName, atSign, baseClassNameAndArguments);
         }
 
         public AttributeAssignmentSyntaxNode AttributeAssignmentSyntax(SyntaxToken assignmentSign, ExpressionSyntaxNode value)
@@ -193,7 +198,7 @@ namespace Parser.Internal
             return new AttributeAssignmentSyntaxNode(assignmentSign, value);
         }
 
-        public AttributeSyntaxNode AttributeSyntax(IdentifierNameSyntaxNode name, AttributeAssignmentSyntaxNode? assignment)
+        public AttributeSyntaxNode AttributeSyntax(SyntaxToken name, AttributeAssignmentSyntaxNode? assignment)
         {
             return new AttributeSyntaxNode(name, assignment);
         }
@@ -203,12 +208,12 @@ namespace Parser.Internal
             return new AttributeListSyntaxNode(openingBracket, nodes, closingBracket);
         }
 
-        public MethodDefinitionSyntaxNode MethodDefinitionSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, SyntaxList body, EndKeywordSyntaxNode? endKeyword)
+        public ConcreteMethodDeclarationSyntaxNode ConcreteMethodDeclarationSyntax(SyntaxToken functionKeyword, FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription, SyntaxList<SyntaxToken> commas, StatementSyntaxNode body, EndKeywordSyntaxNode? endKeyword)
         {
-            return new MethodDefinitionSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
+            return new ConcreteMethodDeclarationSyntaxNode(functionKeyword, outputDescription, name, inputDescription, commas, body, endKeyword);
         }
 
-        public AbstractMethodDeclarationSyntaxNode AbstractMethodDeclarationSyntax(FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription)
+        public AbstractMethodDeclarationSyntaxNode AbstractMethodDeclarationSyntax(FunctionOutputDescriptionSyntaxNode? outputDescription, CompoundNameExpressionSyntaxNode name, FunctionInputDescriptionSyntaxNode? inputDescription)
         {
             return new AbstractMethodDeclarationSyntaxNode(outputDescription, name, inputDescription);
         }
@@ -228,7 +233,7 @@ namespace Parser.Internal
             return new BaseClassListSyntaxNode(lessSign, baseClasses);
         }
 
-        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, IdentifierNameSyntaxNode className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
+        public ClassDeclarationSyntaxNode ClassDeclarationSyntax(SyntaxToken classdefKeyword, AttributeListSyntaxNode? attributes, SyntaxToken className, BaseClassListSyntaxNode? baseClassList, SyntaxList nodes, SyntaxToken endKeyword)
         {
             return new ClassDeclarationSyntaxNode(classdefKeyword, attributes, className, baseClassList, nodes, endKeyword);
         }
@@ -238,7 +243,7 @@ namespace Parser.Internal
             return new EnumerationItemValueSyntaxNode(openingBracket, values, closingBracket);
         }
 
-        public EnumerationItemSyntaxNode EnumerationItemSyntax(IdentifierNameSyntaxNode name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
+        public EnumerationItemSyntaxNode EnumerationItemSyntax(SyntaxToken name, EnumerationItemValueSyntaxNode? values, SyntaxList<SyntaxToken> commas)
         {
             return new EnumerationItemSyntaxNode(name, values, commas);
         }

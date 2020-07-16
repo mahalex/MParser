@@ -1,67 +1,80 @@
 ﻿using System;
+using System.Linq;
 using Parser;
 
 namespace Repl
 {
     public class MRepl
     {
+        private readonly CompilationContext _context;
+
+        public MRepl()
+        {
+            _context = CompilationContext.Empty;
+        }
+
         public void Run()
         {
             while (true)
             {
-                Console.Write("> ");
-                var line = Console.ReadLine();
-                var window = new TextWindowWithNull(line);
-                var parser = new MParser(window);
-                var tree = parser.Parse();
-                if (tree.Diagnostics.Diagnostics.Count > 0)
+                var line = Read();
+                if (line.StartsWith('#'))
                 {
-                    foreach (var diagnostic in tree.Diagnostics.Diagnostics)
+                    line = line.Trim();
+                    if (line == "#q")
                     {
-                        Console.WriteLine($"{diagnostic.Span}: {diagnostic.Message}");
+                        break;
                     }
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine($"Unknown command '{line}'.");
+                    Console.ResetColor();
+                    continue;
+                }
+                var result = Evaluate(line);
+                Print(result);
+            }
+        }
+
+        private void Print(string result)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(result);
+            Console.ResetColor();
+        }
+
+        private string Read()
+        {
+            Console.Write("> ");
+            return Console.ReadLine();
+        }
+
+        private string Evaluate(string submission)
+        {
+            var tree = SyntaxTree.Parse(submission);
+            if (tree.Diagnostics.Any())
+            {
+                foreach (var diagnostic in tree.Diagnostics.Diagnostics)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine($"{diagnostic.Span}: {diagnostic.Message}");
+                    Console.ResetColor();
                 }
                 TreeRenderer.RenderTree(tree);
+                return string.Empty;
             }
-        }
-    }
 
-    public class TreeRenderer
-    {
-        private static void RenderToken(SyntaxToken token, string indent, bool isLast)
-        {
-            Console.Write(indent + (isLast ? "└── " : "├── "));
-            Console.Write($"<{token.Kind}>");
-            Console.Write($" {token.Text}");
-            Console.WriteLine();
-        }
+            TreeRenderer.RenderTree(tree);
+            var compilation = Compilation.Create(tree);
+            var evaluationResult = compilation.Evaluate(_context, inRepl: true);
 
-        private static void RenderNode(SyntaxNode node, string indent, bool isLast)
-        {
-            Console.Write(indent);
-            Console.Write(isLast ? "└── " : "├── ");
-            Console.Write($"<{node.Kind}>");
-            Console.WriteLine();
-            var children = node.GetChildNodesAndTokens();
-            var last = children.Count - 1;
-            indent += isLast ? "    " : "│   ";
-            for (var index = 0; index <= last; index++)
+            foreach (var diagnostic in evaluationResult.Diagnostics)
             {
-                var child = children[index];
-                if (child.IsNode)
-                {
-                    RenderNode(child.AsNode(), indent, index == last);
-                }
-                else if (child.IsToken)
-                {
-                    RenderToken(child.AsToken(), indent, index == last);
-                }
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"{diagnostic.Span}: {diagnostic.Message}");
+                Console.ResetColor();
             }
-        }
 
-        public static void RenderTree(SyntaxTree tree)
-        {
-            RenderNode(tree.Root, "", true);
+            return evaluationResult.Value?.ToString() ?? string.Empty;
         }
     }
 }

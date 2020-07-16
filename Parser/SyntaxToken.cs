@@ -29,6 +29,8 @@ namespace Parser
 
         public int Position { get; }
 
+        public object? Value => _token.GetValue();
+
         public bool Equals(SyntaxToken other)
         {
             return Equals(_parent, other._parent) && Equals(_token, other._token);

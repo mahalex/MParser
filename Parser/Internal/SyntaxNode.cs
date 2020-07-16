@@ -79,13 +79,13 @@ namespace Parser.Internal
         }
     }
 
-    internal abstract class FunctionHandleSyntaxNode : ExpressionSyntaxNode
+    internal abstract class FunctionHandleExpressionSyntaxNode : ExpressionSyntaxNode
     {
-        protected FunctionHandleSyntaxNode(TokenKind kind) : base(kind)
+        protected FunctionHandleExpressionSyntaxNode(TokenKind kind) : base(kind)
         {
         }
 
-        protected FunctionHandleSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
+        protected FunctionHandleExpressionSyntaxNode(TokenKind kind, TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
         {
         }
     }

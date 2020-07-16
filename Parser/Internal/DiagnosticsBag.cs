@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,6 +38,11 @@ namespace Parser.Internal
             Report(span, "Unexpected end of file.");
         }
 
+        internal void ReportNotEnoughInputs(TextSpan span, string functionName)
+        {
+            Report(span, $"Not enough inputs for function '{functionName}'.");
+        }
+
         internal void ReportUnexpectedCharacterWhileParsingNumber(TextSpan span, char c)
         {
             Report(span, $"Unexpected character '{c}' while parsing a number.");
@@ -67,6 +73,11 @@ namespace Parser.Internal
             Report(span, "Unmatched open parenthesis by the end of file.");
         }
 
+        internal void ReportCannotEvaluateExpression(TextSpan span)
+        {
+            Report(span, $"Cannot evaluate expression.");
+        }
+
         public IEnumerator<Diagnostic> GetEnumerator()
         {
             return _diagnostics.GetEnumerator();
@@ -77,5 +88,19 @@ namespace Parser.Internal
             return GetEnumerator();
         }
 
+        internal void ReportVariableNotFound(TextSpan span, string variableName)
+        {
+            Report(span, $"Variable '{variableName}' not found.");
+        }
+
+        internal void ReportFunctionNotFound(TextSpan span, string functionName)
+        {
+            Report(span, $"Function '{functionName}' not found.");
+        }
+
+        internal void ReportTooManyInputs(TextSpan span, string functionName)
+        {
+            Report(span, $"Too many inputs in the call to '{functionName}'.");
+        }
     }
 }

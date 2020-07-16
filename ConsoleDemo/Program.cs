@@ -1,5 +1,4 @@
 ﻿using Parser;
-using Semantics;
 using System;
 using System.IO;
 using System.Linq;
@@ -72,7 +71,7 @@ namespace ConsoleDemo
             var childNodesAndTokens = root.GetChildNodesAndTokens();
             var node = childNodesAndTokens[0].AsNode();
             var classChildNodesAndTokens = node.GetChildNodesAndTokens();
-            var c = GetClass.FromTree(root, fileName);
+            var c = Semantics.GetClass.FromTree(root, fileName);
             Console.WriteLine(c.Name);
             foreach (var m in c.Methods)
             {
@@ -86,13 +85,13 @@ namespace ConsoleDemo
 
         public static void ContextDemo()
         {
-            var context = new Context();
+            var context = new Semantics.Context();
             context.ScanPath(BaseDirectory);
         }
 
         public static void DumbPrinterDemo()
         {
-            var context = new Context();
+            var context = new Semantics.Context();
             context.ScanPath(BaseDirectory);
             var fileName = Path.Combine(
                 BaseDirectory,
@@ -105,7 +104,7 @@ namespace ConsoleDemo
 
         public static void UsageDemo()
         {
-            var context = new Context();
+            var context = new Semantics.Context();
             context.ScanPath(BaseDirectory);
             var fileName = Path.Combine(
                 BaseDirectory,
@@ -130,7 +129,6 @@ namespace ConsoleDemo
             //ContextDemo();
             //DumbPrinterDemo();
             //UsageDemo();
-            Console.ReadKey();
         }
     }
 }
