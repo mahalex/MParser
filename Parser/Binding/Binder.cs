@@ -258,7 +258,8 @@ namespace Parser.Binding
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntaxNode node)
         {
             var expression = BindExpression(node.Expression);
-            return ExpressionStatement(node, expression);
+            var discardResult = node.Semicolon is not null;
+            return ExpressionStatement(node, expression, discardResult);
         }
 
         private BoundExpression BindExpression(ExpressionSyntaxNode node)

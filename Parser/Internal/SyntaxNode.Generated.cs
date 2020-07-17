@@ -779,18 +779,23 @@ namespace Parser.Internal
     internal class ExpressionStatementSyntaxNode : StatementSyntaxNode
     {
         internal readonly ExpressionSyntaxNode _expression;
-        internal ExpressionStatementSyntaxNode(ExpressionSyntaxNode expression): base(TokenKind.ExpressionStatement)
+        internal readonly TrailingSemicolonSyntaxNode? _semicolon;
+        internal ExpressionStatementSyntaxNode(ExpressionSyntaxNode expression, TrailingSemicolonSyntaxNode? semicolon): base(TokenKind.ExpressionStatement)
         {
-            Slots = 1;
+            Slots = 2;
             this.AdjustWidth(expression);
             _expression = expression;
+            this.AdjustWidth(semicolon);
+            _semicolon = semicolon;
         }
 
-        internal ExpressionStatementSyntaxNode(ExpressionSyntaxNode expression, TokenDiagnostic[] diagnostics): base(TokenKind.ExpressionStatement, diagnostics)
+        internal ExpressionStatementSyntaxNode(ExpressionSyntaxNode expression, TrailingSemicolonSyntaxNode? semicolon, TokenDiagnostic[] diagnostics): base(TokenKind.ExpressionStatement, diagnostics)
         {
-            Slots = 1;
+            Slots = 2;
             this.AdjustWidth(expression);
             _expression = expression;
+            this.AdjustWidth(semicolon);
+            _semicolon = semicolon;
         }
 
         internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
@@ -800,14 +805,52 @@ namespace Parser.Internal
 
         public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
         {
-            return new ExpressionStatementSyntaxNode(_expression, diagnostics);
+            return new ExpressionStatementSyntaxNode(_expression, _semicolon, diagnostics);
         }
 
         public override GreenNode? GetSlot(int i)
         {
             return i switch
             {
-            0 => _expression, _ => null
+            0 => _expression, 1 => _semicolon, _ => null
+            }
+
+            ;
+        }
+    }
+
+    internal class TrailingSemicolonSyntaxNode : SyntaxNode
+    {
+        internal readonly SyntaxToken _semicolon;
+        internal TrailingSemicolonSyntaxNode(SyntaxToken semicolon): base(TokenKind.TrailingSemicolon)
+        {
+            Slots = 1;
+            this.AdjustWidth(semicolon);
+            _semicolon = semicolon;
+        }
+
+        internal TrailingSemicolonSyntaxNode(SyntaxToken semicolon, TokenDiagnostic[] diagnostics): base(TokenKind.TrailingSemicolon, diagnostics)
+        {
+            Slots = 1;
+            this.AdjustWidth(semicolon);
+            _semicolon = semicolon;
+        }
+
+        internal override Parser.SyntaxNode CreateRed(Parser.SyntaxNode parent, int position)
+        {
+            return new Parser.TrailingSemicolonSyntaxNode(parent, this, position);
+        }
+
+        public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
+        {
+            return new TrailingSemicolonSyntaxNode(_semicolon, diagnostics);
+        }
+
+        public override GreenNode? GetSlot(int i)
+        {
+            return i switch
+            {
+            0 => _semicolon, _ => null
             }
 
             ;

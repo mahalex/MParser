@@ -845,7 +845,28 @@ namespace Parser.Internal
                 throw new Exception("Expression statement cannot be empty.");
             }
 
-            return Factory.ExpressionStatementSyntax(expression);
+            if (CurrentToken.Kind == TokenKind.SemicolonToken && !TriviaContainsNewLine(expression.TrailingTrivia))
+            {   
+                var semicolon = EatToken();
+                return Factory.ExpressionStatementSyntax(
+                    expression,
+                    Factory.TrailingSemicolonSyntax(semicolon));
+            }
+
+            return Factory.ExpressionStatementSyntax(expression, semicolon: null);
+        }
+
+        private bool TriviaContainsNewLine(IReadOnlyList<SyntaxTrivia> trivia)
+        {
+            foreach(var t in trivia)
+            {
+                if (t.Text.Contains('\n'))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private AttributeAssignmentSyntaxNode? ParseAttributeAssignment()
@@ -1177,11 +1198,6 @@ namespace Parser.Internal
                     case "end":
                         return null;
                 }
-            }
-
-            if (CurrentToken.Kind == TokenKind.OpenSquareBracketToken)
-            {
-                return ParseExpressionStatement();
             }
 
             if (CurrentToken.Kind == TokenKind.SemicolonToken)

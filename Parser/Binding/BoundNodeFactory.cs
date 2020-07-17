@@ -25,9 +25,12 @@ namespace Parser.Binding
             return new BoundBlockStatement(syntax, statements);
         }
 
-        public static BoundExpressionStatement ExpressionStatement(SyntaxNode syntax, BoundExpression expression)
+        public static BoundExpressionStatement ExpressionStatement(
+            SyntaxNode syntax,
+            BoundExpression expression,
+            bool discardResult)
         {
-            return new BoundExpressionStatement(syntax, expression);
+            return new BoundExpressionStatement(syntax, expression, discardResult);
         }
 
         public static BoundIfStatement IfStatement(

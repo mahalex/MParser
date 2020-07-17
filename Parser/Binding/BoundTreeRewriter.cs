@@ -147,7 +147,7 @@ namespace Parser.Binding
                 return node;
             }
 
-            return ExpressionStatement(node.Syntax, expression);
+            return ExpressionStatement(node.Syntax, expression, node.DiscardResult);
         }
 
         public virtual BoundStatement RewriteEmptyStatement(BoundEmptyStatement node)

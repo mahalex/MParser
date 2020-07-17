@@ -88,6 +88,10 @@
     </Class>
     <Class Name="ExpressionStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="ExpressionStatement">
         <Field Type="ExpressionSyntaxNode" Name="expression" />
+        <Field Type="TrailingSemicolonSyntaxNode" Name="semicolon" Nullable="true" />
+    </Class>
+    <Class Name="TrailingSemicolonSyntaxNode" BaseClass="SyntaxNode" Kind="TrailingSemicolon">
+        <Field Type="SyntaxToken" Name="semicolon" />
     </Class>
     <Class Name="EmptyStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="EmptyStatement">
         <Field Type="SyntaxToken" Name="semicolon" />

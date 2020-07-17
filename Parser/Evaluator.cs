@@ -210,7 +210,8 @@ namespace Parser
 
         private MObject? EvaluateExpressionStatement(BoundExpressionStatement node)
         {
-            return EvaluateExpression(node.Expression);
+            var result = EvaluateExpression(node.Expression);
+            return node.DiscardResult ? null : result;
         }
 
         private MObject? EvaluateExpression(BoundExpression node)

@@ -118,15 +118,18 @@ namespace Parser.Binding
 
     public class BoundExpressionStatement : BoundStatement
     {
-        public BoundExpression Expression { get; }
-
-        public override BoundNodeKind Kind => BoundNodeKind.ExpressionStatement;
-
-        public BoundExpressionStatement(SyntaxNode syntax, BoundExpression expression)
+        public BoundExpressionStatement(SyntaxNode syntax, BoundExpression expression, bool discardResult)
             : base(syntax)
         {
             Expression = expression;
+            DiscardResult = discardResult;
         }
+
+        public BoundExpression Expression { get; }
+
+        public bool DiscardResult { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.ExpressionStatement;
     }
 
     public class BoundForStatement : BoundStatement

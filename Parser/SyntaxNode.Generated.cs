@@ -852,6 +852,7 @@ namespace Parser
     public class ExpressionStatementSyntaxNode : StatementSyntaxNode
     {
         private SyntaxNode? _expression;
+        private SyntaxNode? _semicolon;
         internal ExpressionStatementSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
         {
         }
@@ -865,11 +866,20 @@ namespace Parser
             }
         }
 
+        public TrailingSemicolonSyntaxNode? Semicolon
+        {
+            get
+            {
+                var red = this.GetRed(ref this._semicolon, 1);
+                return red is null ? default : (TrailingSemicolonSyntaxNode)red;
+            }
+        }
+
         internal override SyntaxNode? GetNode(int i)
         {
             return i switch
             {
-            0 => GetRed(ref _expression!, 0), _ => null
+            0 => GetRed(ref _expression!, 0), 1 => GetRed(ref _semicolon, 1), _ => null
             }
 
             ;
@@ -878,6 +888,36 @@ namespace Parser
         public override void Accept(SyntaxVisitor visitor)
         {
             visitor.VisitExpressionStatement(this);
+        }
+    }
+
+    public class TrailingSemicolonSyntaxNode : SyntaxNode
+    {
+        internal TrailingSemicolonSyntaxNode(SyntaxNode parent, Internal.GreenNode green, int position): base(parent, green, position)
+        {
+        }
+
+        public SyntaxToken Semicolon
+        {
+            get
+            {
+                return new SyntaxToken(this, ((Parser.Internal.TrailingSemicolonSyntaxNode)_green)._semicolon, this.GetChildPosition(0));
+            }
+        }
+
+        internal override SyntaxNode? GetNode(int i)
+        {
+            return i switch
+            {
+            _ => null
+            }
+
+            ;
+        }
+
+        public override void Accept(SyntaxVisitor visitor)
+        {
+            visitor.VisitTrailingSemicolon(this);
         }
     }
 
