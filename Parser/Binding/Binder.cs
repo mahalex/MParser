@@ -13,24 +13,33 @@ namespace Parser.Binding
     {
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
 
-        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
+        private BoundProgram? BindProgramInternal(SyntaxTree syntaxTree)
         {
-            var binder = new Binder();
-            var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
+            var boundRoot = BindRoot(syntaxTree.NullRoot);
             var statements = ((BoundBlockStatement)boundRoot.File.Body).Statements;
             var functionsBuilder = ImmutableDictionary.CreateBuilder<FunctionSymbol, LoweredFunction>();
             var globalStatements = statements.Where(s => s.Kind != BoundNodeKind.FunctionDeclaration).ToArray();
             var mainFunction = (FunctionSymbol?)null;
             var scriptFunction = (FunctionSymbol?)null;
+            var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
             if (globalStatements.Length > 0)
             {
-                // we have to gather all bound expression statements into a "script" function.
-                scriptFunction = new FunctionSymbol("%script");
+                // we have to gather all bound expression statements into a "Main" function.
+                scriptFunction = new FunctionSymbol("Main");
+                foreach (var f in functions) {
+                    if (f.Name == "Main")
+                    {
+                        _diagnostics.ReportMainIsNotAllowed(
+                            new TextSpan(f.Syntax.Position, f.Syntax.FullWidth));
+                        return null;
+                    }
+                }
+
                 var body = Block(globalStatements[0].Syntax, globalStatements);
                 var loweredBody = Lowerer.Lower(body);
                 var declaration = new BoundFunctionDeclaration(
                     syntax: globalStatements[0].Syntax,
-                    name: "%script",
+                    name: "Main",
                     inputDescription: ImmutableArray<ParameterSymbol>.Empty,
                     outputDescription: ImmutableArray<ParameterSymbol>.Empty,
                     body: body);
@@ -38,7 +47,7 @@ namespace Parser.Binding
                 functionsBuilder.Add(scriptFunction, loweredFunction);
             }
 
-            var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
+
             var first = true;
             foreach (var function in functions)
             {
@@ -55,10 +64,16 @@ namespace Parser.Binding
             }
 
             return new BoundProgram(
-                binder._diagnostics.ToImmutableArray(),
+                _diagnostics.ToImmutableArray(),
                 mainFunction,
                 scriptFunction,
                 functionsBuilder.ToImmutable());
+        }
+
+        public static BoundProgram? BindProgram(SyntaxTree syntaxTree)
+        {
+            var binder = new Binder();
+            return binder.BindProgramInternal(syntaxTree);
         }
 
         private static LoweredFunction LowerFunction(BoundFunctionDeclaration declaration)

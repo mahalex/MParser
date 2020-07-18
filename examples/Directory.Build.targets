@@ -3,10 +3,12 @@
   <Target Name="CreateManifestResourceNames" />
 
   <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)">
-      <ItemGroup>
+    <ItemGroup>
       <ReferencePath Remove="@(ReferencePath)"
                      Condition="'%(FileName)' != 'System.Console' AND
+                                '%(FileName)' != 'System.Collections' AND
                                 '%(FileName)' != 'System.Runtime'" />
+      <ReferencePath Include="$(MSBuildThisFileDirectory)\..\Parser\bin\Debug\net5.0\Parser.dll" />
     </ItemGroup>
     <Message Importance="high" Text="ReferencePath: @(ReferencePath)" />
     <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)\..\cmc\cmc.csproj&quot; -- @(Compile->'&quot;%(Identity)&quot;', ' ') /o &quot;@(IntermediateAssembly)&quot; @(ReferencePath->'/r &quot;%(Identity)&quot;', ' ')"

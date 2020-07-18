@@ -48,6 +48,11 @@ namespace Parser.Internal
             Report(span, $"Unexpected character '{c}' while parsing a number.");
         }
 
+        internal void ReportMainIsNotAllowed(TextSpan span)
+        {
+            Report(span, $"Function name 'Main' is not allowed in scripts.");
+        }
+
         internal void ReportUnexpectedEOLWhileParsingString(TextSpan span)
         {
             Report(span, "Unexpected end of line while parsing a string literal.");

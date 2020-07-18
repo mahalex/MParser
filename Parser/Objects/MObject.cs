@@ -12,6 +12,11 @@
             return MCharArray.Create(chars);
         }
 
+        public static MCharArray CreateCharArray(string s)
+        {
+            return MCharArray.Create(s.ToCharArray());
+        }
+
         public static MLogical CreateLogical(bool value)
         {
             return MLogical.Create(value);
