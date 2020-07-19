@@ -4,34 +4,18 @@ using Mono.Cecil.Rocks;
 using Parser.Binding;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 
 namespace Parser.Emitting
 {
-    public class MethodInterfaceDescription
-    {
-        public MethodInterfaceDescription(ImmutableArray<ParameterSymbol> inputDescription, ImmutableArray<ParameterSymbol> outputDescription, MethodDefinition method)
-        {
-            InputDescription = inputDescription;
-            OutputDescription = outputDescription;
-            Method = method;
-        }
-
-        public ImmutableArray<ParameterSymbol> InputDescription { get; }
-
-        public ImmutableArray<ParameterSymbol> OutputDescription { get; }
-
-        public MethodDefinition Method { get; }
-    }
-
     public class Emitter
     {
         private Dictionary<string, TypeReference> _knownTypes = new Dictionary<string, TypeReference>();
         private Dictionary<string, MethodInterfaceDescription> _functions = new Dictionary<string, MethodInterfaceDescription>();
         private MethodReference? _consoleWriteLineReference;
         private MethodReference? _dispReference;
+        private MethodReference? _mObjectToBool;
         private MethodReference? _stringToMObject;
         private MethodReference? _doubleToMObject;
         private MethodReference? _getItemFromDictionary;
@@ -44,6 +28,8 @@ namespace Parser.Emitting
         private MethodReference? _dictionaryCtorReference = null;
         private Dictionary<BoundBinaryOperatorKind, MethodReference> _binaryOperations = new Dictionary<BoundBinaryOperatorKind, MethodReference>();
         private Dictionary<BoundUnaryOperatorKind, MethodReference> _unaryOperations = new Dictionary<BoundUnaryOperatorKind, MethodReference>();
+        private Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
+        private Dictionary<int, BoundLabel> _forwardLabelsToFix = new Dictionary<int, BoundLabel>();
 
         private static TypeReference ResolveAndImportType(
             string typeName,
@@ -206,6 +192,13 @@ namespace Parser.Emitting
                 assemblies: assemblies,
                 assemblyDefinition: assemblyDefinition);
 
+            _mObjectToBool = ResolveAndImportMethod(
+                typeName: "Parser.MFunctions.MHelpers",
+                methodName: "ToBool",
+                parameterTypeNames: new[] { "Parser.Objects.MObject" },
+                assemblies: assemblies,
+                assemblyDefinition: assemblyDefinition);
+
             _stringToMObject = ResolveAndImportMethod(
                 typeName: "Parser.Objects.MObject",
                 methodName: "CreateCharArray",
@@ -315,6 +308,9 @@ namespace Parser.Emitting
         {
             var ilProcessor = methodDefinition.Body.GetILProcessor();
 
+            _labels.Clear();
+            _forwardLabelsToFix.Clear();
+
             // Local #0 is the dictionary with actual local variables.
             _currentLocals = new VariableDefinition(_stringMObjectDictionary);
             ilProcessor.Body.Variables.Add(_currentLocals);
@@ -331,6 +327,7 @@ namespace Parser.Emitting
                 counter++;
             }
 
+            
             // The following locals are "output variables".
             _currentOutputVariables.Clear();
             if (function.OutputDescription.Length > 0)
@@ -359,50 +356,89 @@ namespace Parser.Emitting
                 }
             }
 
+            foreach (var (index, target) in _forwardLabelsToFix)
+            {
+                var targetIndex = _labels[target];
+                ilProcessor.Body.Instructions[index].Operand = ilProcessor.Body.Instructions[targetIndex];
+            }
+
             ilProcessor.Emit(OpCodes.Ret);
         }
 
         private void EmitBlockStatement(BoundBlockStatement block, MethodDefinition methodDefinition)
         {
-            var index = 0;
-            while (index < block.Statements.Length)
+            var ilProcessor = methodDefinition.Body.GetILProcessor();
+            foreach (var statement in block.Statements)
             {
-                var statement = block.Statements[index];
                 switch (statement.Kind)
                 {
                     case BoundNodeKind.GotoStatement:
-                        throw new NotImplementedException("Gotos are not supported.");
+                        EmitGoto((BoundGotoStatement)statement, ilProcessor);
+                        break;
                     case BoundNodeKind.ConditionalGotoStatement:
-                        throw new NotImplementedException("Conditional gotos are not supported.");
+                        EmitConditionalGoto((BoundConditionalGotoStatement)statement, ilProcessor);
+                        break;
                     case BoundNodeKind.LabelStatement:
-                        throw new NotImplementedException("Labels are not supported.");
+                        EmitLabelStatement((BoundLabelStatement)statement, ilProcessor);
+                        break;
                     default:
-                        EmitStatement(statement, methodDefinition);
-                        index++;
+                        EmitStatement(statement, ilProcessor);
                         break;
                 }
             }
-
         }
 
-        private void EmitStatement(BoundStatement node, MethodDefinition methodDefinition)
+        private void EmitLabelStatement(BoundLabelStatement node, ILProcessor ilProcessor)
+        {
+            _labels[node.Label] = ilProcessor.Body.Instructions.Count;
+        }
+
+        private void EmitGoto(BoundGotoStatement node, ILProcessor ilProcessor)
+        {
+            if (_labels.TryGetValue(node.Label, out var target))
+            {
+                ilProcessor.Emit(OpCodes.Br, ilProcessor.Body.Instructions[target]);
+            }
+            else
+            {
+                _forwardLabelsToFix.Add(ilProcessor.Body.Instructions.Count, node.Label);
+                ilProcessor.Emit(OpCodes.Br, Instruction.Create(OpCodes.Nop));
+            }
+        }
+
+        private void EmitConditionalGoto(BoundConditionalGotoStatement node, ILProcessor ilProcessor)
+        {
+            EmitExpression(node.Condition, ilProcessor);
+            ilProcessor.Emit(OpCodes.Call, _mObjectToBool);
+            var instruction = node.GotoIfTrue ? OpCodes.Brtrue : OpCodes.Brfalse;
+            if (_labels.TryGetValue(node.Label, out var target))
+            {
+                ilProcessor.Emit(instruction, ilProcessor.Body.Instructions[target]);
+            }
+            else
+            {
+                _forwardLabelsToFix.Add(ilProcessor.Body.Instructions.Count, node.Label);
+                ilProcessor.Emit(instruction, Instruction.Create(OpCodes.Nop));
+            }
+        }
+
+        private void EmitStatement(BoundStatement node, ILProcessor ilProcessor)
         {
             switch (node.Kind)
             {
                 case BoundNodeKind.EmptyStatement:
                     break;
                 case BoundNodeKind.ExpressionStatement:
-                    EmitExpressionStatement((BoundExpressionStatement)node, methodDefinition);
+                    EmitExpressionStatement((BoundExpressionStatement)node, ilProcessor);
                     break;
                 default:
                     throw new NotImplementedException($"Invalid statement kind '{node.Kind}'.");
             };
         }
 
-        private void EmitExpressionStatement(BoundExpressionStatement node, MethodDefinition methodDefinition)
+        private void EmitExpressionStatement(BoundExpressionStatement node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
-            EmitExpression(node.Expression, methodDefinition);
+            EmitExpression(node.Expression, ilProcessor);
             if (node.DiscardResult)
             {
                 ilProcessor.Emit(OpCodes.Pop);
@@ -413,44 +449,42 @@ namespace Parser.Emitting
             }
         }
 
-        private void EmitExpression(BoundExpression node, MethodDefinition methodDefinition)
+        private void EmitExpression(BoundExpression node, ILProcessor ilProcessor)
         {
             switch (node.Kind) {
                 case BoundNodeKind.AssignmentExpression:
-                    EmitAssignmentExpression((BoundAssignmentExpression)node, methodDefinition);
+                    EmitAssignmentExpression((BoundAssignmentExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.BinaryOperationExpression:
-                    EmitBinaryOperationExpression((BoundBinaryOperationExpression)node, methodDefinition);
+                    EmitBinaryOperationExpression((BoundBinaryOperationExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.FunctionCallExpression:
-                    EmitFunctionCallExpression((BoundFunctionCallExpression)node, methodDefinition);
+                    EmitFunctionCallExpression((BoundFunctionCallExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.IdentifierNameExpression:
-                    EmitIdentifierNameExpression((BoundIdentifierNameExpression)node, methodDefinition);
+                    EmitIdentifierNameExpression((BoundIdentifierNameExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.NumberLiteralExpression:
-                    EmitNumberLiteralExpression((BoundNumberLiteralExpression)node, methodDefinition);
+                    EmitNumberLiteralExpression((BoundNumberLiteralExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.StringLiteralExpression:
-                    EmitStringLiteralExpression((BoundStringLiteralExpression)node, methodDefinition);
+                    EmitStringLiteralExpression((BoundStringLiteralExpression)node, ilProcessor);
                     break;
                 default:
                     throw new NotImplementedException($"Invalid node kind '{node.Kind}'.");
             }
         }
 
-        private void EmitBinaryOperationExpression(BoundBinaryOperationExpression node, MethodDefinition methodDefinition)
+        private void EmitBinaryOperationExpression(BoundBinaryOperationExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             var method = _binaryOperations[node.Op.Kind];
-            EmitExpression(node.Left, methodDefinition);
-            EmitExpression(node.Right, methodDefinition);
+            EmitExpression(node.Left, ilProcessor);
+            EmitExpression(node.Right, ilProcessor);
             ilProcessor.Emit(OpCodes.Call, method);
         }
 
-        private void EmitAssignmentExpression(BoundAssignmentExpression node, MethodDefinition methodDefinition)
+        private void EmitAssignmentExpression(BoundAssignmentExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             if (node.Left.Kind != BoundNodeKind.IdentifierNameExpression) 
             {
                 throw new Exception("Assignment to complex lvalues is not supported.");
@@ -458,42 +492,38 @@ namespace Parser.Emitting
             var left = ((BoundIdentifierNameExpression)node.Left);
             ilProcessor.Emit(OpCodes.Ldloc_0);
             ilProcessor.Emit(OpCodes.Ldstr, left.Name);
-            EmitExpression(node.Right, methodDefinition);
+            EmitExpression(node.Right, ilProcessor);
             ilProcessor.Emit(OpCodes.Callvirt, _putItemIntoDictionary);
             ilProcessor.Emit(OpCodes.Ldloc_0);
             ilProcessor.Emit(OpCodes.Ldstr, left.Name);
             ilProcessor.Emit(OpCodes.Callvirt, _getItemFromDictionary);
         }
 
-        private void EmitIdentifierNameExpression(BoundIdentifierNameExpression node, MethodDefinition methodDefinition)
+        private void EmitIdentifierNameExpression(BoundIdentifierNameExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             ilProcessor.Emit(OpCodes.Ldloc_0);
             ilProcessor.Emit(OpCodes.Ldstr, node.Name);
             ilProcessor.Emit(OpCodes.Callvirt, _getItemFromDictionary);
         }
 
-        private void EmitNumberLiteralExpression(BoundNumberLiteralExpression node, MethodDefinition methodDefinition)
+        private void EmitNumberLiteralExpression(BoundNumberLiteralExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             ilProcessor.Emit(OpCodes.Ldc_R8, node.Value);
             ilProcessor.Emit(OpCodes.Call, _doubleToMObject);
         }
 
-        private void EmitStringLiteralExpression(BoundStringLiteralExpression node, MethodDefinition methodDefinition)
+        private void EmitStringLiteralExpression(BoundStringLiteralExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             ilProcessor.Emit(OpCodes.Ldstr, node.Value);
             ilProcessor.Emit(OpCodes.Call, _stringToMObject);
         }
 
-        private void EmitFunctionCallExpression(BoundFunctionCallExpression node, MethodDefinition methodDefinition)
+        private void EmitFunctionCallExpression(BoundFunctionCallExpression node, ILProcessor ilProcessor)
         {
-            var ilProcessor = methodDefinition.Body.GetILProcessor();
             if (node.Name.Kind == BoundNodeKind.IdentifierNameExpression
                 && ((BoundIdentifierNameExpression)node.Name).Name == "disp")
             {
-                EmitExpression(node.Arguments[0], methodDefinition);
+                EmitExpression(node.Arguments[0], ilProcessor);
                 ilProcessor.Emit(OpCodes.Call, _dispReference);
                 ilProcessor.Emit(OpCodes.Ldnull);
             }
@@ -504,7 +534,7 @@ namespace Parser.Emitting
                 {
                     if (i < node.Arguments.Length)
                     {
-                        EmitExpression(node.Arguments[i], methodDefinition);
+                        EmitExpression(node.Arguments[i], ilProcessor);
                     }
                     else
                     {
