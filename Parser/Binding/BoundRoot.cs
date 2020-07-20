@@ -134,10 +134,23 @@ namespace Parser.Binding
 
     public class BoundForStatement : BoundStatement
     {
-        public BoundForStatement(SyntaxNode syntax)
+        public BoundForStatement(
+            SyntaxNode syntax,
+            BoundIdentifierNameExpression loopVariable,
+            BoundExpression loopedExpression,
+            BoundStatement body)
             : base(syntax)
         {
+            LoopVariable = loopVariable;
+            LoopedExpression = loopedExpression;
+            Body = body;
         }
+
+        public BoundIdentifierNameExpression LoopVariable { get; }
+
+        public BoundExpression LoopedExpression { get; }
+
+        public BoundStatement Body { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.ForStatement;
     }
@@ -257,6 +270,8 @@ namespace Parser.Binding
             : base(syntax)
         {
         }
+
+        public abstract TypeSymbol Type { get; }
     }
 
     public class BoundArrayLiteralExpression : BoundExpression
@@ -267,6 +282,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.ArrayLiteralExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundAssignmentExpression : BoundExpression
@@ -282,6 +299,8 @@ namespace Parser.Binding
         public BoundExpression Right { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.AssignmentExpression;
+
+        public override TypeSymbol Type => Right.Type;
     }
 
     public class BoundBinaryOperationExpression : BoundExpression
@@ -299,6 +318,8 @@ namespace Parser.Binding
         public BoundExpression Right { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.BinaryOperationExpression;
+
+        public override TypeSymbol Type => Op.Result;
     }
 
     public class BoundCellArrayElementAccessExpression : BoundExpression
@@ -309,6 +330,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.CellArrayElementAccessExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundCellArrayLiteralExpression : BoundExpression
@@ -319,6 +342,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.CellArrayLiteralExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundClassInvokationExpression : BoundExpression
@@ -329,6 +354,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.ClassInvokationExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundCommandExpression : BoundExpression
@@ -339,6 +366,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.CommandExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundCompoundNameExpression : BoundExpression
@@ -349,6 +378,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.CompoundNameExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundDoubleQuotedStringLiteralExpression : BoundExpression
@@ -359,6 +390,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.DoubleQuotedStringLiteralExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundEmptyExpression : BoundExpression
@@ -369,6 +402,20 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.EmptyExpression;
+
+        public override TypeSymbol Type => TypeSymbol.Null;
+    }
+
+    public class BoundErrorExpression : BoundExpression
+    {
+        public BoundErrorExpression(SyntaxNode syntax)
+            : base(syntax)
+        {
+        }
+
+        public override BoundNodeKind Kind => BoundNodeKind.ErrorExpression;
+
+        public override TypeSymbol Type => TypeSymbol.Error;
     }
 
     public class BoundFunctionCallExpression : BoundExpression
@@ -383,6 +430,27 @@ namespace Parser.Binding
         public BoundExpression Name { get; }
         public ImmutableArray<BoundExpression> Arguments { get; }
         public override BoundNodeKind Kind => BoundNodeKind.FunctionCallExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
+    }
+
+    public class BoundTypedFunctionCallExpression : BoundExpression
+    {
+        public BoundTypedFunctionCallExpression(
+            SyntaxNode syntax,
+            TypedFunctionSymbol function,
+            ImmutableArray<BoundExpression> arguments)
+            : base(syntax)
+        {
+            Function = function;
+            Arguments = arguments;
+        }
+
+        public TypedFunctionSymbol Function { get; }
+        public ImmutableArray<BoundExpression> Arguments { get; }
+        public override BoundNodeKind Kind => BoundNodeKind.TypedFunctionCallExpression;
+
+        public override TypeSymbol Type => Function.ReturnType;
     }
 
     public class BoundIdentifierNameExpression : BoundExpression
@@ -395,6 +463,8 @@ namespace Parser.Binding
 
         public string Name { get; }
         public override BoundNodeKind Kind => BoundNodeKind.IdentifierNameExpression;
+
+        public override TypeSymbol Type => TypeSymbol.MObject;
     }
 
     public class BoundIndirectMemberAccessExpression : BoundExpression
@@ -405,6 +475,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.IndirectMemberAccessExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundLambdaExpression : BoundExpression
@@ -415,6 +487,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.LambdaExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundMemberAccessExpression : BoundExpression
@@ -425,6 +499,8 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.MemberAccessExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
     public class BoundNamedFunctionHandleExpression : BoundExpression
@@ -435,11 +511,13 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.NamedFunctionHandleExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
-    public class BoundNumberLiteralExpression : BoundExpression
+    public class BoundNumberDoubleLiteralExpression : BoundExpression
     {
-        public BoundNumberLiteralExpression(SyntaxNode syntax, double value)
+        public BoundNumberDoubleLiteralExpression(SyntaxNode syntax, double value)
             : base(syntax)
         {
             Value = value;
@@ -447,6 +525,22 @@ namespace Parser.Binding
 
         public double Value { get; }
         public override BoundNodeKind Kind => BoundNodeKind.NumberLiteralExpression;
+
+        public override TypeSymbol Type => TypeSymbol.Double;
+    }
+
+    public class BoundNumberIntLiteralExpression : BoundExpression
+    {
+        public BoundNumberIntLiteralExpression(SyntaxNode syntax, int value)
+            : base(syntax)
+        {
+            Value = value;
+        }
+
+        public double Value { get; }
+        public override BoundNodeKind Kind => BoundNodeKind.NumberLiteralExpression;
+
+        public override TypeSymbol Type => TypeSymbol.Int;
     }
 
     public class BoundStringLiteralExpression : BoundExpression
@@ -459,6 +553,39 @@ namespace Parser.Binding
 
         public string Value { get; }
         public override BoundNodeKind Kind => BoundNodeKind.StringLiteralExpression;
+
+        public override TypeSymbol Type => TypeSymbol.String;
+    }
+
+    public class BoundTypedVariableDeclaration : BoundStatement
+    {
+        public BoundTypedVariableDeclaration(SyntaxNode syntax, TypedVariableSymbol variable, BoundExpression initializer)
+            : base(syntax)
+        {
+            Variable = variable;
+            Initializer = initializer;
+        }
+
+        public TypedVariableSymbol Variable { get; }
+
+        public BoundExpression Initializer { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.TypedVariableDeclaration;
+    }
+
+    public class BoundTypedVariableExpression : BoundExpression
+    {
+        public BoundTypedVariableExpression(SyntaxNode syntax, TypedVariableSymbol variable)
+            : base(syntax)
+        {
+            Variable = variable;
+        }
+
+        public TypedVariableSymbol Variable { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.TypedVariableExpression;
+
+        public override TypeSymbol Type => Variable.Type;
     }
 
     public class BoundUnaryOperationExpression : BoundExpression
@@ -474,6 +601,8 @@ namespace Parser.Binding
 
         public BoundUnaryOperator Op { get; }
         public BoundExpression Operand { get; }
+
+        public override TypeSymbol Type => Op.Result;
     }
 
     public class BoundUnquotedStringLiteralExpression : BoundExpression
@@ -484,6 +613,26 @@ namespace Parser.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.UnquotedStringLiteralExpression;
+
+        public override TypeSymbol Type => throw new System.NotImplementedException();
+    }
+
+    public class BoundConversionExpression : BoundExpression
+    {
+        public BoundConversionExpression(SyntaxNode syntax, TypeSymbol targetType, BoundExpression expression)
+            : base(syntax)
+        {
+            TargetType = targetType;
+            Expression = expression;
+        }
+
+        public TypeSymbol TargetType { get; }
+
+        public BoundExpression Expression { get; }
+
+        public override BoundNodeKind Kind => BoundNodeKind.ConversionExpression;
+
+        public override TypeSymbol Type => TargetType;
     }
 
     public class BoundElseifClause : BoundNode

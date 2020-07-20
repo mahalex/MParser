@@ -107,5 +107,10 @@ namespace Parser.Internal
         {
             Report(span, $"Too many inputs in the call to '{functionName}'.");
         }
+
+        internal void ReportForLoopWithoutVariable(TextSpan span)
+        {
+            Report(span, $"A 'for' loop must have a loop variable.");
+        }
     }
 }

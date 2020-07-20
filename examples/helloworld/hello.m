@@ -5,6 +5,11 @@ f(x);
 x = 3;
 f(x);
 
+% for i = 1:10
+%     disp(i);
+% end
+
+
 function f(x)
     disp('X was');
     disp(x);

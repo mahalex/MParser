@@ -38,11 +38,18 @@ namespace Parser.Binding
                     RewriteSwitchStatement((BoundSwitchStatement)node),
                 BoundNodeKind.TryCatchStatement =>
                     RewriteTryCatchStatement((BoundTryCatchStatement)node),
+                BoundNodeKind.TypedVariableDeclaration =>
+                    RewriteTypedVariableDeclaration((BoundTypedVariableDeclaration)node),
                 BoundNodeKind.WhileStatement =>
                     RewriteWhileStatement((BoundWhileStatement)node),
                 _ =>
                     throw new Exception($"Invalid statement kind {node.Kind}."),
             };
+        }
+
+        public virtual BoundStatement RewriteTypedVariableDeclaration(BoundTypedVariableDeclaration node)
+        {
+            return node;
         }
 
         public virtual BoundStatement RewriteGotoStatement(BoundGotoStatement node)
@@ -136,7 +143,7 @@ namespace Parser.Binding
 
         public virtual BoundStatement RewriteForStatement(BoundForStatement node)
         {
-            throw new NotImplementedException();
+            return node;
         }
 
         public virtual BoundStatement RewriteExpressionStatement(BoundExpressionStatement node)
@@ -220,6 +227,8 @@ namespace Parser.Binding
                     RewriteCommandExpression((BoundCommandExpression)node),
                 BoundNodeKind.CompoundNameExpression =>
                     RewriteCompoundNameExpression((BoundCompoundNameExpression)node),
+                BoundNodeKind.ConversionExpression =>
+                    RewriteConversionExpression((BoundConversionExpression)node),
                 BoundNodeKind.DoubleQuotedStringLiteralExpression =>
                     RewriteDoubleQuotedStringLiteralExpression((BoundDoubleQuotedStringLiteralExpression)node),
                 BoundNodeKind.EmptyExpression =>
@@ -237,9 +246,11 @@ namespace Parser.Binding
                 BoundNodeKind.NamedFunctionHandleExpression =>
                     RewriteNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
                 BoundNodeKind.NumberLiteralExpression =>
-                    RewriteNumberLiteralExpression((BoundNumberLiteralExpression)node),
+                    RewriteNumberLiteralExpression((BoundNumberDoubleLiteralExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     RewriteStringLiteralExpression((BoundStringLiteralExpression)node),
+                BoundNodeKind.TypedVariableExpression =>
+                    RewriteTypedVariableExpression((BoundTypedVariableExpression)node),
                 BoundNodeKind.UnaryOperationExpression =>
                     RewriteUnaryOperationExpression((BoundUnaryOperationExpression)node),
                 BoundNodeKind.UnquotedStringLiteralExpression =>
@@ -247,6 +258,17 @@ namespace Parser.Binding
                 _ =>
                     throw new Exception($"Invalid expression kind {node.Kind}."),
             };
+        }
+
+        public virtual BoundExpression RewriteConversionExpression(BoundConversionExpression node)
+        {
+            var operand = RewriteExpression(node.Expression);
+            return Conversion(node.Syntax, node.TargetType, operand);
+        }
+
+        public virtual BoundExpression RewriteTypedVariableExpression(BoundTypedVariableExpression node)
+        {
+            return node;
         }
 
         public virtual BoundExpression RewriteUnquotedStringLiteralExpression(BoundUnquotedStringLiteralExpression node)
@@ -265,7 +287,7 @@ namespace Parser.Binding
             return node;
         }
 
-        public virtual BoundExpression RewriteNumberLiteralExpression(BoundNumberLiteralExpression node)
+        public virtual BoundExpression RewriteNumberLiteralExpression(BoundNumberDoubleLiteralExpression node)
         {
             return node;
         }

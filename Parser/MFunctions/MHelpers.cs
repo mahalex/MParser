@@ -13,6 +13,18 @@ namespace Parser.MFunctions
             }
         }
 
+        public static int Len(MObject? obj)
+        {
+            return obj switch
+            {
+                MDoubleMatrix m => m.RowCount * m.ColumnCount,
+                MDoubleNumber _ => 1,
+                MLogical _ => 1,
+                MCharArray c => c.Chars.Length,
+                _ => throw new System.Exception($"Unknown MObject type {obj.GetType()}"),
+            };
+        }
+
         public static bool ToBool(MObject operand)
         {
             return operand switch
@@ -20,6 +32,7 @@ namespace Parser.MFunctions
                 MDoubleNumber { Value: var value } => value != 0.0,
                 MLogical { Value: var value } => value,
                 MCharArray { Chars: var value } => value.Length > 0,
+                MDoubleMatrix m => m.RowCount > 0 && m.ColumnCount > 0,
                 _ => throw new System.Exception($"Unknown MObject type {operand.GetType()}"),
             };
         }

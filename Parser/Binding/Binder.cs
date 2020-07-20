@@ -116,7 +116,7 @@ namespace Parser.Binding
                 TokenKind.ExpressionStatement =>
                     BindExpressionStatement((ExpressionStatementSyntaxNode)node),
                 TokenKind.ForStatement =>
-                    BindForStatement((ForStatementSyntaxNode)node),
+                    BindForStatement((ForStatementSyntaxNode)node)!,
                 TokenKind.FunctionDeclaration =>
                     BindFunctionDeclaration((FunctionDeclarationSyntaxNode)node),
                 TokenKind.IfStatement =>
@@ -265,9 +265,29 @@ namespace Parser.Binding
             return new ParameterSymbol(parameter.Text);
         }
 
-        private BoundForStatement BindForStatement(ForStatementSyntaxNode node)
+        private BoundForStatement? BindForStatement(ForStatementSyntaxNode node)
         {
-            throw new NotImplementedException();
+            var loopVariable = BindLoopVariable(node.Assignment.Lhs);
+            if (loopVariable is null)
+            {
+                return null;
+            }
+
+            var loopedExpression = BindExpression(node.Assignment.Rhs);
+            var body = BindStatement(node.Body);
+            return ForStatement(node, loopVariable, loopedExpression, body);
+        }
+
+        private BoundIdentifierNameExpression? BindLoopVariable(ExpressionSyntaxNode node)
+        {
+            if (node.Kind != TokenKind.IdentifierNameExpression)
+            {
+                _diagnostics.ReportForLoopWithoutVariable(
+                    new TextSpan(node.Position, node.FullWidth));
+                return null;
+            }
+
+            return Identifier(node, ((IdentifierNameExpressionSyntaxNode)node).Name.Text);
         }
 
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntaxNode node)
@@ -342,11 +362,37 @@ namespace Parser.Binding
             return Assignment(node, left, right);
         }
 
+        private BoundExpression BindConversion(BoundExpression expression, TypeSymbol targetType)
+        {
+            var conversion = Conversion.Classify(expression.Type, targetType);
+            if (!conversion.Exists)
+            {
+                return new BoundErrorExpression(expression.Syntax);
+            }
+
+            if (conversion.IsIdentity)
+            {
+                return expression;
+            }
+
+            return Conversion(expression.Syntax, targetType, expression);
+        }
+
         private BoundBinaryOperationExpression BindBinaryOperationExpression(BinaryOperationExpressionSyntaxNode node)
         {
             var left = BindExpression(node.Lhs);
             var right = BindExpression(node.Rhs);
-            return BinaryOperation(node, left, node.Operation.Kind, right);
+            var op = BoundBinaryOperator.GetOperator(node.Operation.Kind, left.Type, right.Type);
+            if (op is null)
+            {
+                throw new Exception($"Unknown binary operator '{node.Operation.Kind}'.");
+            }
+
+            return BinaryOperation(
+                node,
+                BindConversion(left, op.Left),
+                op,
+                BindConversion(right, op.Right));
         }
 
         private BoundCellArrayElementAccessExpression BindCellArrayElementAccessExpression(CellArrayElementAccessExpressionSyntaxNode node)
@@ -416,10 +462,10 @@ namespace Parser.Binding
             throw new NotImplementedException();
         }
 
-        private BoundNumberLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
+        private BoundNumberDoubleLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             var value = (double)node.Number.Value!;
-            return NumberLiteral(node, value);
+            return NumberDoubleLiteral(node, value);
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntaxNode node)
@@ -436,7 +482,16 @@ namespace Parser.Binding
         private BoundUnaryOperationExpression BindUnaryPrefixOperationExpression(UnaryPrefixOperationExpressionSyntaxNode node)
         {
             var operand = BindExpression(node.Operand);
-            return UnaryOperation(node, node.Operation.Kind, operand);
+            var op = BoundUnaryOperator.GetOperator(node.Operation.Kind, operand.Type);
+            if (op is null)
+            {
+                throw new Exception($"Unknown binary operator '{node.Operation.Kind}'.");
+            }
+
+            return UnaryOperation(
+                node,
+                op,
+                BindConversion(operand, op.Result));
         }
 
         private BoundUnaryOperationExpression BindUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)

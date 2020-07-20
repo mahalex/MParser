@@ -21,6 +21,7 @@
         LabelStatement,
         SwitchStatement,
         TryCatchStatement,
+        TypedVariableDeclaration,
         WhileStatement,
 
         // Expressions
@@ -33,8 +34,10 @@
         ClassInvokationExpression,
         CommandExpression,
         CompoundNameExpression,
+        ConversionExpression,
         DoubleQuotedStringLiteralExpression,
         EmptyExpression,
+        ErrorExpression,
         FunctionCallExpression,
         IdentifierNameExpression,
         IndirectMemberAccessExpression,
@@ -44,11 +47,13 @@
         NumberLiteralExpression,
         ParenthesizedExpression,
         StringLiteralExpression,
+        TypedFunctionCallExpression,
+        TypedVariableExpression,
         UnaryOperationExpression,
         UnquotedStringLiteralExpression,
 
         // Parts
         ElseIfClause,
-        ElseClause
+        ElseClause,
     }
 }

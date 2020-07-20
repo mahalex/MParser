@@ -25,6 +25,11 @@ namespace Parser.Binding
             return new BoundBlockStatement(syntax, statements);
         }
 
+        public static BoundConversionExpression Conversion(SyntaxNode syntax, TypeSymbol targetType, BoundExpression expression)
+        {
+            return new BoundConversionExpression(syntax, targetType, expression);
+        }
+
         public static BoundExpressionStatement ExpressionStatement(
             SyntaxNode syntax,
             BoundExpression expression,
@@ -41,6 +46,15 @@ namespace Parser.Binding
             BoundStatement? elseClause)
         {
             return new BoundIfStatement(syntax, condition, body, elseifClauses, elseClause);
+        }
+
+        public static BoundForStatement ForStatement(
+            SyntaxNode syntax,
+            BoundIdentifierNameExpression loopVariable,
+            BoundExpression loopExpression,
+            BoundStatement body)
+        {
+            return new BoundForStatement(syntax, loopVariable, loopExpression, body);
         }
 
         public static BoundLabelStatement LabelStatement(
@@ -61,10 +75,9 @@ namespace Parser.Binding
         public static BoundBinaryOperationExpression BinaryOperation(
             SyntaxNode syntax,
             BoundExpression left,
-            TokenKind kind,
+            BoundBinaryOperator op,
             BoundExpression right)
         {
-            var op = BindBinaryOperator(kind);
             return new BoundBinaryOperationExpression(syntax, left, op, right);
         }
 
@@ -127,11 +140,18 @@ namespace Parser.Binding
             return new BoundIdentifierNameExpression(syntax, name);
         }
 
-        public static BoundNumberLiteralExpression NumberLiteral(
+        public static BoundNumberDoubleLiteralExpression NumberDoubleLiteral(
             SyntaxNode syntax,
             double value)
         {
-            return new BoundNumberLiteralExpression(syntax, value);
+            return new BoundNumberDoubleLiteralExpression(syntax, value);
+        }
+
+        public static BoundNumberIntLiteralExpression NumberIntLiteral(
+            SyntaxNode syntax,
+            int value)
+        {
+            return new BoundNumberIntLiteralExpression(syntax, value);
         }
 
         public static BoundStringLiteralExpression StringLiteral(
@@ -149,25 +169,38 @@ namespace Parser.Binding
             return new BoundElseifClause(syntax, condition, body);
         }
 
+        public static BoundTypedVariableDeclaration TypedVariableDeclaration(
+            SyntaxNode syntax,
+            TypedVariableSymbol variable,
+            BoundExpression initializer)
+        {
+            return new BoundTypedVariableDeclaration(syntax, variable, initializer);
+        }
+
+        public static BoundTypedVariableExpression TypedVariableExpression(
+            SyntaxNode syntax,
+            TypedVariableSymbol variable)
+        {
+            return new BoundTypedVariableExpression(syntax, variable);
+        }
+
         public static BoundUnaryOperationExpression UnaryOperation(
             SyntaxNode syntax,
-            TokenKind kind,
+            BoundUnaryOperator op,
             BoundExpression operand)
         {
-            var op = BindUnaryOperator(kind);
             return new BoundUnaryOperationExpression(syntax, op, operand);
         }
 
-        private static BoundUnaryOperator BindUnaryOperator(TokenKind kind)
+        public static BoundExpression TypedFunctionCall(
+            SyntaxNode syntax,
+            TypedFunctionSymbol function,
+            ImmutableArray<BoundExpression> arguments)
         {
-            return BoundUnaryOperator.GetOperator(kind)
-                ?? throw new Exception($"Unexpected unary operator kind {kind}.");
-        }
-
-        private static BoundBinaryOperator BindBinaryOperator(TokenKind kind)
-        {
-            return BoundBinaryOperator.GetOperator(kind)
-                ?? throw new Exception($"Unexpected binary operator kind {kind}.");
+            return new BoundTypedFunctionCallExpression(
+                syntax,
+                function,
+                arguments);
         }
     }
 }

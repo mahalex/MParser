@@ -1,10 +1,22 @@
-﻿namespace Parser.Objects
+﻿using System;
+
+namespace Parser.Objects
 {
     public abstract class MObject
     {
         public static MDoubleNumber CreateDoubleNumber(double value)
         {
             return MDoubleNumber.Create(value);
+        }
+
+        public static MDoubleNumber CreateIntNumber(int value)
+        {
+            return MDoubleNumber.Create(value);
+        }
+
+        public static MDoubleMatrix CreateDoubleMatrix(double[,] matrix)
+        {
+            return MDoubleMatrix.Create(matrix);
         }
 
         public static MCharArray CreateCharArray(char[] chars)

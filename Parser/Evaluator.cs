@@ -251,7 +251,7 @@ namespace Parser
                 BoundNodeKind.NamedFunctionHandleExpression =>
                     EvaluateNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
                 BoundNodeKind.NumberLiteralExpression =>
-                    EvaluateNumberLiteralExpression((BoundNumberLiteralExpression)node),
+                    EvaluateNumberLiteralExpression((BoundNumberDoubleLiteralExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     EvaluateStringLiteralExpression((BoundStringLiteralExpression)node),
                 BoundNodeKind.UnaryOperationExpression =>
@@ -420,7 +420,7 @@ namespace Parser
             };
         }
 
-        private MObject? EvaluateNumberLiteralExpression(BoundNumberLiteralExpression node)
+        private MObject? EvaluateNumberLiteralExpression(BoundNumberDoubleLiteralExpression node)
         {
             return MObject.CreateDoubleNumber(node.Value);
         }
