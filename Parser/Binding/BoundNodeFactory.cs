@@ -133,6 +133,14 @@ namespace Parser.Binding
             return new BoundGotoStatement(syntax, label);
         }
 
+        public static BoundWhileStatement WhileStatement(
+            SyntaxNode syntax,
+            BoundExpression condition,
+            BoundStatement body)
+        {
+            return new BoundWhileStatement(syntax, condition, body);
+        }
+
         public static BoundIdentifierNameExpression Identifier(
             SyntaxNode syntax,
             string name)

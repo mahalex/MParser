@@ -256,12 +256,18 @@ namespace Parser.Binding
 
     public class BoundWhileStatement : BoundStatement
     {
-        public BoundWhileStatement(SyntaxNode syntax)
+        public BoundWhileStatement(SyntaxNode syntax, BoundExpression condition, BoundStatement body)
             : base(syntax)
         {
+            Condition = condition;
+            Body = body;
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.WhileStatement;
+
+        public BoundExpression Condition { get; }
+
+        public BoundStatement Body { get; }
     }
 
     public abstract class BoundExpression : BoundNode

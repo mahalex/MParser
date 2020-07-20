@@ -132,11 +132,6 @@ namespace Parser.Binding
             };
         }
 
-        private BoundWhileStatement BindWhileStatement(WhileStatementSyntaxNode node)
-        {
-            throw new NotImplementedException();
-        }
-
         private BoundTryCatchStatement BindTryCatchStatement(TryCatchStatementSyntaxNode node)
         {
             throw new NotImplementedException();
@@ -288,6 +283,13 @@ namespace Parser.Binding
             }
 
             return Identifier(node, ((IdentifierNameExpressionSyntaxNode)node).Name.Text);
+        }
+
+        private BoundWhileStatement BindWhileStatement(WhileStatementSyntaxNode node)
+        {
+            var condition = BindConversion(BindExpression(node.Condition), TypeSymbol.Boolean);
+            var body = BindStatement(node.Body);
+            return WhileStatement(node, condition, body);
         }
 
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntaxNode node)

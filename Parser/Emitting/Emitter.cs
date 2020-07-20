@@ -467,8 +467,13 @@ namespace Parser.Emitting
 
         private void EmitConditionalGoto(BoundConditionalGotoStatement node, ILProcessor ilProcessor)
         {
-            EmitExpression(node.Condition, ilProcessor);
-            ilProcessor.Emit(OpCodes.Call, _mObjectToBool);
+            var condition = ConvertExpression(node.Condition, TypeSymbol.Boolean);
+            if (condition is null)
+            {
+                throw new Exception("Cannot cast a condition in GOTO to boolean.");
+            }
+
+            EmitExpression(condition, ilProcessor);
             var instruction = node.GotoIfTrue ? OpCodes.Brtrue : OpCodes.Brfalse;
             if (_labels.TryGetValue(node.Label, out var target))
             {
@@ -569,13 +574,17 @@ namespace Parser.Emitting
             {
                 ilProcessor.Emit(OpCodes.Call, _doubleToMObject);
             }
-            if ((fromType, toType) == (TypeSymbol.Int, TypeSymbol.MObject))
+            else if ((fromType, toType) == (TypeSymbol.Int, TypeSymbol.MObject))
             {
                 ilProcessor.Emit(OpCodes.Call, _intToMObject);
             }
             else if ((fromType, toType) == (TypeSymbol.String, TypeSymbol.MObject))
             {
                 ilProcessor.Emit(OpCodes.Call, _stringToMObject);
+            }
+            else if ((fromType, toType) == (TypeSymbol.MObject, TypeSymbol.Boolean))
+            {
+                ilProcessor.Emit(OpCodes.Call, _mObjectToBool);
             }
             else
             {

@@ -86,6 +86,41 @@ namespace Parser.Lowering
             return RewriteBlockStatement(Block(node.Syntax, builder.ToArray()));
         }
 
+        public override BoundStatement RewriteWhileStatement(BoundWhileStatement node)
+        {
+            // while cond
+            //     body
+            // end
+            //
+            //      |
+            //      |
+            //      V
+            //
+            // LabelLoop:
+            //     gotoFalse cond LabelEnd
+            //     body
+            //     goto LabelLoop
+            // LabelEnd:
+            var labelLoop = GenerateLabel();
+            var labelEnd = GenerateLabel();
+            var result = Block(
+                node.Syntax,
+                // LabelLoop:
+                LabelStatement(node.Syntax, labelLoop),
+                //     gotoFalse cond LabelEnd
+                GotoIfFalse(
+                    node.Syntax,
+                    node.Condition,
+                    labelEnd),
+                //     body
+                node.Body,
+                //     goto LabelLoop
+                Goto(node.Syntax, labelLoop),
+                // LabelEnd:
+                LabelStatement(node.Syntax, labelEnd));
+            return RewriteBlockStatement(result);
+        }
+
         public override BoundStatement RewriteForStatement(BoundForStatement node)
         {
             // for i = expr
@@ -102,7 +137,6 @@ namespace Parser.Lowering
             //   #index = #index + 1
             //   goto LabelLoop
             // LabelEnd:
-            var builder = ImmutableArray.CreateBuilder<BoundStatement>();
             var labelLoop = GenerateLabel();
             var labelEnd = GenerateLabel();
             var localArray = GenerateTypedLocalVariable(TypeSymbol.MObject);

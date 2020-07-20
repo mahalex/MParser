@@ -70,7 +70,9 @@ namespace Parser.Binding
 
         public virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)
         {
-            throw new NotImplementedException();
+            var condition = RewriteExpression(node.Condition);
+            var body = RewriteStatement(node.Body);
+            return WhileStatement(node.Syntax, condition, body);
         }
 
         public virtual BoundStatement RewriteTryCatchStatement(BoundTryCatchStatement node)

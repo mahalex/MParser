@@ -28,6 +28,11 @@
                 return Implicit;
             }
 
+            if (to == TypeSymbol.Boolean)
+            {
+                return Implicit;
+            }
+
             return None;
         }
     }
