@@ -1,4 +1,5 @@
 ﻿using Parser.Binding;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -127,36 +128,23 @@ namespace Parser.Lowering
             //     body
             // end
             //
+            //      |
+            //      |
+            //      V
+            //
             //   #array = expr
             //   #length = len(#array)
             //   #index = 0
-            //   i = #array(#index);
-            // LabelLoop:
-            //   gotoFalse (#index < #length) LabelEnd
-            //   body
-            //   #index = #index + 1
-            //   goto LabelLoop
-            // LabelEnd:
-            var labelLoop = GenerateLabel();
-            var labelEnd = GenerateLabel();
+            //   while #index < #length
+            //       i = #array(#index);
+            //       body
+            //       #index = #index + 1
             var localArray = GenerateTypedLocalVariable(TypeSymbol.MObject);
             var localLength = GenerateTypedLocalVariable(TypeSymbol.Int);
             var localIndex = GenerateTypedLocalVariable(TypeSymbol.Int);
-            return RewriteBlockStatement(Block(
+            var whileBody = Block(
                 node.Syntax,
-                //   #array = expr
-                TypedVariableDeclaration(node.Syntax, localArray, node.LoopedExpression),
-                //   #length = len(#array)
-                TypedVariableDeclaration(
-                    node.Syntax,
-                    localLength,
-                    FunctionCall(
-                        node.Syntax,
-                        Identifier(node.Syntax, "len"),
-                        new[] { (BoundExpression)TypedVariableExpression(node.Syntax, localArray) }.ToImmutableArray())),
-                //   #index = 0
-                TypedVariableDeclaration(node.Syntax, localIndex, NumberDoubleLiteral(node.Syntax, 0.0)),
-                //   i = #array(#index);
+                //       i = #array(#index);
                 ExpressionStatement(
                     node.Syntax,
                     Assignment(
@@ -167,18 +155,7 @@ namespace Parser.Lowering
                             TypedVariableExpression(node.Syntax, localArray),
                             new[] { (BoundExpression)TypedVariableExpression(node.Syntax, localIndex) }.ToImmutableArray())),
                     discardResult: true),
-                // LabelLoop:
-                LabelStatement(node.Syntax, labelLoop),
-                //   gotoFalse (#index < #length) LabelEnd
-                GotoIfFalse(
-                    node.Syntax,
-                    BinaryOperation(
-                        node.Syntax,
-                        TypedVariableExpression(node.Syntax, localIndex),
-                        BoundBinaryOperator.GetOperator(TokenKind.LessToken, TypeSymbol.Int, TypeSymbol.Int)!,
-                        TypedVariableExpression(node.Syntax, localLength)),
-                    labelEnd),
-                //   body
+                //       body
                 node.Body,
                 //   #index = #index + 1;
                 ExpressionStatement(
@@ -191,11 +168,33 @@ namespace Parser.Lowering
                             TypedVariableExpression(node.Syntax, localIndex),
                             BoundBinaryOperator.GetOperator(TokenKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int)!,
                             NumberIntLiteral(node.Syntax, 1))),
-                    discardResult: true),
-                //   goto LabelLoop
-                Goto(node.Syntax, labelLoop),
-                // LabelEnd:
-                LabelStatement(node.Syntax, labelEnd)));
+                    discardResult: true));
+
+            var result = Block(
+                node.Syntax,
+                //   #array = expr
+                TypedVariableDeclaration(node.Syntax, localArray, node.LoopedExpression),
+                //   #length = len(#array)
+                TypedVariableDeclaration(
+                    node.Syntax,
+                    localLength,
+                    FunctionCall(
+                        node.Syntax,
+                        Identifier(node.Syntax, "len"),
+                        new[] { (BoundExpression)TypedVariableExpression(node.Syntax, localArray) }.ToImmutableArray())),
+                //   #index = 0
+                TypedVariableDeclaration(node.Syntax, localIndex, NumberIntLiteral(node.Syntax, 0)),
+                //   while #index < #length
+                //       whileBody
+                WhileStatement(
+                    node.Syntax,
+                    BinaryOperation(
+                        node.Syntax,
+                        TypedVariableExpression(node.Syntax, localIndex),
+                        BoundBinaryOperator.GetOperator(TokenKind.LessToken, TypeSymbol.Int, TypeSymbol.Int)!,
+                        TypedVariableExpression(node.Syntax, localLength)),
+                    whileBody));
+            return RewriteBlockStatement(result);
         }
 
         public static BoundBlockStatement Lower(BoundStatement statement)

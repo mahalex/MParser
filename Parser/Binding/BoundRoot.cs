@@ -437,7 +437,7 @@ namespace Parser.Binding
         public ImmutableArray<BoundExpression> Arguments { get; }
         public override BoundNodeKind Kind => BoundNodeKind.FunctionCallExpression;
 
-        public override TypeSymbol Type => throw new System.NotImplementedException();
+        public override TypeSymbol Type => TypeSymbol.MObject;
     }
 
     public class BoundTypedFunctionCallExpression : BoundExpression

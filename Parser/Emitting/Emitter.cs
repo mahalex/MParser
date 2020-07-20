@@ -360,7 +360,6 @@ namespace Parser.Emitting
 
         private void EmitFunction(LoweredFunction function, MethodDefinition methodDefinition)
         {
-            Console.WriteLine($"Emitting function '{function.Name}'.");
             var ilProcessor = methodDefinition.Body.GetILProcessor();
 
             _labels.Clear();
@@ -467,7 +466,7 @@ namespace Parser.Emitting
 
         private void EmitConditionalGoto(BoundConditionalGotoStatement node, ILProcessor ilProcessor)
         {
-            var condition = ConvertExpression(node.Condition, TypeSymbol.Boolean);
+            var condition = TryConvertExpression(node.Condition, TypeSymbol.Boolean);
             if (condition is null)
             {
                 throw new Exception("Cannot cast a condition in GOTO to boolean.");
@@ -600,10 +599,30 @@ namespace Parser.Emitting
 
         private void EmitBinaryOperationExpression(BoundBinaryOperationExpression node, ILProcessor ilProcessor)
         {
-            var method = _binaryOperations[node.Op.Kind];
-            EmitExpression(node.Left, ilProcessor);
-            EmitExpression(node.Right, ilProcessor);
-            ilProcessor.Emit(OpCodes.Call, method);
+            if (_binaryOperations.TryGetValue(node.Op.Kind, out var method))
+            {
+                EmitExpression(node.Left, ilProcessor);
+                EmitExpression(node.Right, ilProcessor);
+                ilProcessor.Emit(OpCodes.Call, method);
+            } else
+            {
+                if (node.Op.Kind == BoundBinaryOperatorKind.LessInt)
+                {
+                    EmitExpression(node.Left, ilProcessor);
+                    EmitExpression(node.Right, ilProcessor);
+                    ilProcessor.Emit(OpCodes.Clt);
+                }
+                else if (node.Op.Kind == BoundBinaryOperatorKind.PlusInt)
+                {
+                    EmitExpression(node.Left, ilProcessor);
+                    EmitExpression(node.Right, ilProcessor);
+                    ilProcessor.Emit(OpCodes.Add);
+                }
+                else
+                {
+                    throw new Exception($"Binary operation '{node.Op.Kind}' not implemented.");
+                }
+            }
         }
 
         private void EmitAssignmentExpression(BoundAssignmentExpression node, ILProcessor ilProcessor)
@@ -615,9 +634,11 @@ namespace Parser.Emitting
                 _ => throw new Exception($"Assignment to lvalue of kind {node.Left.Kind} is not supported."),
             };
 
-            var rightType = node.Right.Type;
-
-            var rewrittenRight = ConvertExpression(node.Right, leftType);
+            var rewrittenRight = TryConvertExpression(node.Right, leftType);
+            if (rewrittenRight is null)
+            {
+                throw new Exception($"Cannot convert an expression of type '{node.Right.Type}' to '{leftType}'.");
+            }
 
             if (node.Left.Kind == BoundNodeKind.IdentifierNameExpression)
             {
@@ -634,6 +655,7 @@ namespace Parser.Emitting
             {
                 var typedVariableExpression = (BoundTypedVariableExpression)node.Left;
                 EmitExpression(rewrittenRight, ilProcessor);
+                ilProcessor.Emit(OpCodes.Dup);
                 ilProcessor.Emit(OpCodes.Stloc, _typedLocals[typedVariableExpression.Variable]);
             }
             else
@@ -664,7 +686,7 @@ namespace Parser.Emitting
             ilProcessor.Emit(OpCodes.Ldstr, node.Value);
         }
 
-        private BoundExpression? ConvertExpression(BoundExpression expression, TypeSymbol targetType)
+        private BoundExpression? TryConvertExpression(BoundExpression expression, TypeSymbol targetType)
         {
             var conversion = Conversion.Classify(expression.Type, targetType);
             if (!conversion.Exists)
@@ -680,7 +702,12 @@ namespace Parser.Emitting
             {
                 return BoundNodeFactory.Conversion(expression.Syntax, targetType, expression);
             }
+        }
 
+        private BoundExpression ConvertExpression(BoundExpression expression, TypeSymbol targetType)
+        {
+            return TryConvertExpression(expression, targetType)
+                ?? throw new Exception($"Conversion from '{expression.Type}' to '{targetType}' failed.");
         }
 
         private BoundExpression RewriteFunctionCall(BoundFunctionCallExpression node, TypedFunctionSymbol function)
@@ -696,7 +723,7 @@ namespace Parser.Emitting
             {
                 var argument = node.Arguments[i];
                 var parameter = function.Parameters[i];
-                var rewrittenArgument = ConvertExpression(argument, parameter.Type);
+                var rewrittenArgument = TryConvertExpression(argument, parameter.Type);
                 if (rewrittenArgument is null)
                 {
                     throw new NotImplementedException($"Argument number {i + 1} of function '{function.Name}' expects {parameter.Type}, but got {argument.Type}, and no conversion exists.");
@@ -753,9 +780,10 @@ namespace Parser.Emitting
                     throw new Exception("Multi-dimensional array slicing is not supported.");
                 }
 
-                var typedVariableExpression = (BoundTypedVariableExpression)node.Name;
-                EmitTypedVariableExpression(typedVariableExpression, ilProcessor);
-                EmitExpression(node.Arguments[0], ilProcessor);
+                var typedVariableExpression = ConvertExpression((BoundTypedVariableExpression)node.Name, TypeSymbol.MObject);
+                EmitExpression(typedVariableExpression, ilProcessor);
+                var indexExpression = ConvertExpression(node.Arguments[0], TypeSymbol.MObject);
+                EmitExpression(indexExpression, ilProcessor);
                 ilProcessor.Emit(OpCodes.Call, _arraySliceReference);
             }
             else

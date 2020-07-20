@@ -5,16 +5,15 @@ f(x);
 x = 3;
 f(x);
 
-i = 1;
-while i <= 10
-    disp(i);
-    i = i + 1;
-end
-
-% for i = 1:10
+% i = 1;
+% while i <= 10
 %     disp(i);
+%     i = i + 1;
 % end
 
+for i = 1:10
+    disp(i);
+end
 
 function f(x)
     disp('X was');

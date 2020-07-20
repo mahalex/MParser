@@ -8,12 +8,12 @@ namespace Parser.Binding
         {
             new BoundBinaryOperator(
                 TokenKind.LessToken,
-                BoundBinaryOperatorKind.Less,
+                BoundBinaryOperatorKind.LessInt,
                 TypeSymbol.Int,
                 TypeSymbol.Boolean),
             new BoundBinaryOperator(
                 TokenKind.PlusToken,
-                BoundBinaryOperatorKind.Plus,
+                BoundBinaryOperatorKind.PlusInt,
                 TypeSymbol.Int),
         };
 
