@@ -250,8 +250,10 @@ namespace Parser
                     EvaluateMemberAccess((BoundMemberAccessExpression)node),
                 BoundNodeKind.NamedFunctionHandleExpression =>
                     EvaluateNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
-                BoundNodeKind.NumberLiteralExpression =>
-                    EvaluateNumberLiteralExpression((BoundNumberDoubleLiteralExpression)node),
+                BoundNodeKind.NumberDoubleLiteralExpression =>
+                    EvaluateNumberDoubleLiteralExpression((BoundNumberDoubleLiteralExpression)node),
+                BoundNodeKind.NumberIntLiteralExpression =>
+                    EvaluateNumberIntLiteralExpression((BoundNumberIntLiteralExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     EvaluateStringLiteralExpression((BoundStringLiteralExpression)node),
                 BoundNodeKind.UnaryOperationExpression =>
@@ -420,7 +422,12 @@ namespace Parser
             };
         }
 
-        private MObject? EvaluateNumberLiteralExpression(BoundNumberDoubleLiteralExpression node)
+        private MObject? EvaluateNumberDoubleLiteralExpression(BoundNumberDoubleLiteralExpression node)
+        {
+            return MObject.CreateDoubleNumber(node.Value);
+        }
+
+        private MObject? EvaluateNumberIntLiteralExpression(BoundNumberIntLiteralExpression node)
         {
             return MObject.CreateDoubleNumber(node.Value);
         }

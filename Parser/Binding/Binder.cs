@@ -462,10 +462,18 @@ namespace Parser.Binding
             throw new NotImplementedException();
         }
 
-        private BoundNumberDoubleLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
+        private BoundNumberLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             var value = (double)node.Number.Value!;
-            return NumberDoubleLiteral(node, value);
+            var intValue = (int)Math.Round(value);
+            if (intValue == value)
+            {
+                return NumberIntLiteral(node, intValue);
+            }
+            else
+            {
+                return NumberDoubleLiteral(node, value);
+            }
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntaxNode node)

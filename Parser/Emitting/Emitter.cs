@@ -540,8 +540,11 @@ namespace Parser.Emitting
                 case BoundNodeKind.IdentifierNameExpression:
                     EmitIdentifierNameExpression((BoundIdentifierNameExpression)node, ilProcessor);
                     break;
-                case BoundNodeKind.NumberLiteralExpression:
-                    EmitNumberLiteralExpression((BoundNumberDoubleLiteralExpression)node, ilProcessor);
+                case BoundNodeKind.NumberDoubleLiteralExpression:
+                    EmitNumberDoubleLiteralExpression((BoundNumberDoubleLiteralExpression)node, ilProcessor);
+                    break;
+                case BoundNodeKind.NumberIntLiteralExpression:
+                    EmitNumberIntLiteralExpression((BoundNumberIntLiteralExpression)node, ilProcessor);
                     break;
                 case BoundNodeKind.StringLiteralExpression:
                     EmitStringLiteralExpression((BoundStringLiteralExpression)node, ilProcessor);
@@ -565,6 +568,10 @@ namespace Parser.Emitting
             if ((fromType, toType) == (TypeSymbol.Double, TypeSymbol.MObject))
             {
                 ilProcessor.Emit(OpCodes.Call, _doubleToMObject);
+            }
+            if ((fromType, toType) == (TypeSymbol.Int, TypeSymbol.MObject))
+            {
+                ilProcessor.Emit(OpCodes.Call, _intToMObject);
             }
             else if ((fromType, toType) == (TypeSymbol.String, TypeSymbol.MObject))
             {
@@ -633,9 +640,14 @@ namespace Parser.Emitting
             ilProcessor.Emit(OpCodes.Callvirt, _getItemFromDictionary);
         }
 
-        private void EmitNumberLiteralExpression(BoundNumberDoubleLiteralExpression node, ILProcessor ilProcessor)
+        private void EmitNumberDoubleLiteralExpression(BoundNumberDoubleLiteralExpression node, ILProcessor ilProcessor)
         {
             ilProcessor.Emit(OpCodes.Ldc_R8, node.Value);
+        }
+
+        private void EmitNumberIntLiteralExpression(BoundNumberIntLiteralExpression node, ILProcessor ilProcessor)
+        {
+            ilProcessor.Emit(OpCodes.Ldc_I4, node.Value);
         }
 
         private void EmitStringLiteralExpression(BoundStringLiteralExpression node, ILProcessor ilProcessor)

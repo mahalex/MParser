@@ -245,8 +245,10 @@ namespace Parser.Binding
                     RewriteMemberAccessExpression((BoundMemberAccessExpression)node),
                 BoundNodeKind.NamedFunctionHandleExpression =>
                     RewriteNamedFunctionHandleExpression((BoundNamedFunctionHandleExpression)node),
-                BoundNodeKind.NumberLiteralExpression =>
-                    RewriteNumberLiteralExpression((BoundNumberDoubleLiteralExpression)node),
+                BoundNodeKind.NumberDoubleLiteralExpression =>
+                    RewriteNumberDoubleLiteralExpression((BoundNumberDoubleLiteralExpression)node),
+                BoundNodeKind.NumberIntLiteralExpression =>
+                    RewriteNumberIntLiteralExpression((BoundNumberIntLiteralExpression)node),
                 BoundNodeKind.StringLiteralExpression =>
                     RewriteStringLiteralExpression((BoundStringLiteralExpression)node),
                 BoundNodeKind.TypedVariableExpression =>
@@ -287,7 +289,12 @@ namespace Parser.Binding
             return node;
         }
 
-        public virtual BoundExpression RewriteNumberLiteralExpression(BoundNumberDoubleLiteralExpression node)
+        public virtual BoundExpression RewriteNumberDoubleLiteralExpression(BoundNumberDoubleLiteralExpression node)
+        {
+            return node;
+        }
+
+        public virtual BoundExpression RewriteNumberIntLiteralExpression(BoundNumberIntLiteralExpression node)
         {
             return node;
         }

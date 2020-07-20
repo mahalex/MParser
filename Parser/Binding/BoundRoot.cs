@@ -515,7 +515,14 @@ namespace Parser.Binding
         public override TypeSymbol Type => throw new System.NotImplementedException();
     }
 
-    public class BoundNumberDoubleLiteralExpression : BoundExpression
+    public abstract class BoundNumberLiteralExpression : BoundExpression
+    {
+        protected BoundNumberLiteralExpression(SyntaxNode syntax) : base(syntax)
+        {
+        }
+    }
+
+    public class BoundNumberDoubleLiteralExpression : BoundNumberLiteralExpression
     {
         public BoundNumberDoubleLiteralExpression(SyntaxNode syntax, double value)
             : base(syntax)
@@ -524,12 +531,12 @@ namespace Parser.Binding
         }
 
         public double Value { get; }
-        public override BoundNodeKind Kind => BoundNodeKind.NumberLiteralExpression;
+        public override BoundNodeKind Kind => BoundNodeKind.NumberDoubleLiteralExpression;
 
         public override TypeSymbol Type => TypeSymbol.Double;
     }
 
-    public class BoundNumberIntLiteralExpression : BoundExpression
+    public class BoundNumberIntLiteralExpression : BoundNumberLiteralExpression
     {
         public BoundNumberIntLiteralExpression(SyntaxNode syntax, int value)
             : base(syntax)
@@ -537,8 +544,8 @@ namespace Parser.Binding
             Value = value;
         }
 
-        public double Value { get; }
-        public override BoundNodeKind Kind => BoundNodeKind.NumberLiteralExpression;
+        public int Value { get; }
+        public override BoundNodeKind Kind => BoundNodeKind.NumberIntLiteralExpression;
 
         public override TypeSymbol Type => TypeSymbol.Int;
     }
