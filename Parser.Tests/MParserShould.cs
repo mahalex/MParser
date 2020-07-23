@@ -1,4 +1,5 @@
 ﻿using Xunit;
+using FluentAssertions;
 
 namespace Parser.Tests
 {
@@ -95,7 +96,7 @@ namespace Parser.Tests
         [Fact]
         public void ProvidePosition()
         {
-            var text = "2 + 3";
+            var text = "% Comment\n  2 + 3";
             var sut = GetSut(text);
             var actual = sut.Parse();
             var statement = actual.Root.Body.Statements[0].AsNode() as ExpressionStatementSyntaxNode;
@@ -104,8 +105,29 @@ namespace Parser.Tests
             var operation = expression.Operation;
             var rhs = expression.Rhs;
             Assert.Equal(0, lhs.Position);
-            Assert.Equal(2, operation.Position);
-            Assert.Equal(4, rhs.Position);
+            Assert.Equal(14, operation.Position);
+            Assert.Equal(16, rhs.Position);
+        }
+
+        [Fact]
+        public void ProvideFullSpan()
+        {
+            var text = "% Comment\n  2 + 3";
+            var sut = GetSut(text);
+            var actual = sut.Parse();
+            var statement = actual.Root.Body.Statements[0].AsNode() as ExpressionStatementSyntaxNode;
+            var expression = statement!.Expression as BinaryOperationExpressionSyntaxNode;
+            var lhs = expression!.Lhs;
+            var operation = expression.Operation;
+            var rhs = expression.Rhs;
+            expression.FullSpan.Start.Should().Be(0);
+            expression.FullSpan.End.Should().Be(17);
+            lhs.FullSpan.Start.Should().Be(0);
+            lhs.FullSpan.End.Should().Be(14);
+            operation.FullSpan.Start.Should().Be(14);
+            operation.FullSpan.End.Should().Be(16);
+            rhs.FullSpan.Start.Should().Be(16);
+            rhs.FullSpan.End.Should().Be(17);
         }
     }
 }

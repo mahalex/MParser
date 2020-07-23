@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Internal;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -22,12 +23,15 @@ namespace Parser
             _parent = parent;
             _token = token ?? throw new ArgumentNullException(nameof(token));
             Position = position;
+            FullSpan = new TextSpan(Position, token.FullWidth);
         }
 
         public SyntaxNode Parent => _parent;
         internal Internal.GreenNode Token => _token;
 
         public int Position { get; }
+
+        public TextSpan FullSpan { get; }
 
         public object? Value => _token.GetValue();
 

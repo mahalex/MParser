@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Internal;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace Parser
             _parent = parent;
             _green = green;
             Position = position;
+            FullSpan = new TextSpan(Position, green.FullWidth);
         }
 
         private protected SyntaxNode(Internal.GreenNode green, int position)
@@ -20,6 +22,7 @@ namespace Parser
             _parent = this;
             _green = green;
             Position = position;
+            FullSpan = new TextSpan(Position, green.FullWidth);
         }
 
         public TokenKind Kind => _green.Kind;
@@ -34,6 +37,10 @@ namespace Parser
         }
         
         public int Position { get; }
+
+        public TextSpan FullSpan { get; }
+
+        public int FullWidth => _green.FullWidth;
 
         internal int GetChildPosition(int slot)
         {
@@ -74,8 +81,6 @@ namespace Parser
         public virtual string Text => _green.Text;
 
         public virtual string FullText => _green.FullText;
-
-        public int FullWidth => _green.FullWidth;
 
         public virtual IReadOnlyList<SyntaxTrivia> LeadingTrivia
         {
