@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.Internal
 {
@@ -31,9 +32,16 @@ namespace Parser.Internal
             return (T)_list.GetListSlot(i);
         }
 
+        public T this[int i] => (T)_list.GetListSlot(i);
+
         public static SyntaxList<T> List(T[] elements)
         {
             return new SyntaxList<T>(elements);
+        }
+
+        public static SyntaxList<T> List(IReadOnlyList<T> elements)
+        {
+            return new SyntaxList<T>(elements.ToArray());
         }
 
         public static SyntaxList<T> Empty => new SyntaxList<T>(new T[] { });
@@ -49,5 +57,7 @@ namespace Parser.Internal
         {
             return new SyntaxList<T>(_list._elements.Select(x => (T)x).ToArray(), diagnostics);
         }
+
+        public int Length => _list.Length;
     }
 }

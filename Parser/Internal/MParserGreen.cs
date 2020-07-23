@@ -348,7 +348,7 @@ namespace Parser.Internal
                 switch (token.Kind)
                 {
                     case TokenKind.OpenBraceToken: // cell array element access
-                        if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
+                        if (options.ParsingArrayElements && expression.TrailingTrivia is not null)
                         {
                             return expression;
                         }
@@ -363,7 +363,7 @@ namespace Parser.Internal
                         );
                         break;
                     case TokenKind.OpenParenthesisToken: // function call
-                        if (options.ParsingArrayElements && expression.TrailingTrivia.Any())
+                        if (options.ParsingArrayElements && expression.TrailingTrivia is not null)
                         {
                             return expression;
                         }
@@ -401,7 +401,7 @@ namespace Parser.Internal
                     case TokenKind.UnquotedStringLiteralToken:
                         return ParseCommandExpression(expression);
                     case TokenKind.AtToken:
-                        if (expression.TrailingTrivia.Any())
+                        if (expression.TrailingTrivia is not null)
                         {
                             return expression;
                         }
@@ -435,7 +435,7 @@ namespace Parser.Internal
         private ClassInvokationExpressionSyntaxNode ParseBaseClassInvokation(ExpressionSyntaxNode expression)
         {
             if (expression is IdentifierNameExpressionSyntaxNode methodName
-                && !expression.TrailingTrivia.Any())
+                && expression.TrailingTrivia is null)
             {
                 var atToken = EatToken();
                 var baseClassNameWithArguments = ParseExpression();
@@ -446,7 +446,7 @@ namespace Parser.Internal
                 return Factory.ClassInvokationExpressionSyntax(methodName, atToken, baseClassNameWithArguments);
             }
             if (expression is MemberAccessExpressionSyntaxNode memberAccess
-                && !expression.TrailingTrivia.Any())
+                && expression.TrailingTrivia is null)
             {
                 var atToken = EatToken();
                 var baseClassNameWithArguments = ParseExpression();
@@ -530,7 +530,7 @@ namespace Parser.Internal
             var builder = new SyntaxListBuilder();
             builder.Add(firstName);
             while (CurrentToken.Kind == TokenKind.DotToken
-                   && !lastToken.TrailingTrivia.Any())
+                   && lastToken.TrailingTrivia is null)
             {
                 var dot = EatToken();
                 builder.Add(dot);
@@ -856,11 +856,18 @@ namespace Parser.Internal
             return Factory.ExpressionStatementSyntax(expression, semicolon: null);
         }
 
-        private bool TriviaContainsNewLine(IReadOnlyList<SyntaxTrivia> trivia)
+        private bool TriviaContainsNewLine(GreenNode? trivia)
         {
-            foreach(var t in trivia)
+            var triviaList = trivia as SyntaxList<SyntaxTrivia>;
+            if (triviaList is null)
             {
-                if (t.Text.Contains('\n'))
+                return false;
+            }
+
+            for (var i = 0; i < triviaList.Length; i++)
+            {
+                var text = triviaList[i].Text;
+                if (text.Contains('\n'))
                 {
                     return true;
                 }

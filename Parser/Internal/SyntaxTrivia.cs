@@ -40,12 +40,17 @@ namespace Parser.Internal
             writer.Write(_text);
         }
 
+        public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
+        {
+            writer.Write(_text);
+        }
+
         public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)
         {
             return new SyntaxTrivia(Kind, _text, diagnostics);
         }
 
-        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => new List<SyntaxTrivia>();
-        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => new List<SyntaxTrivia>();
+        public override GreenNode? LeadingTriviaCore => null;
+        public override GreenNode? TrailingTriviaCore => null;
     }
 }

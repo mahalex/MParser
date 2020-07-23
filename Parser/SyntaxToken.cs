@@ -33,6 +33,15 @@ namespace Parser
 
         public TextSpan FullSpan { get; }
 
+        public TextSpan Span => CalculateSpan();
+
+        public TextSpan CalculateSpan()
+        {
+            var leadingTriviaWidth = LeadingTrivia.Width;
+            var trailingTriviaWidth = TrailingTrivia.Width;
+            return new TextSpan(Position + leadingTriviaWidth, FullWidth - leadingTriviaWidth - trailingTriviaWidth);
+        }
+
         public object? Value => _token.GetValue();
 
         public bool Equals(SyntaxToken other)
@@ -69,21 +78,21 @@ namespace Parser
         public int FullWidth => _token.FullWidth;
         public bool IsMissing => _token.IsMissing;
 
-        public IReadOnlyList<SyntaxTrivia> LeadingTrivia
+        public SyntaxTriviaList LeadingTrivia
         {
             get
             {
-                var p = _parent;
-                return _token.LeadingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                return new SyntaxTriviaList(this, Token.LeadingTriviaCore, this.Position);
             }
         }
 
-        public IReadOnlyList<SyntaxTrivia> TrailingTrivia
+        public SyntaxTriviaList TrailingTrivia
         {
             get
             {
-                var p = _parent;
-                return _token.TrailingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                var trailingGreen = Token.TrailingTriviaCore;
+                var trailingTriviaWidth = trailingGreen?.FullWidth ?? 0;
+                return new SyntaxTriviaList(this, trailingGreen, this.Position + this.FullWidth - trailingTriviaWidth);
             }
         }
     }

@@ -493,7 +493,7 @@ namespace Parser.Internal
             if (TokensSinceNewLine == 1
                 && !TokenStack.Any()
                 && LastToken.Kind == TokenKind.IdentifierToken
-                && LastToken.TrailingTrivia.Any()
+                && LastToken.TrailingTrivia is not null
                 && character != '='
                 && character != '('
                 && !SyntaxFacts.Keywords.Contains(LastToken.Text))
@@ -773,7 +773,7 @@ namespace Parser.Internal
                         || LastToken.Kind == TokenKind.CloseSquareBracketToken
                         || LastToken.Kind == TokenKind.IdentifierToken))
                     {
-                        if (LastToken.TrailingTrivia.Count == 0 && leadingTrivia.Count == 0)
+                        if (LastToken.TrailingTrivia is null && leadingTrivia.Count == 0)
                         {
                             Window.ConsumeChar();
                             tokenInfo.Kind = TokenKind.ApostropheToken;

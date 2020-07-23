@@ -11,14 +11,14 @@ namespace Semantics
         {
             var name = methodDefinition.Name.Text;
             var description = "";
-            description += string.Join("", methodDefinition.LeadingTrivia.Select(x => x.FullText));
+            description += string.Join("", methodDefinition.LeadingTrivia?.Select(x => x.FullText));
             if (methodDefinition.Body == null)
             {
-                description += string.Join("", methodDefinition.EndKeyword.LeadingTrivia.Select(x => x.FullText));
+                description += string.Join("", methodDefinition.EndKeyword.LeadingTrivia?.Select(x => x.FullText));
             }
             else
             {
-                description += string.Join("", methodDefinition.Body.LeadingTrivia.Select(x => x.FullText));
+                description += string.Join("", methodDefinition.Body.LeadingTrivia?.Select(x => x.FullText));
             }
 
             return new MMethod(name, description);
@@ -28,7 +28,7 @@ namespace Semantics
         {
             var name = methodDeclaration.Name.Text;
             var description = "";
-            description += string.Join("", methodDeclaration.LeadingTrivia.Select(x => x.FullText));
+            description += string.Join("", methodDeclaration.LeadingTrivia?.Select(x => x.FullText));
             return new MMethod(name, description);
         }
         

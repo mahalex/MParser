@@ -191,11 +191,11 @@ namespace Parser.Internal
             }
         }
 
-        public virtual IReadOnlyList<SyntaxTrivia> LeadingTrivia => GetFirstTerminal()?.LeadingTriviaCore ?? new List<SyntaxTrivia>();
-        public virtual IReadOnlyList<SyntaxTrivia> TrailingTrivia => GetLastTerminal()?.TrailingTriviaCore ?? new List<SyntaxTrivia>();
+        public virtual GreenNode? LeadingTrivia => GetFirstTerminal()?.LeadingTriviaCore;
+        public virtual GreenNode? TrailingTrivia => GetLastTerminal()?.TrailingTriviaCore;
 
-        public abstract IReadOnlyList<SyntaxTrivia> LeadingTriviaCore { get; }
-        public abstract IReadOnlyList<SyntaxTrivia> TrailingTriviaCore { get; }
+        public virtual GreenNode? LeadingTriviaCore => null;
+        public virtual GreenNode? TrailingTriviaCore => null;
 
         public virtual string FullText
         {

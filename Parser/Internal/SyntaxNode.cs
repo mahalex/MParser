@@ -53,8 +53,8 @@ namespace Parser.Internal
 
         public override string FullText => CollectFullText();
 
-        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => throw new NotImplementedException();
-        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => throw new NotImplementedException();
+        public override GreenNode? LeadingTriviaCore => throw new NotImplementedException();
+        public override GreenNode? TrailingTriviaCore => throw new NotImplementedException();
     }
 
     internal abstract class StatementSyntaxNode : SyntaxNode

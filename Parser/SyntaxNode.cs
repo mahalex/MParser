@@ -1,6 +1,5 @@
 ﻿using Parser.Internal;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace Parser
@@ -39,6 +38,15 @@ namespace Parser
         public int Position { get; }
 
         public TextSpan FullSpan { get; }
+
+        public TextSpan Span => CalculateSpan();
+
+        private TextSpan CalculateSpan()
+        {
+            var leadingTriviaWidth = LeadingTrivia?.Width ?? 0;
+            var trailingTriviaWidth = TrailingTrivia?.Width ?? 0;
+            return new TextSpan(Position + leadingTriviaWidth, _green.FullWidth - leadingTriviaWidth - trailingTriviaWidth);
+        }
 
         public int FullWidth => _green.FullWidth;
 
@@ -82,22 +90,30 @@ namespace Parser
 
         public virtual string FullText => _green.FullText;
 
-        public virtual IReadOnlyList<SyntaxTrivia> LeadingTrivia
+        public virtual SyntaxTriviaList? LeadingTrivia
         {
             get
             {
-                var p = Parent;
-                return _green.LeadingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                return GetFirstToken()?.LeadingTrivia;
             }
         }
 
-        public virtual IReadOnlyList<SyntaxTrivia> TrailingTrivia
+        public virtual SyntaxTriviaList? TrailingTrivia
         {
             get
             {
-                var p = Parent;
-                return _green.TrailingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                return GetLastToken()?.TrailingTrivia;
             }
+        }
+
+        public SyntaxToken? GetFirstToken()
+        {
+            return SyntaxNavigator.Singleton.EnumerateTokens(this).Select(t => (SyntaxToken?)t).FirstOrDefault();
+        }
+
+        public SyntaxToken? GetLastToken()
+        {
+            return SyntaxNavigator.Singleton.EnumerateTokens(this).Select(t => (SyntaxToken?)t).LastOrDefault();
         }
 
         public abstract void Accept(SyntaxVisitor visitor);
@@ -170,12 +186,16 @@ namespace Parser
 
         internal override SyntaxNode? GetNode(int index)
         {
-            throw new System.NotImplementedException();
+            return index switch
+            {
+                0 => GetRed(ref _file!, 0),
+                _ => null,
+            };
         }
 
         public override void Accept(SyntaxVisitor visitor)
         {
-            throw new System.NotImplementedException();
+            visitor.VisitRoot(this);
         }
 
 

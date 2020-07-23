@@ -129,5 +129,26 @@ namespace Parser.Tests
             rhs.FullSpan.Start.Should().Be(16);
             rhs.FullSpan.End.Should().Be(17);
         }
+
+        [Fact]
+        public void ProvideSpan()
+        {
+            var text = "% Comment\n  2 + 3";
+            var sut = GetSut(text);
+            var actual = sut.Parse();
+            var statement = actual.Root.Body.Statements[0].AsNode() as ExpressionStatementSyntaxNode;
+            var expression = statement!.Expression as BinaryOperationExpressionSyntaxNode;
+            var lhs = expression!.Lhs;
+            var operation = expression.Operation;
+            var rhs = expression.Rhs;
+            expression.Span.Start.Should().Be(12);
+            expression.Span.End.Should().Be(17);
+            lhs.Span.Start.Should().Be(12);
+            lhs.Span.End.Should().Be(13);
+            operation.Span.Start.Should().Be(14);
+            operation.Span.End.Should().Be(15);
+            rhs.Span.Start.Should().Be(16);
+            rhs.Span.End.Should().Be(17);
+        }
     }
 }
