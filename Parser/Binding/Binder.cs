@@ -30,7 +30,7 @@ namespace Parser.Binding
                     if (f.Name == "Main")
                     {
                         _diagnostics.ReportMainIsNotAllowed(
-                            new TextSpan(f.Syntax.Position, f.Syntax.FullWidth));
+                            f.Syntax.Span);
                         return null;
                     }
                 }
@@ -277,8 +277,7 @@ namespace Parser.Binding
         {
             if (node.Kind != TokenKind.IdentifierNameExpression)
             {
-                _diagnostics.ReportForLoopWithoutVariable(
-                    new TextSpan(node.Position, node.FullWidth));
+                _diagnostics.ReportForLoopWithoutVariable(node.Span);
                 return null;
             }
 

@@ -39,7 +39,7 @@ namespace Parser
                 if (mainFunction.InputDescription.Length > 0)
                 {
                     _diagnostics.ReportNotEnoughInputs(
-                        new TextSpan(mainFunction.Body.Syntax.Position, mainFunction.Body.Syntax.Position + mainFunction.Body.Syntax.FullWidth),
+                        mainFunction.Body.Syntax.Span,
                         mainFunction.Name);
                 return new EvaluationResult(null, _diagnostics.ToImmutableArray());
                 }
@@ -291,10 +291,9 @@ namespace Parser
             foreach (var argument in node.Arguments)
             {
                 var evaluatedArgument = EvaluateExpression(argument);
-                if (argument is null)
+                if (evaluatedArgument is null)
                 {
-                    _diagnostics.ReportCannotEvaluateExpression(
-                        new TextSpan(argument.Syntax.Position, argument.Syntax.FullWidth));
+                    _diagnostics.ReportCannotEvaluateExpression(argument.Syntax.Span);
                     allGood = false;
                 }
                 else
@@ -319,9 +318,7 @@ namespace Parser
                 if (resolvedFunction is null)
                 {
                     _diagnostics.ReportFunctionNotFound(
-                        new TextSpan(
-                            node.Name.Syntax.Position,
-                            node.Name.Syntax.Position + node.Name.Syntax.FullWidth),
+                        node.Name.Syntax.Span,
                         function.Name);
                     return null;
                 }
@@ -343,10 +340,8 @@ namespace Parser
                     if (counter < arguments.Count)
                     {
                         _diagnostics.ReportTooManyInputs(
-                            new TextSpan(
-                                node.Arguments[counter].Syntax.Position,
-                                node.Arguments[counter].Syntax.Position + node.Arguments[counter].Syntax.FullWidth),
-                        function.Name);
+                            node.Arguments[counter].Syntax.Span,
+                            function.Name);
                         return null;
                     }
                     _scopeStack.Push(newScope);
@@ -439,7 +434,7 @@ namespace Parser
             if (maybeValue is null)
             {
                 _diagnostics.ReportVariableNotFound(
-                    new TextSpan(node.Syntax.Position, node.Syntax.FullWidth),
+                    node.Syntax.Span,
                     variableName);
             }
 
@@ -505,7 +500,7 @@ namespace Parser
             if (rightValue is null)
             {
                 _diagnostics.ReportCannotEvaluateExpression(
-                    new TextSpan(node.Right.Syntax.Position, node.Right.Syntax.Position + node.Right.Syntax.FullWidth));
+                    node.Right.Syntax.Span);
                 return null;
             }
 
