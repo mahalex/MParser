@@ -13,7 +13,7 @@ namespace Parser.Binding
     {
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
 
-        private BoundProgram? BindProgramInternal(SyntaxTree syntaxTree)
+        private BoundProgram BindProgramInternal(SyntaxTree syntaxTree)
         {
             var boundRoot = BindRoot(syntaxTree.NullRoot);
             var statements = ((BoundBlockStatement)boundRoot.File.Body).Statements;
@@ -31,7 +31,11 @@ namespace Parser.Binding
                     {
                         _diagnostics.ReportMainIsNotAllowed(
                             f.Syntax.Span);
-                        return null;
+                        return new BoundProgram(
+                            _diagnostics.ToImmutableArray(),
+                            mainFunction: null,
+                            scriptFunction: null,
+                            functions: functionsBuilder.ToImmutable());
                     }
                 }
 
@@ -70,7 +74,7 @@ namespace Parser.Binding
                 functionsBuilder.ToImmutable());
         }
 
-        public static BoundProgram? BindProgram(SyntaxTree syntaxTree)
+        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
         {
             var binder = new Binder();
             return binder.BindProgramInternal(syntaxTree);

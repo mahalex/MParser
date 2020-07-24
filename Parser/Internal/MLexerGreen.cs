@@ -858,46 +858,40 @@ namespace Parser.Internal
             List<SyntaxTrivia> leadingTrivia,
             List<SyntaxTrivia> trailingTrivia)
         {
-            switch (tokenInfo.Kind)
+            return tokenInfo.Kind switch
             {
-                case TokenKind.IdentifierToken:
-                    return TokenFactory.CreateIdentifier(
-                        tokenInfo.Text,
-                        leadingTrivia,
-                        trailingTrivia);
-                case TokenKind.UnquotedStringLiteralToken:
-                    return TokenFactory.CreateUnquotedStringLiteral(
-                        tokenInfo.Text,
-                        tokenInfo.StringValue,
-                        leadingTrivia,
-                        trailingTrivia);
-                case TokenKind.NumberLiteralToken:
-                    return TokenFactory.CreateTokenWithValueAndTrivia<double>(
-                        tokenInfo.Kind,
-                        tokenInfo.Text,
-                        tokenInfo.DoubleValue,
-                        leadingTrivia,
-                        trailingTrivia);
-                case TokenKind.StringLiteralToken:
-                    return TokenFactory.CreateTokenWithValueAndTrivia<string>(
-                        tokenInfo.Kind,
-                        tokenInfo.Text,
-                        tokenInfo.StringValue,
-                        leadingTrivia,
-                        trailingTrivia);
-                case TokenKind.DoubleQuotedStringLiteralToken:
-                    return TokenFactory.CreateTokenWithValueAndTrivia<string>(
-                        tokenInfo.Kind,
-                        tokenInfo.Text,
-                        tokenInfo.StringValue,
-                        leadingTrivia,
-                        trailingTrivia);
-                default:
-                    return TokenFactory.CreateTokenWithTrivia(
-                        tokenInfo.Kind,
-                        leadingTrivia,
-                        trailingTrivia);
-            }
+                TokenKind.IdentifierToken => TokenFactory.CreateIdentifier(
+                    tokenInfo.Text,
+                    leadingTrivia,
+                    trailingTrivia),
+                TokenKind.UnquotedStringLiteralToken => TokenFactory.CreateUnquotedStringLiteral(
+                    tokenInfo.Text,
+                    tokenInfo.StringValue,
+                    leadingTrivia,
+                    trailingTrivia),
+                TokenKind.NumberLiteralToken => TokenFactory.CreateTokenWithValueAndTrivia<double>(
+                    tokenInfo.Kind,
+                    tokenInfo.Text,
+                    tokenInfo.DoubleValue,
+                    leadingTrivia,
+                    trailingTrivia),
+                TokenKind.StringLiteralToken => TokenFactory.CreateTokenWithValueAndTrivia<string>(
+                    tokenInfo.Kind,
+                    tokenInfo.Text,
+                    tokenInfo.StringValue,
+                    leadingTrivia,
+                    trailingTrivia),
+                TokenKind.DoubleQuotedStringLiteralToken => TokenFactory.CreateTokenWithValueAndTrivia<string>(
+                    tokenInfo.Kind,
+                    tokenInfo.Text,
+                    tokenInfo.StringValue,
+                    leadingTrivia,
+                    trailingTrivia),
+                _ => TokenFactory.CreateTokenWithTrivia(
+                    tokenInfo.Kind,
+                    leadingTrivia,
+                    trailingTrivia),
+            };
         }
 
         public List<(SyntaxToken, Position)> ParseAll()

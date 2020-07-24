@@ -27,7 +27,7 @@ namespace cmi
                 var child = children[index];
                 if (child.IsNode)
                 {
-                    RenderNode(child.AsNode(), indent, index == last);
+                    RenderNode(child.AsNode()!, indent, index == last);
                 }
                 else if (child.IsToken)
                 {

@@ -13,7 +13,7 @@ namespace Parser.MFunctions
             }
         }
 
-        public static int Len(MObject? obj)
+        public static int Len(MObject obj)
         {
             return obj switch
             {

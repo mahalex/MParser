@@ -76,17 +76,6 @@ namespace Parser.Internal
             return token;
         }
 
-        private SyntaxToken? PossiblyEatIdentifier(string s)
-        {
-            var token = CurrentToken;
-            if (token.Kind == TokenKind.IdentifierToken && token.Text == s)
-            {
-                return EatToken();
-            }
-
-            return null;
-        }
-
         private SyntaxToken EatPossiblyMissingIdentifier(string s)
         {
             var token = CurrentToken;
@@ -300,43 +289,20 @@ namespace Parser.Internal
             return builder.ToList();
         }
 
-        private ExpressionSyntaxNode? ParseTerm(ParseOptions options)
+        private ExpressionSyntaxNode ParseTerm(ParseOptions options)
         {
             var token = CurrentToken;
-            ExpressionSyntaxNode? expression = null;
-            switch (token.Kind)
+            ExpressionSyntaxNode expression = token.Kind switch
             {
-                case TokenKind.NumberLiteralToken:
-                    expression = Factory.NumberLiteralExpressionSyntax(EatToken());
-                    break;
-                case TokenKind.StringLiteralToken:
-                    expression = Factory.StringLiteralExpressionSyntax(EatToken());
-                    break;
-                case TokenKind.DoubleQuotedStringLiteralToken:
-                    expression = Factory.DoubleQuotedStringLiteralExpressionSyntax(EatToken());
-                    break;
-                case TokenKind.OpenSquareBracketToken:
-                    expression = ParseArrayLiteral();
-                    break;
-                case TokenKind.OpenBraceToken:
-                    expression = ParseCellArrayLiteral();
-                    break;
-                case TokenKind.ColonToken:
-                    expression = Factory.EmptyExpressionSyntax();
-                    break;
-                case TokenKind.OpenParenthesisToken:
-                    expression = ParseParenthesizedExpression();
-                    break;
-                default:
-                    var id = EatToken(TokenKind.IdentifierToken);
-                    expression = Factory.IdentifierNameExpressionSyntax(id);
-                    break;
-            }
-
-            if (expression == null)
-            {
-                return null;
-            }
+                TokenKind.NumberLiteralToken => Factory.NumberLiteralExpressionSyntax(EatToken()),
+                TokenKind.StringLiteralToken => Factory.StringLiteralExpressionSyntax(EatToken()),
+                TokenKind.DoubleQuotedStringLiteralToken => Factory.DoubleQuotedStringLiteralExpressionSyntax(EatToken()),
+                TokenKind.OpenSquareBracketToken => ParseArrayLiteral(),
+                TokenKind.OpenBraceToken => ParseCellArrayLiteral(),
+                TokenKind.ColonToken => Factory.EmptyExpressionSyntax(),
+                TokenKind.OpenParenthesisToken => ParseParenthesizedExpression(),
+                _ => Factory.IdentifierNameExpressionSyntax(EatToken(TokenKind.IdentifierToken)),
+            };
             return ParsePostfix(options, expression);
         }
 
@@ -599,10 +565,6 @@ namespace Parser.Internal
             else
             {
                 lhs = ParseTerm(options);
-                if (lhs is null)
-                {
-                    throw new Exception("Left-hand side in subexpression cannot be empty.");
-                }
             }
 
             while (true)
@@ -858,8 +820,7 @@ namespace Parser.Internal
 
         private bool TriviaContainsNewLine(GreenNode? trivia)
         {
-            var triviaList = trivia as SyntaxList<SyntaxTrivia>;
-            if (triviaList is null)
+            if (trivia is not SyntaxList<SyntaxTrivia> triviaList)
             {
                 return false;
             }

@@ -121,11 +121,11 @@ namespace Parser.Internal
 
         public override GreenNode? GetSlot(int i)
         {
-            switch (i)
+            return i switch
             {
-                case 0: return _file;
-                default: return null;
-            }
+                0 => _file,
+                _ => null,
+            };
         }
 
         public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)

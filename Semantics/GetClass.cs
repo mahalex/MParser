@@ -58,8 +58,7 @@ namespace Semantics
         
         public static MClass FromTree(FileSyntaxNode tree, string fileName)
         {
-            var classDeclaration = tree.Body.Statements[0].AsNode() as ClassDeclarationSyntaxNode;
-            if (classDeclaration == null)
+            if (tree.Body.Statements[0].AsNode() is not ClassDeclarationSyntaxNode classDeclaration)
             {
                 return null;
             }
