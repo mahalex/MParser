@@ -20,6 +20,7 @@ namespace Parser.Internal
         }
 
         public override string Text => _text;
+        public override string FullText => _text;
         public int Width => _text.Length;
 
         public override GreenNode? GetSlot(int i)

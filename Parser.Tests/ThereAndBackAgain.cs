@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace Parser.Tests
@@ -56,7 +57,35 @@ namespace Parser.Tests
             Assert.Equal(text, actualText);
             Assert.Equal(text.Length, actualWidth);
         }
-        
+
+        [Theory]
+        [MemberData(nameof(FilesData))]
+        public void TestLeadingAndTrailingTrivia(string fileName)
+        {
+            var text = File.ReadAllText(fileName);
+            var window = new TextWindowWithNull(text, fileName);
+            var parser = CreateParser(window);
+            var tree = parser.Parse();
+
+            var sb = new StringBuilder();
+            var maybeLeadingTrivia = tree.Root.LeadingTrivia;
+            var maybeTrailingTrivia = tree.Root.TrailingTrivia;
+            if (maybeLeadingTrivia is SyntaxTriviaList leadingTrivia)
+            {
+                sb.Append(leadingTrivia.FullText);
+            }
+
+            sb.Append(tree.Root.Text);
+
+            if (maybeTrailingTrivia is SyntaxTriviaList trailingTrivia)
+            {
+                sb.Append(trailingTrivia.FullText);
+            }
+
+            var actualText = sb.ToString();
+            Assert.Equal(text, actualText);
+        }
+
         public static IEnumerable<object[]> FilesData()
         {
             return Files().Select(fileName => new object[] { fileName });

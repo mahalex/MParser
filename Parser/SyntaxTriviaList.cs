@@ -36,6 +36,8 @@ namespace Parser
             }
         }
 
+        public string FullText => Node?.FullText ?? string.Empty;
+
         public IEnumerator<SyntaxTrivia> GetEnumerator()
         {
             for (var i = 0; i < Count; i++)

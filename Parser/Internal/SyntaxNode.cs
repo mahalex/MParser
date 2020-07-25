@@ -51,7 +51,7 @@ namespace Parser.Internal
             return builder.ToString();
         }
 
-        public override string FullText => CollectFullText();
+        //public override string FullText => CollectFullText();
 
         public override GreenNode? LeadingTriviaCore => throw new NotImplementedException();
         public override GreenNode? TrailingTriviaCore => throw new NotImplementedException();

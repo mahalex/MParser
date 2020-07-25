@@ -16,12 +16,12 @@ namespace Parser
             }
         }
 
-        public BlockStatementSyntaxNode Body
+        public BlockStatementSyntaxNode? Body
         {
             get
             {
-                var red = this.GetRed(ref this._body!, 0);
-                return red is null ? throw new System.Exception("body cannot be null.") : (BlockStatementSyntaxNode)red;
+                var red = this.GetRed(ref this._body, 0);
+                return red is null ? default : (BlockStatementSyntaxNode)red;
             }
         }
 
@@ -29,7 +29,7 @@ namespace Parser
         {
             return i switch
             {
-            0 => GetRed(ref _body!, 0), _ => null
+            0 => GetRed(ref _body, 0), _ => null
             }
 
             ;

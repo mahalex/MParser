@@ -1175,9 +1175,14 @@ namespace Parser.Internal
             return ParseExpressionStatement();
         }
 
-        private BlockStatementSyntaxNode ParseBlockStatement()
+        private BlockStatementSyntaxNode? ParseBlockStatement()
         {
             var statements = ParseStatementList();
+            if (statements.Length == 0)
+            {
+                return null;
+            }
+
             return Factory.BlockStatementSyntax(statements);
         }
         

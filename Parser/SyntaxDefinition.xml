@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Syntax xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <Class Name="FileSyntaxNode" BaseClass="SyntaxNode" Kind="File">
-        <Field Type="BlockStatementSyntaxNode" Name="body" />
+        <Field Type="BlockStatementSyntaxNode" Name="body" Nullable="true"/>
         <Field Type="SyntaxToken" Name="endOfFile" />
     </Class>
     <Class Name="BlockStatementSyntaxNode" BaseClass="StatementSyntaxNode" Kind="BlockStatement">

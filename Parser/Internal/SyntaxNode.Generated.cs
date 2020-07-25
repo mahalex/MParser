@@ -3,9 +3,9 @@ namespace Parser.Internal
 {
     internal class FileSyntaxNode : SyntaxNode
     {
-        internal readonly BlockStatementSyntaxNode _body;
+        internal readonly BlockStatementSyntaxNode? _body;
         internal readonly SyntaxToken _endOfFile;
-        internal FileSyntaxNode(BlockStatementSyntaxNode body, SyntaxToken endOfFile): base(TokenKind.File)
+        internal FileSyntaxNode(BlockStatementSyntaxNode? body, SyntaxToken endOfFile): base(TokenKind.File)
         {
             Slots = 2;
             this.AdjustWidth(body);
@@ -14,7 +14,7 @@ namespace Parser.Internal
             _endOfFile = endOfFile;
         }
 
-        internal FileSyntaxNode(BlockStatementSyntaxNode body, SyntaxToken endOfFile, TokenDiagnostic[] diagnostics): base(TokenKind.File, diagnostics)
+        internal FileSyntaxNode(BlockStatementSyntaxNode? body, SyntaxToken endOfFile, TokenDiagnostic[] diagnostics): base(TokenKind.File, diagnostics)
         {
             Slots = 2;
             this.AdjustWidth(body);

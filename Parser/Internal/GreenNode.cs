@@ -209,7 +209,6 @@ namespace Parser.Internal
                 }
 
                 return sb.ToString();
-
             }
         } 
 

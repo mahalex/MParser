@@ -3,7 +3,7 @@ namespace Parser.Internal
 {
     internal partial class SyntaxFactory
     {
-        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode body, SyntaxToken endOfFile)
+        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode? body, SyntaxToken endOfFile)
         {
             return new FileSyntaxNode(body, endOfFile);
         }
