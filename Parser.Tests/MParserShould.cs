@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using FluentAssertions;
+using System;
 
 namespace Parser.Tests
 {
@@ -149,6 +150,35 @@ namespace Parser.Tests
             operation.Span.End.Should().Be(15);
             rhs.Span.Start.Should().Be(16);
             rhs.Span.End.Should().Be(17);
+        }
+
+        [Fact]
+        public void NotHangOnUnknownSyntax()
+        {
+            var text = @"
+classdef myClass
+    properties
+        Channel;
+        NodeID;
+        Node;
+    end
+    methods
+        function this = sendData(this, arg1, arg2)
+            arguments
+                this (1,1) myClass
+                arg1 (1,1) double {mustBeNonnegative}
+                arg2 (1,1) double {mustBeNonnegative}
+            end
+            If (arg1 = 0)
+            this.NodeID = 3;
+        end
+    end
+    function this = getData(this, arg1, arg2)
+    end
+end";
+            var sut = GetSut(text);
+            Func<SyntaxTree> action = sut.Parse;
+            action.Should().Throw<ParsingException>();
         }
     }
 }

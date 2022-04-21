@@ -170,6 +170,10 @@ namespace Parser.Internal
                 {
                     var identifierToken = EatToken(TokenKind.IdentifierToken);
                     builder.Add(Factory.IdentifierNameExpressionSyntax(identifierToken));
+                    if (identifierToken.IsMissing)
+                    {
+                        break;
+                    }
                 }
             }
 
