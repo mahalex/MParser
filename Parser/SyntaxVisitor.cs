@@ -15,5 +15,10 @@
         {
             DefaultVisit(list);
         }
+
+        public virtual void VisitRoot(RootSyntaxNode node)
+        {
+            DefaultVisit(node);
+        }
     }
 }

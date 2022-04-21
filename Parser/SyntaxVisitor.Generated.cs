@@ -83,6 +83,11 @@ namespace Parser
             DefaultVisit(node);
         }
 
+        public virtual void VisitTrailingSemicolon(TrailingSemicolonSyntaxNode node)
+        {
+            DefaultVisit(node);
+        }
+
         public virtual void VisitEmptyStatement(EmptyStatementSyntaxNode node)
         {
             DefaultVisit(node);

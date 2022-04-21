@@ -13,24 +13,37 @@ namespace Parser.Binding
     {
         private readonly DiagnosticsBag _diagnostics = new DiagnosticsBag();
 
-        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
+        private BoundProgram BindProgramInternal(SyntaxTree syntaxTree)
         {
-            var binder = new Binder();
-            var boundRoot = binder.BindRoot(syntaxTree.NullRoot);
+            var boundRoot = BindRoot(syntaxTree.NullRoot);
             var statements = ((BoundBlockStatement)boundRoot.File.Body).Statements;
             var functionsBuilder = ImmutableDictionary.CreateBuilder<FunctionSymbol, LoweredFunction>();
             var globalStatements = statements.Where(s => s.Kind != BoundNodeKind.FunctionDeclaration).ToArray();
             var mainFunction = (FunctionSymbol?)null;
             var scriptFunction = (FunctionSymbol?)null;
+            var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
             if (globalStatements.Length > 0)
             {
-                // we have to gather all bound expression statements into a "script" function.
-                scriptFunction = new FunctionSymbol("%script");
+                // we have to gather all bound expression statements into a "Main" function.
+                scriptFunction = new FunctionSymbol("Main");
+                foreach (var f in functions) {
+                    if (f.Name == "Main")
+                    {
+                        _diagnostics.ReportMainIsNotAllowed(
+                            f.Syntax.Span);
+                        return new BoundProgram(
+                            _diagnostics.ToImmutableArray(),
+                            mainFunction: null,
+                            scriptFunction: null,
+                            functions: functionsBuilder.ToImmutable());
+                    }
+                }
+
                 var body = Block(globalStatements[0].Syntax, globalStatements);
                 var loweredBody = Lowerer.Lower(body);
                 var declaration = new BoundFunctionDeclaration(
                     syntax: globalStatements[0].Syntax,
-                    name: "%script",
+                    name: "Main",
                     inputDescription: ImmutableArray<ParameterSymbol>.Empty,
                     outputDescription: ImmutableArray<ParameterSymbol>.Empty,
                     body: body);
@@ -38,7 +51,7 @@ namespace Parser.Binding
                 functionsBuilder.Add(scriptFunction, loweredFunction);
             }
 
-            var functions = statements.OfType<BoundFunctionDeclaration>().ToArray();
+
             var first = true;
             foreach (var function in functions)
             {
@@ -55,10 +68,16 @@ namespace Parser.Binding
             }
 
             return new BoundProgram(
-                binder._diagnostics.ToImmutableArray(),
+                _diagnostics.ToImmutableArray(),
                 mainFunction,
                 scriptFunction,
                 functionsBuilder.ToImmutable());
+        }
+
+        public static BoundProgram BindProgram(SyntaxTree syntaxTree)
+        {
+            var binder = new Binder();
+            return binder.BindProgramInternal(syntaxTree);
         }
 
         private static LoweredFunction LowerFunction(BoundFunctionDeclaration declaration)
@@ -101,7 +120,7 @@ namespace Parser.Binding
                 TokenKind.ExpressionStatement =>
                     BindExpressionStatement((ExpressionStatementSyntaxNode)node),
                 TokenKind.ForStatement =>
-                    BindForStatement((ForStatementSyntaxNode)node),
+                    BindForStatement((ForStatementSyntaxNode)node)!,
                 TokenKind.FunctionDeclaration =>
                     BindFunctionDeclaration((FunctionDeclarationSyntaxNode)node),
                 TokenKind.IfStatement =>
@@ -115,11 +134,6 @@ namespace Parser.Binding
                 _ =>
                     throw new Exception($"Invalid statement node kind '{node.Kind}'."),
             };
-        }
-
-        private BoundWhileStatement BindWhileStatement(WhileStatementSyntaxNode node)
-        {
-            throw new NotImplementedException();
         }
 
         private BoundTryCatchStatement BindTryCatchStatement(TryCatchStatementSyntaxNode node)
@@ -250,15 +264,42 @@ namespace Parser.Binding
             return new ParameterSymbol(parameter.Text);
         }
 
-        private BoundForStatement BindForStatement(ForStatementSyntaxNode node)
+        private BoundForStatement? BindForStatement(ForStatementSyntaxNode node)
         {
-            throw new NotImplementedException();
+            var loopVariable = BindLoopVariable(node.Assignment.Lhs);
+            if (loopVariable is null)
+            {
+                return null;
+            }
+
+            var loopedExpression = BindExpression(node.Assignment.Rhs);
+            var body = BindStatement(node.Body);
+            return ForStatement(node, loopVariable, loopedExpression, body);
+        }
+
+        private BoundIdentifierNameExpression? BindLoopVariable(ExpressionSyntaxNode node)
+        {
+            if (node.Kind != TokenKind.IdentifierNameExpression)
+            {
+                _diagnostics.ReportForLoopWithoutVariable(node.Span);
+                return null;
+            }
+
+            return Identifier(node, ((IdentifierNameExpressionSyntaxNode)node).Name.Text);
+        }
+
+        private BoundWhileStatement BindWhileStatement(WhileStatementSyntaxNode node)
+        {
+            var condition = BindConversion(BindExpression(node.Condition), TypeSymbol.Boolean);
+            var body = BindStatement(node.Body);
+            return WhileStatement(node, condition, body);
         }
 
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntaxNode node)
         {
             var expression = BindExpression(node.Expression);
-            return ExpressionStatement(node, expression);
+            var discardResult = node.Semicolon is not null;
+            return ExpressionStatement(node, expression, discardResult);
         }
 
         private BoundExpression BindExpression(ExpressionSyntaxNode node)
@@ -326,11 +367,37 @@ namespace Parser.Binding
             return Assignment(node, left, right);
         }
 
+        private BoundExpression BindConversion(BoundExpression expression, TypeSymbol targetType)
+        {
+            var conversion = Conversion.Classify(expression.Type, targetType);
+            if (!conversion.Exists)
+            {
+                return new BoundErrorExpression(expression.Syntax);
+            }
+
+            if (conversion.IsIdentity)
+            {
+                return expression;
+            }
+
+            return Conversion(expression.Syntax, targetType, expression);
+        }
+
         private BoundBinaryOperationExpression BindBinaryOperationExpression(BinaryOperationExpressionSyntaxNode node)
         {
             var left = BindExpression(node.Lhs);
             var right = BindExpression(node.Rhs);
-            return BinaryOperation(node, left, node.Operation.Kind, right);
+            var op = BoundBinaryOperator.GetOperator(node.Operation.Kind, left.Type, right.Type);
+            if (op is null)
+            {
+                throw new Exception($"Unknown binary operator '{node.Operation.Kind}'.");
+            }
+
+            return BinaryOperation(
+                node,
+                BindConversion(left, op.Left),
+                op,
+                BindConversion(right, op.Right));
         }
 
         private BoundCellArrayElementAccessExpression BindCellArrayElementAccessExpression(CellArrayElementAccessExpressionSyntaxNode node)
@@ -403,7 +470,15 @@ namespace Parser.Binding
         private BoundNumberLiteralExpression BindNumberLiteralExpression(NumberLiteralExpressionSyntaxNode node)
         {
             var value = (double)node.Number.Value!;
-            return NumberLiteral(node, value);
+            var intValue = (int)Math.Round(value);
+            if (intValue == value)
+            {
+                return NumberIntLiteral(node, intValue);
+            }
+            else
+            {
+                return NumberDoubleLiteral(node, value);
+            }
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntaxNode node)
@@ -420,7 +495,16 @@ namespace Parser.Binding
         private BoundUnaryOperationExpression BindUnaryPrefixOperationExpression(UnaryPrefixOperationExpressionSyntaxNode node)
         {
             var operand = BindExpression(node.Operand);
-            return UnaryOperation(node, node.Operation.Kind, operand);
+            var op = BoundUnaryOperator.GetOperator(node.Operation.Kind, operand.Type);
+            if (op is null)
+            {
+                throw new Exception($"Unknown binary operator '{node.Operation.Kind}'.");
+            }
+
+            return UnaryOperation(
+                node,
+                op,
+                BindConversion(operand, op.Result));
         }
 
         private BoundUnaryOperationExpression BindUnaryPostfixOperationExpression(UnaryPostfixOperationExpressionSyntaxNode node)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Parser.Internal
 {
@@ -16,66 +15,66 @@ namespace Parser.Internal
             public SyntaxTokenWithTrivia(
                 TokenKind kind,
                 string text,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia) : base(kind)
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia) : base(kind)
             {
                 _text = text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public SyntaxTokenWithTrivia(
                 TokenKind kind,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia) : base(kind)
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia) : base(kind)
             {
                 _text = base.Text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public SyntaxTokenWithTrivia(
                 TokenKind kind,
                 string text,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia,
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia,
                 TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
             {
                 _text = text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public SyntaxTokenWithTrivia(
                 TokenKind kind,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia,
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia,
                 TokenDiagnostic[] diagnostics) : base(kind, diagnostics)
             {
                 _text = base.Text;
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (_text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
             {
-                if (leading)
+                if (leading && LeadingTrivia is SyntaxList<SyntaxTrivia> leadingTrivia)
                 {
-                    foreach (var trivia in LeadingTrivia)
+                    for (var i = 0; i < leadingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        leadingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
                 base.WriteTokenTo(writer, leading, trailing);
-                if (trailing)
+                if (trailing && TrailingTrivia is SyntaxList<SyntaxTrivia> trailingTrivia)
                 {
-                    foreach (var trivia in TrailingTrivia)
+                    for (var i = 0; i < trailingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        trailingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
             }
@@ -85,9 +84,9 @@ namespace Parser.Internal
                 return new SyntaxTokenWithTrivia(Kind, _text, LeadingTrivia, TrailingTrivia, diagnostics);
             }
 
-            public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore { get; }
+            public override GreenNode? LeadingTriviaCore { get; }
 
-            public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore { get; }
+            public override GreenNode? TrailingTriviaCore { get; }
         }
 
         internal class SyntaxTokenWithValue<T> : SyntaxToken
@@ -138,46 +137,47 @@ namespace Parser.Internal
                 TokenKind kind,
                 string text,
                 T value,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia) : base(kind, text, value)
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia)
+                : base(kind, text, value)
             {
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public SyntaxTokenWithValueAndTrivia(
                 TokenKind kind,
                 string text,
                 T value,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia,
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia,
                 TokenDiagnostic[] diagnostics) : base(kind, text, value, diagnostics)
             {
                 LeadingTriviaCore = leadingTrivia;
                 TrailingTriviaCore = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
-            public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore { get; }
+            public override GreenNode? LeadingTriviaCore { get; }
 
-            public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore { get; }
+            public override GreenNode? TrailingTriviaCore { get; }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
             {
-                if (leading)
+                if (leading && LeadingTrivia is SyntaxList<SyntaxTrivia> leadingTrivia)
                 {
-                    foreach (var trivia in LeadingTrivia)
+                    for (var i = 0; i < leadingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        leadingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
                 base.WriteTokenTo(writer, leading, trailing);
-                if (trailing)
+                if (trailing && TrailingTrivia is SyntaxList<SyntaxTrivia> trailingTrivia)
                 {
-                    foreach (var trivia in TrailingTrivia)
+                    for (var i = 0; i < trailingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        trailingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
             }
@@ -220,49 +220,49 @@ namespace Parser.Internal
 
         internal class SyntaxIdentifierWithTrivia : SyntaxIdentifier
         {
-            private readonly IReadOnlyList<SyntaxTrivia> _leadingTrivia;
-            private readonly IReadOnlyList<SyntaxTrivia> _trailingTrivia;
+            private readonly GreenNode? _leadingTrivia;
+            private readonly GreenNode? _trailingTrivia;
 
-            public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => _leadingTrivia;
-            public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => _trailingTrivia;
+            public override GreenNode? LeadingTriviaCore => _leadingTrivia;
+            public override GreenNode? TrailingTriviaCore => _trailingTrivia;
 
             public SyntaxIdentifierWithTrivia(
                 string text,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia
-                ) : base(text)
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia)
+                : base(text)
             {
                 _leadingTrivia = leadingTrivia;
                 _trailingTrivia = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public SyntaxIdentifierWithTrivia(
                 string text,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia,
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia,
                 TokenDiagnostic[] diagnostics) : base(text, diagnostics)
             {
                 _leadingTrivia = leadingTrivia;
                 _trailingTrivia = trailingTrivia;
-                _fullWidth = (leadingTrivia?.Sum(t => t.FullWidth) ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.Sum(t => t.FullWidth) ?? 0);
+                _fullWidth = (leadingTrivia?.FullWidth ?? 0) + (text?.Length ?? 0) + (trailingTrivia?.FullWidth ?? 0);
             }
 
             public override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
             {
-                if (leading)
+                if (leading && LeadingTrivia is SyntaxList<SyntaxTrivia> leadingTrivia)
                 {
-                    foreach (var trivia in LeadingTrivia)
+                    for (var i = 0; i < leadingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        leadingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
                 base.WriteTokenTo(writer, leading, trailing);
-                if (trailing)
+                if (trailing && TrailingTrivia is SyntaxList<SyntaxTrivia> trailingTrivia)
                 {
-                    foreach (var trivia in TrailingTrivia)
+                    for (var i = 0; i < trailingTrivia.Length; i++)
                     {
-                        writer.Write(trivia.Text);
+                        trailingTrivia[i].WriteTriviaTo(writer);
                     }
                 }
             }
@@ -280,8 +280,8 @@ namespace Parser.Internal
         {
             public MissingTokenWithTrivia(
                 TokenKind kind,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia
                 ) : base(kind, leadingTrivia, trailingTrivia)
             {
                 _isMissing = true;
@@ -289,8 +289,8 @@ namespace Parser.Internal
 
             public MissingTokenWithTrivia(
                 TokenKind kind,
-                IReadOnlyList<SyntaxTrivia> leadingTrivia,
-                IReadOnlyList<SyntaxTrivia> trailingTrivia,
+                GreenNode? leadingTrivia,
+                GreenNode? trailingTrivia,
                 TokenDiagnostic[] diagnostics) : base(kind, leadingTrivia, trailingTrivia, diagnostics)
             {
                 _isMissing = true;
@@ -312,7 +312,7 @@ namespace Parser.Internal
         {
         }
 
-        internal static SyntaxToken NoneToken => new MissingTokenWithTrivia(TokenKind.None, s_EmptySyntaxTriviaList, s_EmptySyntaxTriviaList);
+        internal static SyntaxToken NoneToken => new MissingTokenWithTrivia(TokenKind.None, null, null);
 
         public virtual object? Value => null;
 
@@ -320,8 +320,8 @@ namespace Parser.Internal
 
         public virtual int Width => Text.Length;
 
-        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => s_EmptySyntaxTriviaList;
-        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => s_EmptySyntaxTriviaList;
+        public override GreenNode? LeadingTriviaCore => null;
+        public override GreenNode? TrailingTriviaCore => null;
 
         public override GreenNode? GetSlot(int i)
         {

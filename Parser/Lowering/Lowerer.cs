@@ -1,5 +1,5 @@
 ﻿using Parser.Binding;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,6 +10,7 @@ namespace Parser.Lowering
     internal class Lowerer : BoundTreeRewriter
     {
         private int _labelNumber = 0;
+        private int _localVariableNumber = 0;
 
         private Lowerer()
         {
@@ -19,6 +20,12 @@ namespace Parser.Lowering
         {
             var name = $"Label{++_labelNumber}";
             return new BoundLabel(name);
+        }
+
+        private TypedVariableSymbol GenerateTypedLocalVariable(TypeSymbol typeSymbol)
+        {
+            var name = $"#{++_localVariableNumber}";
+            return new TypedVariableSymbol(name, typeSymbol);
         }
 
         public override BoundStatement RewriteIfStatement(BoundIfStatement node)
@@ -78,6 +85,116 @@ namespace Parser.Lowering
 
             builder.Add(LabelStatement(node.Syntax, labels[^1]));
             return RewriteBlockStatement(Block(node.Syntax, builder.ToArray()));
+        }
+
+        public override BoundStatement RewriteWhileStatement(BoundWhileStatement node)
+        {
+            // while cond
+            //     body
+            // end
+            //
+            //      |
+            //      |
+            //      V
+            //
+            // LabelLoop:
+            //     gotoFalse cond LabelEnd
+            //     body
+            //     goto LabelLoop
+            // LabelEnd:
+            var labelLoop = GenerateLabel();
+            var labelEnd = GenerateLabel();
+            var result = Block(
+                node.Syntax,
+                // LabelLoop:
+                LabelStatement(node.Syntax, labelLoop),
+                //     gotoFalse cond LabelEnd
+                GotoIfFalse(
+                    node.Syntax,
+                    node.Condition,
+                    labelEnd),
+                //     body
+                node.Body,
+                //     goto LabelLoop
+                Goto(node.Syntax, labelLoop),
+                // LabelEnd:
+                LabelStatement(node.Syntax, labelEnd));
+            return RewriteBlockStatement(result);
+        }
+
+        public override BoundStatement RewriteForStatement(BoundForStatement node)
+        {
+            // for i = expr
+            //     body
+            // end
+            //
+            //      |
+            //      |
+            //      V
+            //
+            //   #array = expr
+            //   #length = len(#array)
+            //   #index = 0
+            //   while #index < #length
+            //       i = #array(#index);
+            //       body
+            //       #index = #index + 1
+            var localArray = GenerateTypedLocalVariable(TypeSymbol.MObject);
+            var localLength = GenerateTypedLocalVariable(TypeSymbol.Int);
+            var localIndex = GenerateTypedLocalVariable(TypeSymbol.Int);
+            var whileBody = Block(
+                node.Syntax,
+                //       i = #array(#index);
+                ExpressionStatement(
+                    node.Syntax,
+                    Assignment(
+                        node.Syntax,
+                        node.LoopVariable,
+                        FunctionCall(
+                            node.Syntax,
+                            TypedVariableExpression(node.Syntax, localArray),
+                            new[] { (BoundExpression)TypedVariableExpression(node.Syntax, localIndex) }.ToImmutableArray())),
+                    discardResult: true),
+                //       body
+                node.Body,
+                //   #index = #index + 1;
+                ExpressionStatement(
+                    node.Syntax,
+                    Assignment(
+                        node.Syntax,
+                        TypedVariableExpression(node.Syntax, localIndex),
+                        BinaryOperation(
+                            node.Syntax,
+                            TypedVariableExpression(node.Syntax, localIndex),
+                            BoundBinaryOperator.GetOperator(TokenKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int)!,
+                            NumberIntLiteral(node.Syntax, 1))),
+                    discardResult: true));
+
+            var result = Block(
+                node.Syntax,
+                //   #array = expr
+                TypedVariableDeclaration(node.Syntax, localArray, node.LoopedExpression),
+                //   #length = len(#array)
+                TypedVariableDeclaration(
+                    node.Syntax,
+                    localLength,
+                    FunctionCall(
+                        node.Syntax,
+                        Identifier(node.Syntax, "len"),
+                        new[] { (BoundExpression)TypedVariableExpression(node.Syntax, localArray) }.ToImmutableArray())),
+                //   #index = 0
+                TypedVariableDeclaration(node.Syntax, localIndex, NumberIntLiteral(node.Syntax, 0)),
+                //   while #index < #length
+                //       whileBody
+                WhileStatement(
+                    node.Syntax,
+                    BinaryOperation(
+                        node.Syntax,
+                        TypedVariableExpression(node.Syntax, localIndex),
+                        BoundBinaryOperator.GetOperator(TokenKind.LessToken, TypeSymbol.Int, TypeSymbol.Int)!,
+                        TypedVariableExpression(node.Syntax, localLength)),
+                    whileBody));
+            return RewriteBlockStatement(result);
         }
 
         public static BoundBlockStatement Lower(BoundStatement statement)

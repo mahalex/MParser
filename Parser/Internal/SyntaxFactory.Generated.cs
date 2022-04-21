@@ -3,7 +3,7 @@ namespace Parser.Internal
 {
     internal partial class SyntaxFactory
     {
-        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode body, SyntaxToken endOfFile)
+        public FileSyntaxNode FileSyntax(BlockStatementSyntaxNode? body, SyntaxToken endOfFile)
         {
             return new FileSyntaxNode(body, endOfFile);
         }
@@ -78,9 +78,14 @@ namespace Parser.Internal
             return new TryCatchStatementSyntaxNode(tryKeyword, tryBody, catchClause, endKeyword);
         }
 
-        public ExpressionStatementSyntaxNode ExpressionStatementSyntax(ExpressionSyntaxNode expression)
+        public ExpressionStatementSyntaxNode ExpressionStatementSyntax(ExpressionSyntaxNode expression, TrailingSemicolonSyntaxNode? semicolon)
         {
-            return new ExpressionStatementSyntaxNode(expression);
+            return new ExpressionStatementSyntaxNode(expression, semicolon);
+        }
+
+        public TrailingSemicolonSyntaxNode TrailingSemicolonSyntax(SyntaxToken semicolon)
+        {
+            return new TrailingSemicolonSyntaxNode(semicolon);
         }
 
         public EmptyStatementSyntaxNode EmptyStatementSyntax(SyntaxToken semicolon)

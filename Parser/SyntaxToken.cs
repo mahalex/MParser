@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Internal;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -22,12 +23,24 @@ namespace Parser
             _parent = parent;
             _token = token ?? throw new ArgumentNullException(nameof(token));
             Position = position;
+            FullSpan = new TextSpan(Position, token.FullWidth);
         }
 
         public SyntaxNode Parent => _parent;
         internal Internal.GreenNode Token => _token;
 
         public int Position { get; }
+
+        public TextSpan FullSpan { get; }
+
+        public TextSpan Span => CalculateSpan();
+
+        public TextSpan CalculateSpan()
+        {
+            var leadingTriviaWidth = LeadingTrivia.Width;
+            var trailingTriviaWidth = TrailingTrivia.Width;
+            return new TextSpan(Position + leadingTriviaWidth, FullWidth - leadingTriviaWidth - trailingTriviaWidth);
+        }
 
         public object? Value => _token.GetValue();
 
@@ -38,7 +51,7 @@ namespace Parser
 
         public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             return obj is SyntaxToken token && Equals(token);
         }
 
@@ -65,21 +78,21 @@ namespace Parser
         public int FullWidth => _token.FullWidth;
         public bool IsMissing => _token.IsMissing;
 
-        public IReadOnlyList<SyntaxTrivia> LeadingTrivia
+        public SyntaxTriviaList LeadingTrivia
         {
             get
             {
-                var p = _parent;
-                return _token.LeadingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                return new SyntaxTriviaList(this, Token.LeadingTriviaCore, this.Position);
             }
         }
 
-        public IReadOnlyList<SyntaxTrivia> TrailingTrivia
+        public SyntaxTriviaList TrailingTrivia
         {
             get
             {
-                var p = _parent;
-                return _token.TrailingTrivia.Select(trivia => new SyntaxTrivia(p, trivia)).ToImmutableList();
+                var trailingGreen = Token.TrailingTriviaCore;
+                var trailingTriviaWidth = trailingGreen?.FullWidth ?? 0;
+                return new SyntaxTriviaList(this, trailingGreen, this.Position + this.FullWidth - trailingTriviaWidth);
             }
         }
     }

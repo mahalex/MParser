@@ -135,6 +135,9 @@
         // a list of syntax nodes and/or tokens.
         List,
 
+        // a semicolon that marks expression statements with discarded results.
+        TrailingSemicolon,
+
 
         // STATEMENTS
         // The name ends with "Declaration" or "Statement".

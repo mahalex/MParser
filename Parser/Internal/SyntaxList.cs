@@ -58,5 +58,7 @@ namespace Parser.Internal
         {
             return new SyntaxList(_elements, diagnostics);
         }
+
+        public int Length => _elements.Length;
     }
 }

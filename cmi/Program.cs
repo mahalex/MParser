@@ -4,7 +4,6 @@ using System.IO;
 
 namespace cmi
 {
-
     class Program
     {
         static void Main(string[] args)

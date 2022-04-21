@@ -51,10 +51,10 @@ namespace Parser.Internal
             return builder.ToString();
         }
 
-        public override string FullText => CollectFullText();
+        //public override string FullText => CollectFullText();
 
-        public override IReadOnlyList<SyntaxTrivia> LeadingTriviaCore => throw new NotImplementedException();
-        public override IReadOnlyList<SyntaxTrivia> TrailingTriviaCore => throw new NotImplementedException();
+        public override GreenNode? LeadingTriviaCore => throw new NotImplementedException();
+        public override GreenNode? TrailingTriviaCore => throw new NotImplementedException();
     }
 
     internal abstract class StatementSyntaxNode : SyntaxNode
@@ -121,11 +121,11 @@ namespace Parser.Internal
 
         public override GreenNode? GetSlot(int i)
         {
-            switch (i)
+            return i switch
             {
-                case 0: return _file;
-                default: return null;
-            }
+                0 => _file,
+                _ => null,
+            };
         }
 
         public override GreenNode SetDiagnostics(TokenDiagnostic[] diagnostics)

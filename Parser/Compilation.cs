@@ -1,4 +1,5 @@
 ﻿using Parser.Binding;
+using Parser.Emitting;
 
 namespace Parser
 {
@@ -14,6 +15,13 @@ namespace Parser
         public static Compilation Create(SyntaxTree syntaxTree)
         {
             return new Compilation(syntaxTree);
+        }
+
+        public void Emit(string[] references, string outputPath)
+        {
+            var emitter = new Emitter();
+            var boundProgram = GetBoundProgram();
+            emitter.Emit(boundProgram, references, outputPath);
         }
 
         private BoundProgram GetBoundProgram()

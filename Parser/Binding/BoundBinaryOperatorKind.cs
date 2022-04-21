@@ -25,5 +25,7 @@
         Tilde,
         Caret,
         DotCaret,
+        LessInt,
+        PlusInt,
     }
 }

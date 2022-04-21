@@ -14,6 +14,16 @@ namespace Parser.Internal
             IReadOnlyList<SyntaxTrivia> leadingTrivia,
             IReadOnlyList<SyntaxTrivia> trailingTrivia)
         {
+            var leading = leadingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(leadingTrivia) : null;
+            var trailing = trailingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(trailingTrivia) : null;
+            return new SyntaxToken.SyntaxTokenWithTrivia(kind, leading, trailing);
+        }
+
+        public static SyntaxToken CreateTokenWithTrivia(
+            TokenKind kind,
+            GreenNode? leadingTrivia,
+            GreenNode? trailingTrivia)
+        {
             return new SyntaxToken.SyntaxTokenWithTrivia(kind, leadingTrivia, trailingTrivia);
         }
 
@@ -21,6 +31,16 @@ namespace Parser.Internal
             string text,
             IReadOnlyList<SyntaxTrivia> leadingTrivia,
             IReadOnlyList<SyntaxTrivia> trailingTrivia)
+        {
+            var leading = leadingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(leadingTrivia) : null;
+            var trailing = trailingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(trailingTrivia) : null;
+            return new SyntaxToken.SyntaxIdentifierWithTrivia(text, leading, trailing);
+        }
+
+        public static SyntaxToken CreateIdentifier(
+            string text,
+            GreenNode? leadingTrivia,
+            GreenNode? trailingTrivia)
         {
             return new SyntaxToken.SyntaxIdentifierWithTrivia(text, leadingTrivia, trailingTrivia);
         }
@@ -32,6 +52,18 @@ namespace Parser.Internal
             IReadOnlyList<SyntaxTrivia> leadingTrivia,
             IReadOnlyList<SyntaxTrivia> trailingTrivia)
         {
+            var leading = leadingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(leadingTrivia) : null;
+            var trailing = trailingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(trailingTrivia) : null;
+            return new SyntaxToken.SyntaxTokenWithValueAndTrivia<T>(kind, text, value, leading, trailing);
+        }
+
+        public static SyntaxToken CreateTokenWithValueAndTrivia<T>(
+            TokenKind kind,
+            string text,
+            T value,
+            GreenNode? leadingTrivia,
+            GreenNode? trailingTrivia)
+        {
             return new SyntaxToken.SyntaxTokenWithValueAndTrivia<T>(kind, text, value, leadingTrivia, trailingTrivia);
         }
 
@@ -40,6 +72,22 @@ namespace Parser.Internal
             string value,
             IReadOnlyList<SyntaxTrivia> leadingTrivia,
             IReadOnlyList<SyntaxTrivia> trailingTrivia)
+        {
+            var leading = leadingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(leadingTrivia) : null;
+            var trailing = trailingTrivia.Count > 0 ? SyntaxList<SyntaxTrivia>.List(trailingTrivia) : null;
+            return new SyntaxToken.SyntaxTokenWithValueAndTrivia<string>(
+                TokenKind.UnquotedStringLiteralToken,
+                text,
+                value,
+                leading,
+                trailing);
+        }
+
+        public static SyntaxToken CreateUnquotedStringLiteral(
+            string text,
+            string value,
+            GreenNode? leadingTrivia,
+            GreenNode? trailingTrivia)
         {
             return new SyntaxToken.SyntaxTokenWithValueAndTrivia<string>(
                 TokenKind.UnquotedStringLiteralToken,
@@ -54,7 +102,9 @@ namespace Parser.Internal
             IReadOnlyList<SyntaxTrivia>? leadingTrivia,
             IReadOnlyList<SyntaxTrivia>? trailingTrivia)
         {
-            return new SyntaxToken.MissingTokenWithTrivia(kind, leadingTrivia ?? SyntaxToken.s_EmptySyntaxTriviaList, trailingTrivia ?? SyntaxToken.s_EmptySyntaxTriviaList);
+            var leading = (leadingTrivia is { } l && l.Count > 0) ? SyntaxList<SyntaxTrivia>.List(leadingTrivia) : null;
+            var trailing = (trailingTrivia is { } c && c.Count > 0) ? SyntaxList<SyntaxTrivia>.List(trailingTrivia) : null;
+            return new SyntaxToken.MissingTokenWithTrivia(kind, leading, trailing);
         }
     }
 }
